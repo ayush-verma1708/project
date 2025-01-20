@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { products } from '../sample/SampleProd'; // Updated import (no .tsx extension)
+import { useCart } from '../context/CartContext';
 
 export default function ProductsDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -23,6 +24,7 @@ export default function ProductsDetail() {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showAddedNotification, setShowAddedNotification] = useState(false);
   const { id } = useParams(); // Get the product ID from the URL
+  const { addItem } = useCart(); // Destructure addItem from useCart
 
   // Find the product by ID from the products array
   const product = products.find((product) => product.id === id);
@@ -60,6 +62,7 @@ export default function ProductsDetail() {
   };
 
   const handleAddToCart = () => {
+    addItem({ ...product, color: selectedColor }); // Add product to cart with selected color
     setShowAddedNotification(true);
     setTimeout(() => setShowAddedNotification(false), 2000);
   };

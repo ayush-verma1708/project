@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -54,7 +53,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                     />
                     <div className="flex-1">
                       <h3 className="font-medium">{item.name}</h3>
-                      {item.color && (
+                      {item.colors && (
                         <p className="text-sm text-gray-500">Color: {item.color}</p>
                       )}
                       <div className="flex items-center gap-2 mt-2">

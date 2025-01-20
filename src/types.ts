@@ -11,7 +11,6 @@ export interface Product {
   specifications: {
     [key: string]: string; // Added to describe various specifications like Material, Finish, etc.
   };
-  colors: string[]; // Added to list available color options
 }
 
 export interface CartItem extends Product {
