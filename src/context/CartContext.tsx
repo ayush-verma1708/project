@@ -112,14 +112,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // Load cart from localStorage on mount
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
+      // Check if savedCart exists, then parse it and dispatch to load into state
       dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
     }
-  }, []);
+  }, []); // Only run once when component mounts
 
   useEffect(() => {
     // Save cart to localStorage whenever it changes
-    localStorage.setItem('cart', JSON.stringify(state));
-  }, [state]);
+    // Only save state to localStorage if the cart is not empty (optional)
+    if (state.items.length > 0) {
+      localStorage.setItem('cart', JSON.stringify(state));
+    }
+  }, [state]); // Listen to changes in cart state
 
   const addItem = (product: Product & { color?: string }) => {
     dispatch({ type: 'ADD_ITEM', payload: product });
@@ -151,6 +155,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     </CartContext.Provider>
   );
 }
+
 
 export function useCart() {
   const context = useContext(CartContext);
