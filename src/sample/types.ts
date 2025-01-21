@@ -14,22 +14,3 @@ export interface Product {
   colors: string[]; // Added to list available color options
 }
 
-
-export interface CartItem extends Product {
-  quantity: number;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  orders: Order[];
-}
-
-export interface Order {
-  id: string;
-  items: CartItem[];
-  total: number;
-  date: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
-}

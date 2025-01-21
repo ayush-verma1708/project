@@ -34,9 +34,7 @@ export function Navigation() {
               <Search size={20} />
             </button>
             <CartButton />
-            <Link to="/account" className="text-gray-700 hover:text-indigo-600 transition-colors">
-              <User size={20} />
-            </Link>
+         
           </div>
 
           <div className="flex items-center sm:hidden">

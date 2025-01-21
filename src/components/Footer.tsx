@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
@@ -48,22 +47,22 @@ export function Footer() {
             <h3 className="text-white text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy" className="text-sm hover:text-white transition-colors">
+                <Link to="/privacy-policy" className="text-sm hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-sm hover:text-white transition-colors">
+                <Link to="/terms-and-conditions" className="text-sm hover:text-white transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="/shipping" className="text-sm hover:text-white transition-colors">
+                <Link to="/shipping-policy" className="text-sm hover:text-white transition-colors">
                   Shipping Policy
                 </Link>
               </li>
               <li>
-                <Link to="/returns" className="text-sm hover:text-white transition-colors">
+                <Link to="/return-and-refund-policy" className="text-sm hover:text-white transition-colors">
                   Returns
                 </Link>
               </li>

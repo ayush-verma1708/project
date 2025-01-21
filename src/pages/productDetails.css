@@ -1,0 +1,49 @@
+.phone-selector-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .selector-group {
+    margin-bottom: 20px;
+  }
+  
+  .selector {
+    padding: 10px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+  }
+  
+  .product-details {
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .price {
+    font-size: 1.2em;
+    color: green;
+  }
+  
+  .description {
+    margin: 10px 0;
+    color: #555;
+  }
+  
+  .add-to-cart-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-to-cart-btn:hover {
+    background-color: #0056b3;
+  }
+  

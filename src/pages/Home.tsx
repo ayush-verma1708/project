@@ -3,6 +3,7 @@ import { ArrowRight, Truck, RefreshCw, Shield } from 'lucide-react';
 import { products } from '../sample/SampleProd.tsx'; // Make sure the path is correct
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import { ShoppingCart } from 'lucide-react'; // If you want to add a cart button in the grid as well
+import EmailSubscriptionBanner from '../components/promotional/popUpBanner.tsx'; // Import the banner component
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -11,8 +12,13 @@ const fadeInUp = {
 };
 
 export function Home() {
-  return (
+  return ( 
+    <>
+    {/* Email Subscription Popup */}
+  <EmailSubscriptionBanner />
     <div className="space-y-20">
+
+
       {/* Hero Section */}
       <motion.section 
         className="relative h-[80vh] bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center"
@@ -50,7 +56,7 @@ export function Home() {
           </motion.button>
         </div>
       </motion.section>
-
+       
       {/* Benefits Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <motion.div 
@@ -143,6 +149,62 @@ export function Home() {
     ))}
   </motion.div>
 </section>
+ {/* Testimonials Section */}
+ <section className="bg-gray-50 py-20">
+        <motion.h2
+          className="text-3xl font-bold text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          What Our Customers Are Saying
+        </motion.h2>
+
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            className="flex space-x-8 justify-center"
+            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            {/* Testimonial Card */}
+            <div className="bg-white p-8 rounded-xl shadow-xl">
+              <p className="text-gray-600 mb-4">"These mobile skins are game-changers! My device looks amazing, and the quality is top-notch!"</p>
+              <span className="font-semibold">John Doe</span>
+              <p className="text-gray-400">Verified Buyer</p>
+            </div>
+            <div className="bg-white p-8 rounded-xl shadow-xl">
+              <p className="text-gray-600 mb-4">"The shipping was fast, and the skin fit my phone perfectly. Highly recommend!"</p>
+              <span className="font-semibold">Jane Smith</span>
+              <p className="text-gray-400">Verified Buyer</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+  {/* Newsletter Section */}
+  <section className="bg-indigo-600 py-12 text-white text-center">
+        <motion.h3
+          className="text-2xl font-semibold mb-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          Stay Updated with Our Latest Products & Offers
+        </motion.h3>
+        <motion.div
+          className="flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <input
+            type="email"
+            placeholder="Enter your email"
+            className="px-6 py-3 rounded-l-full text-black"
+          />
+          <button className="bg-indigo-700 px-6 py-3 rounded-r-full">Subscribe</button>
+        </motion.div>
+      </section>
+      
     </div>
+    </>
   );
 }

@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-white text-black; /* White background with black text */
   }
 }
 
@@ -18,14 +18,14 @@
   }
 
   .btn-primary {
-    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+    @apply bg-black text-white hover:bg-gray-800; /* Black button with white text, hover to dark gray */
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+    @apply bg-gray-100 text-black hover:bg-gray-200; /* Light gray button with black text */
   }
 
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent; /* Black focus ring */
   }
 }

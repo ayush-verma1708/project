@@ -16,6 +16,8 @@ import {
 import { clsx } from 'clsx';
 import { products } from '../sample/SampleProd'; // Updated import (no .tsx extension)
 import { useCart } from '../context/CartContext';
+import PhoneSelector from '../components/variantSelection/PhoneSelectorProps';
+import {mobiles} from '../sample/mobileDevicesList'
 
 export default function ProductsDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -175,9 +177,9 @@ export default function ProductsDetail() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h3 className="font-semibold">Color</h3>
+              <h3 className="font-semibold">Select Your Device</h3>
               <div className="flex space-x-4">
-                {product.colors.map((color) => (
+                {/* {product.colors.map((color) => (
                   <motion.button
                     key={color}
                     whileHover={{ scale: 1.05 }}
@@ -192,7 +194,8 @@ export default function ProductsDetail() {
                   >
                     {color}
                   </motion.button>
-                ))}
+                ))} */}
+                <PhoneSelector brands={mobiles} />
               </div>
             </motion.div>
 

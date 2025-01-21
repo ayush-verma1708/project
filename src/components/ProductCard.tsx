@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { ShoppingCart } from 'lucide-react';
-import type { Product } from '../types';
+import type { Product } from '../types/types';
 
 interface ProductCardProps {
   product: Product;
@@ -40,7 +40,7 @@ export function ProductCard({ product, selectedColor, showFullDetails = false }:
         <div className="p-6">
           <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
           <p className="text-gray-600 text-sm mb-4">{product.description}</p>
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <span className="text-xl font-bold text-indigo-600">${product.price}</span>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -51,7 +51,7 @@ export function ProductCard({ product, selectedColor, showFullDetails = false }:
               <ShoppingCart size={16} />
               Add to Cart
             </motion.button>
-          </div>
+          </div> */}
           {showFullDetails && (
             <div className="mt-4">
               <div className="flex items-center gap-2">
