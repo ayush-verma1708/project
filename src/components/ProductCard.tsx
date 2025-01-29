@@ -28,7 +28,7 @@ export function ProductCard({ product, selectedColor, showFullDetails = false }:
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <Link to={`/products/${product.id}`} className="block">
+      <Link to={`/products/${product._id}`} className="block">
         <div className="relative pb-[100%]">
           <img
             src={product.images[0]}

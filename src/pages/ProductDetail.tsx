@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import { 
@@ -14,10 +14,11 @@ import {
   Shield
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { products } from '../sample/SampleProd'; // Updated import (no .tsx extension)
 import { useCart } from '../context/CartContext';
 import PhoneSelector from '../components/variantSelection/PhoneSelectorProps';
 import {mobiles} from '../sample/mobileDevicesList'
+import { productService } from '../api'; // Import the productService
+
 
 export default function ProductsDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -27,19 +28,45 @@ export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
   const { id } = useParams(); // Get the product ID from the URL
   const { addItem } = useCart(); // Destructure addItem from useCart
+  const [product, setProduct] = useState<any>(null); // State to store the product
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState<string>(''); // Error state
+  
+  // // Find the product by ID from the products array
+  // const product = products.find((product) => product.id === id);
 
-  // Find the product by ID from the products array
-  const product = products.find((product) => product.id === id);
+  // Fetch product details using getById
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const fetchedProduct = await productService.getById(id!); // Fetch product by ID
+        setProduct(fetchedProduct);
+        setLoading(false);
+      } catch (err) {
+        setError('Product not found!');
+        setLoading(false);
+      }
+    };
 
+    fetchProduct();
+  }, [id]); // Re-fetch when product ID changes
   // If the product is not found, you can display an error or return early
+  
+    // If loading, show a loading spinner
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+  
+    // If there's an error, display the error message
+    if (error) {
+      return <div>{error}</div>;
+    }
+  
   if (!product) {
     return <div>Product not found!</div>;
   }
 
   // Set default color as the first color in the product's colors array
-  if (!selectedColor) {
-    setSelectedColor(product.colors[0]);
-  }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isZoomed) return;
@@ -86,7 +113,7 @@ export default function ProductsDetail() {
                 alt={product.name}
                 className={clsx(
                   "w-full h-full object-cover transition-transform duration-200",
-                  isZoomed && "scale-150"
+                  isZoomed && "scale-150 translate-x-16 translate-y-16"
                 )}
                 style={isZoomed ? {
                   transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
@@ -252,27 +279,26 @@ export default function ProductsDetail() {
             <div className="border-t border-gray-200 pt-6">
               <h3 className="font-semibold mb-4">Description</h3>
               <p className="text-gray-600">{product.description}</p>
-              <ul className="mt-4 space-y-2">
+              {/* <ul className="mt-4 space-y-2">
                 {product.features.map((feature) => (
                   <li key={feature} className="flex items-center space-x-2">
                     <Check size={16} className="text-green-500" />
                     <span>{feature}</span>
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
 
-            <div className="border-t border-gray-200 pt-6">
+            {/* <div className="border-t border-gray-200 pt-6">
               <h3 className="font-semibold mb-4">Specifications</h3>
               <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                 {Object.entries(product.specifications).map(([key, value]) => (
                   <div key={key} className="flex justify-between">
                     <dt className="text-gray-600">{key}</dt>
-                    <dd className="font-medium">{value}</dd>
                   </div>
                 ))}
               </dl>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
