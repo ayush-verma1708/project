@@ -22,7 +22,7 @@ import { productService } from '../api'; // Import the productService
 
 export default function ProductsDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedColor, setSelectedColor] = useState('');
+  // const [selectedColor, setSelectedColor] = useState('');
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showAddedNotification, setShowAddedNotification] = useState(false);
@@ -31,9 +31,9 @@ export default function ProductsDetail() {
   const [product, setProduct] = useState<any>(null); // State to store the product
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string>(''); // Error state
-  
-  // // Find the product by ID from the products array
-  // const product = products.find((product) => product.id === id);
+   // **New State for Selected Phone**
+   const [selectedPhone, setSelectedPhone] = useState({ brand: '', model: '' });
+
 
   // Fetch product details using getById
   useEffect(() => {
@@ -90,12 +90,30 @@ export default function ProductsDetail() {
     );
   };
 
-  const handleAddToCart = () => {
-    addItem({ ...product, color: selectedColor }); // Add product to cart with selected color
-    setShowAddedNotification(true);
-    setTimeout(() => setShowAddedNotification(false), 2000);
-  };
+  // const handleAddToCart = () => {
+  //   addItem({ ...product, color: selectedColor }); // Add product to cart with selected color
+  //   setShowAddedNotification(true);
+  //   setTimeout(() => setShowAddedNotification(false), 2000);
+  // };
+// Handle Add to Cart
+const handleAddToCart = () => {
+  if (!selectedPhone.brand || !selectedPhone.model) {
+    alert('Please select a phone brand and model before adding to cart.');
+    return;
+  }
 
+  addItem({ 
+    ...product, 
+    selectedBrand: selectedPhone.brand, 
+    selectedModel: selectedPhone.model 
+  });
+
+  setShowAddedNotification(true);
+  setTimeout(() => setShowAddedNotification(false), 2000);
+};
+if (loading) return <div>Loading...</div>;
+if (error) return <div>{error}</div>;
+if (!product) return <div>Product not found!</div>;
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -222,7 +240,7 @@ export default function ProductsDetail() {
                     {color}
                   </motion.button>
                 ))} */}
-                <PhoneSelector brands={mobiles} />
+                <PhoneSelector brands={mobiles}  setSelectedPhone={setSelectedPhone}/>
               </div>
             </motion.div>
 

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 
 interface PhoneSelectorProps {
   brands: { [key: string]: string[] };
+  setSelectedPhone: (phone: { brand: string; model: string }) => void;
 }
 
 
-const PhoneSelector: React.FC<PhoneSelectorProps> = ({ brands }) => {
+
+const PhoneSelector: React.FC<PhoneSelectorProps> = ({ brands , setSelectedPhone }) => {
   const [selectedBrand, setSelectedBrand] = useState<string>('');
   const [models, setModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
@@ -15,10 +17,13 @@ const PhoneSelector: React.FC<PhoneSelectorProps> = ({ brands }) => {
     setSelectedBrand(brand);
     setModels(brands[brand] || []);
     setSelectedModel('');
+    setSelectedPhone({ brand, model: '' }); // Update parent state
   };
 
   const handleModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedModel(event.target.value);
+    const model = event.target.value;
+    setSelectedModel(model);
+    setSelectedPhone({ brand: selectedBrand, model }); // Update parent state
   };
 
   return (

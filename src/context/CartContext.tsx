@@ -47,12 +47,34 @@ const calculateTotals = (items: CartItem[]) => {
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
+    // case 'ADD_ITEM': {
+    //   const existingItemIndex = state.items.findIndex(
+    //     item => item.id === action.payload.id 
+    //     // && item.color === action.payload.color
+    //   );
+
+    //   let newItems;
+    //   if (existingItemIndex > -1) {
+    //     newItems = state.items.map((item, index) =>
+    //       index === existingItemIndex
+    //         ? { ...item, quantity: item.quantity + 1 }
+    //         : item
+    //     );
+    //   } else {
+    //     newItems = [...state.items, { ...action.payload, quantity: 1 }];
+    //   }
+
+    //   return {
+    //     ...state,
+    //     items: newItems,
+    //     ...calculateTotals(newItems),
+    //   };
+    // }
     case 'ADD_ITEM': {
       const existingItemIndex = state.items.findIndex(
-        item => item.id === action.payload.id 
-        // && item.color === action.payload.color
+        item => item.id === action.payload.id
       );
-
+    
       let newItems;
       if (existingItemIndex > -1) {
         newItems = state.items.map((item, index) =>
@@ -61,16 +83,21 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
             : item
         );
       } else {
-        newItems = [...state.items, { ...action.payload, quantity: 1 }];
+        newItems = [
+          ...state.items,
+          {
+            ...action.payload,
+            quantity: 1, // Ensure quantity is set
+          },
+        ];
       }
-
+    
       return {
         ...state,
         items: newItems,
         ...calculateTotals(newItems),
       };
     }
-
     case 'REMOVE_ITEM': {
       const newItems = state.items.filter(item => item.id !== action.payload);
       return {
@@ -108,15 +135,29 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
+  // useEffect(() => {
+  //   // Load cart from localStorage on mount
+  //   const savedCart = localStorage.getItem('cart');
+  //   if (savedCart) {
+  //     // Check if savedCart exists, then parse it and dispatch to load into state
+  //     dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
+  //   }
+  // }, []); // Only run once when component mounts
+
   useEffect(() => {
     // Load cart from localStorage on mount
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
-      // Check if savedCart exists, then parse it and dispatch to load into state
       dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
     }
-  }, []); // Only run once when component mounts
-
+  
+    // Load selected phone details
+    const savedPhone = localStorage.getItem('selectedPhone');
+    if (savedPhone) {
+      dispatch({ type: 'ADD_ITEM', payload: JSON.parse(savedPhone) });
+    }
+  }, []);
+  
   useEffect(() => {
     // Save cart to localStorage whenever it changes
     // Only save state to localStorage if the cart is not empty (optional)
@@ -125,8 +166,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state]); // Listen to changes in cart state
 
+  // const addItem = (product: Product & { color?: string }) => {
+  //   dispatch({ type: 'ADD_ITEM', payload: product });
+  // };
   const addItem = (product: Product & { color?: string }) => {
     dispatch({ type: 'ADD_ITEM', payload: product });
+    
+    // Save the selected phone to localStorage for persistence
+    localStorage.setItem('selectedPhone', JSON.stringify(product));
   };
 
   const removeItem = (id: string) => {

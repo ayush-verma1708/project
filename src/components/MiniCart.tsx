@@ -71,11 +71,11 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                       className="w-20 h-20 object-cover rounded-md"
                     />
                     <div className="flex-1">
-                      <h3 className="font-medium">{item.name}</h3>
-                      {item.colors && (
-                        <p className="text-sm text-gray-500">Color: {item.color}</p>
-                      )}
-                      <div className="flex items-center gap-2 mt-2">
+                    <h3 className="font-medium">{item.name}</h3>
+  <p className="text-sm text-gray-500">{item.description}</p>
+  <p className="text-sm text-blue-500 font-semibold">Brand: {item.selectedBrand}</p>
+<p className="text-sm text-green-500 font-semibold">Model: {item.selectedModel}</p>
+                     <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => handleDecreaseQuantity(item.id, item.quantity)}
                           className="p-1 hover:bg-gray-200 rounded"
