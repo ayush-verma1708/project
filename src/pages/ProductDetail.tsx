@@ -22,7 +22,6 @@ import { productService } from '../api'; // Import the productService
 
 export default function ProductsDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // const [selectedColor, setSelectedColor] = useState('');
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showAddedNotification, setShowAddedNotification] = useState(false);
@@ -224,22 +223,7 @@ if (!product) return <div>Product not found!</div>;
             >
               <h3 className="font-semibold">Select Your Device</h3>
               <div className="flex space-x-4">
-                {/* {product.colors.map((color) => (
-                  <motion.button
-                    key={color}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={clsx(
-                      "px-4 py-2 rounded-md",
-                      selectedColor === color
-                        ? "bg-indigo-600 text-white"
-                        : "bg-gray-100 hover:bg-gray-200"
-                    )}
-                    onClick={() => setSelectedColor(color)}
-                  >
-                    {color}
-                  </motion.button>
-                ))} */}
+
                 <PhoneSelector brands={mobiles}  setSelectedPhone={setSelectedPhone}/>
               </div>
             </motion.div>
@@ -297,26 +281,10 @@ if (!product) return <div>Product not found!</div>;
             <div className="border-t border-gray-200 pt-6">
               <h3 className="font-semibold mb-4">Description</h3>
               <p className="text-gray-600">{product.description}</p>
-              {/* <ul className="mt-4 space-y-2">
-                {product.features.map((feature) => (
-                  <li key={feature} className="flex items-center space-x-2">
-                    <Check size={16} className="text-green-500" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul> */}
+              
             </div>
 
-            {/* <div className="border-t border-gray-200 pt-6">
-              <h3 className="font-semibold mb-4">Specifications</h3>
-              <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex justify-between">
-                    <dt className="text-gray-600">{key}</dt>
-                  </div>
-                ))}
-              </dl>
-            </div> */}
+          
           </div>
         </div>
       </div>
