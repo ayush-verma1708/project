@@ -92,7 +92,7 @@ export function CartPage() {
               <div>
                 <Link
                   to="/checkout"
-                  className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full bg-black-600 text-white py-3 rounded-lg hover:bg-black-700 transition-colors"
                 >
                   Checkout <ChevronRight size={16} />
                 </Link>

@@ -48,7 +48,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
               {state.items.length === 0 ? (
                 <div className="text-center text-gray-500 py-8">
                   Your cart is empty.{' '}
-                  <Link to="/" onClick={onClose} className="text-indigo-600 hover:text-indigo-700">
+                  <Link to="/" onClick={onClose} className="text-black-600 hover:text-black-700">
                     Continue Shopping
                   </Link>
                 </div>
@@ -126,7 +126,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 <Link
                   to="/checkout"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full bg-black-600 text-white py-3 rounded-lg hover:bg-black-700 transition-colors"
                 >
                   Checkout <ChevronRight size={16} />
                 </Link>
@@ -190,7 +190,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 //               {state.items.length === 0 ? (
 //                 <div className="text-center text-gray-500 py-8">
 //                   Your cart is empty.{' '}
-//                   <Link to="/" onClick={onClose} className="text-indigo-600 hover:text-indigo-700">
+//                   <Link to="/" onClick={onClose} className="text-black-600 hover:text-black-700">
 //                     Continue Shopping
 //                   </Link>
 //                 </div>
@@ -268,7 +268,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 //                 <Link
 //                   to="/checkout"
 //                   onClick={onClose}
-//                   className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+//                   className="flex items-center justify-center gap-2 w-full bg-black-600 text-white py-3 rounded-lg hover:bg-black-700 transition-colors"
 //                 >
 //                   Checkout <ChevronRight size={16} />
 //                 </Link>
@@ -337,7 +337,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 // //               {state.items.length === 0 ? (
 // //                 <div className="text-center text-gray-500 py-8">
 // //                   Your cart is empty.{' '}
-// //                   <Link to="/" onClick={onClose} className="text-indigo-600 hover:text-indigo-700">
+// //                   <Link to="/" onClick={onClose} className="text-black-600 hover:text-black-700">
 // //                     Continue Shopping
 // //                   </Link>
 // //                 </div>
@@ -439,7 +439,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 // //                 <Link
 // //                   to="/checkout"
 // //                   onClick={onClose}
-// //                   className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+// //                   className="flex items-center justify-center gap-2 w-full bg-black-600 text-white py-3 rounded-lg hover:bg-black-700 transition-colors"
 // //                 >
 // //                   Checkout <ChevronRight size={16} />
 // //                 </Link>

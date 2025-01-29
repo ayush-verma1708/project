@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect , useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import { 
@@ -32,7 +32,9 @@ export default function ProductsDetail() {
   const [error, setError] = useState<string>(''); // Error state
    // **New State for Selected Phone**
    const [selectedPhone, setSelectedPhone] = useState({ brand: '', model: '' });
-
+   const imageRef = useRef<HTMLImageElement | null>(null);
+   const [loaded, setLoaded] = useState(false);
+  
 
   // Fetch product details using getById
   useEffect(() => {
@@ -119,7 +121,7 @@ if (!product) return <div>Product not found!</div>;
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div 
+            {/* <div 
               className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
               onMouseEnter={() => setIsZoomed(true)}
               onMouseLeave={() => setIsZoomed(false)}
@@ -166,7 +168,7 @@ if (!product) return <div>Product not found!</div>;
                   whileTap={{ scale: 0.95 }}
                   className={clsx(
                     "aspect-square rounded-lg overflow-hidden",
-                    currentImageIndex === index && "ring-2 ring-indigo-600"
+                    currentImageIndex === index && "ring-2 ring-black-600"
                   )}
                   onClick={() => setCurrentImageIndex(index)}
                 >
@@ -177,7 +179,85 @@ if (!product) return <div>Product not found!</div>;
                   />
                 </motion.button>
               ))}
-            </div>
+            </div> */}
+             <div
+        className="relative aspect-square overflow-hidden"
+        onMouseEnter={() => setIsZoomed(true)}
+        onMouseLeave={() => setIsZoomed(false)}
+        onMouseMove={handleMouseMove}
+      >
+        {/* Main Product Image */}
+        <img
+          ref={imageRef}
+          src={product.images[currentImageIndex]}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className={`w-full h-full object-contain transition-transform duration-300 ${loaded ? 'opacity-100 hover:scale-105' : 'opacity-0'}`}
+          onLoad={() => setLoaded(true)}
+        />
+        {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10" />
+        
+        {/* Zoom functionality for the main image */}
+        <motion.img
+          src={product.images[currentImageIndex]}
+          alt={product.name}
+          className={clsx(
+            "w-full h-full object-cover transition-transform duration-200",
+            isZoomed && "scale-150 translate-x-16 translate-y-16"
+          )}
+          style={isZoomed ? {
+            transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
+          } : undefined}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          key={currentImageIndex}
+        />
+        
+        {/* Navigation buttons */}
+        <div className="absolute inset-0 flex items-center justify-between p-4">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="p-2 rounded-full bg-white/80 text-gray-800 hover:bg-white"
+            onClick={prevImage}
+          >
+            <ChevronLeft size={24} />
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="p-2 rounded-full bg-white/80 text-gray-800 hover:bg-white"
+            onClick={nextImage}
+          >
+            <ChevronRight size={24} />
+          </motion.button>
+        </div>
+      </div>
+
+      {/* Image Thumbnails */}
+      <div className="grid grid-cols-4 gap-4">
+        {product.images.map((image, index) => (
+          <motion.button
+            key={index}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={clsx(
+              "aspect-square rounded-lg overflow-hidden",
+              currentImageIndex === index && "ring-2 ring-black-600"
+            )}
+            onClick={() => setCurrentImageIndex(index)}
+          >
+            <img
+              src={image}
+              alt={`Product view ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </motion.button>
+        ))}
+      </div>
           </div>
 
           {/* Product Info */}
@@ -207,7 +287,7 @@ if (!product) return <div>Product not found!</div>;
             </div>
 
             <motion.div 
-              className="text-3xl font-bold text-indigo-600"
+              className="text-3xl font-bold text-black-600"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -238,7 +318,9 @@ if (!product) return <div>Product not found!</div>;
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex-1 bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-indigo-700"
+                  // className="flex-1 bg-black-600 text-black px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-black-700"
+                  className="flex-1 bg-black text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-black/70"
+   
                   onClick={handleAddToCart}
                 >
                   <ShoppingCart size={20} />

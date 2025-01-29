@@ -20,7 +20,7 @@ export function Campaigns() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Marketing Campaigns</h1>
-        <button className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+        <button className="inline-flex items-center px-4 py-2 bg-black-600 text-white rounded-md hover:bg-black-700">
           <Plus className="h-5 w-5 mr-2" />
           Create Campaign
         </button>
@@ -32,7 +32,7 @@ export function Campaigns() {
           <input
             type="text"
             placeholder="Search campaigns..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -75,8 +75,8 @@ export function Campaigns() {
                 <tr key={campaign.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <Tag className="h-5 w-5 text-indigo-600" />
+                      <div className="flex-shrink-0 h-10 w-10 bg-black-100 rounded-full flex items-center justify-center">
+                        <Tag className="h-5 w-5 text-black-600" />
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{campaign.name}</div>
@@ -106,7 +106,7 @@ export function Campaigns() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-4">
+                    <button className="text-black-600 hover:text-black-900 mr-4">
                       <Edit className="h-5 w-5" />
                     </button>
                     <button className="text-red-600 hover:text-red-900">

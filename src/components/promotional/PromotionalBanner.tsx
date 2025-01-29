@@ -22,7 +22,7 @@ export const PromotionalBanner: React.FC<PromotionalBannerProps> = ({ message, b
         {link && (
           <a 
             href={link} 
-            className="inline-block mt-2 bg-white text-indigo-600 font-medium py-2 px-4 rounded-full hover:bg-gray-100 transition"
+            className="inline-block mt-2 bg-white text-black-600 font-medium py-2 px-4 rounded-full hover:bg-gray-100 transition"
           >
             Shop Now
           </a>

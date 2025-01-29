@@ -12,7 +12,7 @@ export function CartButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="relative text-gray-700 hover:text-indigo-600 transition-colors"
+        className="relative text-gray-700 hover:text-black-600 transition-colors"
       >
         <ShoppingCart size={20} />
         <AnimatePresence>
@@ -21,7 +21,7 @@ export function CartButton() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+              className="absolute -top-2 -right-2 bg-black-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
             >
               {state.itemCount}
             </motion.div>

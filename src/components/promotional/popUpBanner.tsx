@@ -56,11 +56,11 @@ const EmailSubscriptionBanner: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-black-500"
                 />
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 w-full focus:outline-none"
+                  className="px-6 py-2 bg-black-600 text-white font-semibold rounded-md hover:bg-black-700 w-full focus:outline-none"
                 >
                   Subscribe
                 </button>

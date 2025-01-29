@@ -72,7 +72,7 @@ export function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <button className="px-4 py-2 bg-black-600 text-white rounded-md hover:bg-black-700 focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2">
           Generate Report
         </button>
       </div>
@@ -119,7 +119,7 @@ export function Dashboard() {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium text-gray-900">Recent Orders</h2>
-            <button className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+            <button className="text-sm font-medium text-black-600 hover:text-black-500">
               View all
             </button>
           </div>

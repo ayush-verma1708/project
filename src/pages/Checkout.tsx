@@ -40,7 +40,7 @@ export function CheckoutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold">Checkout</h2>
-            <Link to="/cart" className="text-indigo-600 hover:text-indigo-700 flex items-center gap-2">
+            <Link to="/cart" className="text-black-600 hover:text-black-700 flex items-center gap-2">
               <ChevronLeft size={20} /> Back to Cart
             </Link>
           </div>
@@ -75,7 +75,7 @@ export function CheckoutPage() {
                     name="name"
                     value={shippingAddress.name}
                     onChange={handleChange}
-                    className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-black-500 focus:border-black-500"
                     required
                   />
                 </div>
@@ -89,7 +89,7 @@ export function CheckoutPage() {
                     name="address"
                     value={shippingAddress.address}
                     onChange={handleChange}
-                    className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-black-500 focus:border-black-500"
                     required
                   />
                 </div>
@@ -104,7 +104,7 @@ export function CheckoutPage() {
                       name="city"
                       value={shippingAddress.city}
                       onChange={handleChange}
-                      className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-black-500 focus:border-black-500"
                       required
                     />
                   </div>
@@ -118,7 +118,7 @@ export function CheckoutPage() {
                       name="zip"
                       value={shippingAddress.zip}
                       onChange={handleChange}
-                      className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-black-500 focus:border-black-500"
                       required
                     />
                   </div>
@@ -133,14 +133,14 @@ export function CheckoutPage() {
                     name="country"
                     value={shippingAddress.country}
                     onChange={handleChange}
-                    className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-black-500 focus:border-black-500"
                     required
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="w-full mt-6 bg-black-600 text-white py-3 rounded-lg hover:bg-black-700 transition-colors"
                 >
                   Continue to Payment
                 </button>
@@ -198,7 +198,7 @@ export function CheckoutPage() {
             {/* Payment Button */}
             <Link
               to="/payment"
-              className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+              className="w-full mt-6 bg-black-600 text-white py-3 rounded-lg hover:bg-black-700 transition-colors"
             >
               Proceed to Payment <ChevronRight size={16} />
             </Link>
