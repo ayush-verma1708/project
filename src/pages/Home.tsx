@@ -59,7 +59,7 @@ export function Home() {
                       <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                       <div className="flex justify-between items-center">
                         <span className="text-2xl font-bold text-primary">
-                          ${product.price}
+                          Rs.{product.price}
                         </span>
                         <Button 
                           icon="pi pi-shopping-cart" 
