@@ -1,30 +1,20 @@
-import React, { useState,useEffect , useRef } from 'react';
+import  { useState,useEffect  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { 
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  ShoppingCart,
-  Heart,
-  Share2,
+import {  ShoppingCart,
   Check,
   Truck,
   RotateCcw,
   Shield
 } from 'lucide-react';
-import { clsx } from 'clsx';
 import { useCart } from '../context/CartContext';
 import PhoneSelector from '../components/variantSelection/PhoneSelectorProps';
 import {mobiles} from '../sample/mobileDevicesList'
 import { productService } from '../api'; // Import the productService
-
+import ProductImageGallery from '../components/ProductImageGallery';
 
 export default function ProductsDetail() {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const [showAddedNotification, setShowAddedNotification] = useState(false);
+    const [showAddedNotification, setShowAddedNotification] = useState(false);
   const { id } = useParams(); // Get the product ID from the URL
   const { addItem } = useCart(); // Destructure addItem from useCart
   const [product, setProduct] = useState<any>(null); // State to store the product
@@ -32,8 +22,6 @@ export default function ProductsDetail() {
   const [error, setError] = useState<string>(''); // Error state
    // **New State for Selected Phone**
    const [selectedPhone, setSelectedPhone] = useState({ brand: '', model: '' });
-   const imageRef = useRef<HTMLImageElement | null>(null);
-   const [loaded, setLoaded] = useState(false);
   
 
   // Fetch product details using getById
@@ -69,27 +57,6 @@ export default function ProductsDetail() {
 
   // Set default color as the first color in the product's colors array
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isZoomed) return;
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
-    setZoomPosition({ x, y });
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === product.images.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? product.images.length - 1 : prev - 1
-    );
-  };
 
   
 // Handle Add to Cart
@@ -112,11 +79,7 @@ if (loading) return <div>Loading...</div>;
 if (error) return <div>{error}</div>;
 if (!product) return <div>Product not found!</div>;
 
-// Apply the zoom position to the image
-const zoomStyle = {
-  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-  transform: isZoomed ? 'scale(2)' : 'scale(1)',
-};
+
 
 // Render the product image with zoom functionality
 return (
@@ -124,88 +87,7 @@ return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Image Gallery */}
-        <div className="space-y-4">
-          <div
-            className="relative aspect-square overflow-hidden"
-            onMouseEnter={() => setIsZoomed(true)}
-            onMouseLeave={() => setIsZoomed(false)}
-            onMouseMove={handleMouseMove}
-          >
-            {/* Main Product Image */}
-            <img
-              ref={imageRef}
-              src={product.images[currentImageIndex]}
-              alt={product.name}
-              loading="lazy"
-              decoding="async"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className={`w-full h-full object-contain transition-transform duration-300 ${loaded ? 'opacity-100 hover:scale-105' : 'opacity-0'}`}
-              onLoad={() => setLoaded(true)}
-              style={zoomStyle}
-            />
-            {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10" />
-            
-            {/* Zoom functionality for the main image */}
-            {/* <motion.img
-              src={product.images[currentImageIndex]}
-              alt={product.name}
-              className={clsx(
-                "w-full h-full object-cover transition-transform duration-200",
-                isZoomed && "scale-150 translate-x-16 translate-y-16"
-              )}
-              style={isZoomed ? {
-                transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
-              } : undefined}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              key={currentImageIndex}
-            /> */}
-            
-            {/* Navigation buttons */}
-            <div className="absolute inset-0 flex items-center justify-between p-4">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="p-2 rounded-full bg-white/80 text-gray-800 hover:bg-white"
-                onClick={prevImage}
-              >
-                <ChevronLeft size={24} />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="p-2 rounded-full bg-white/80 text-gray-800 hover:bg-white"
-                onClick={nextImage}
-              >
-                <ChevronRight size={24} />
-              </motion.button>
-            </div>
-          </div>
-
-          {/* Image Thumbnails */}
-          <div className="grid grid-cols-4 gap-4">
-            {product.images.map((image, index) => (
-              <motion.button
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={clsx(
-                  "aspect-square rounded-lg overflow-hidden",
-                  currentImageIndex === index && "ring-2 ring-black-600"
-                )}
-                onClick={() => setCurrentImageIndex(index)}
-              >
-                <img
-                  src={image}
-                  alt={`Product view ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </motion.button>
-            ))}
-          </div>
-        </div>
-
+        <ProductImageGallery images={product.images} productName={product.name} />
         {/* Product Info */}
         <div className="space-y-6">
           <div>
