@@ -272,20 +272,21 @@ return (
                 <ShoppingCart size={20} />
                 <span>Add to Cart</span>
               </motion.button>
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
               >
                 <Heart size={20} />
-              </motion.button>
-              <motion.button
+              </motion.button> */}
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                
                 className="p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
               >
                 <Share2 size={20} />
-              </motion.button>
+              </motion.button> */}
             </div>
           </motion.div>
 

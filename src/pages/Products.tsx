@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import  { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';

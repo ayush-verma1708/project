@@ -38,7 +38,7 @@ export function ProductCard({ product, selectedColor, showFullDetails = false }:
       transition={{ duration: 0.3 }}
       // Scroll animation trigger
       whileInView={{ opacity: 1, y: 0 }} // This ensures it comes in smoothly on scroll
-      initial={{ opacity: 0, y: 50 }} // Starts from a lower position and fades in
+      // initial={{ opacity: 0, y: 50 }} // Starts from a lower position and fades in
       viewport={{ once: true }} // Trigger the animation only once when it's in view
     >
       <Link to={`/products/${product._id}`} className="block flex-1 flex flex-col">
