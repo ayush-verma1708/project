@@ -20,6 +20,7 @@
     "lucide-react": "^0.344.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.2",
+    "chart.js": "^4.x.x",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intersection-observer": "^9.15.1",

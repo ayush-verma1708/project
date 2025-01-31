@@ -5,11 +5,13 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['chart.js/auto']
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
+      external: ['chart.js/auto'],
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
@@ -18,6 +20,5 @@ export default defineConfig({
         }
       }
     }
-  },
- 
+  }
 });
