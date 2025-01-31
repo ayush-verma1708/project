@@ -54,11 +54,7 @@ export default function ProductsDetail() {
   if (!product) {
     return <div>Product not found!</div>;
   }
-
-  // Set default color as the first color in the product's colors array
-
-
-  
+    
 // Handle Add to Cart
 const handleAddToCart = () => {
   if (!selectedPhone.brand || !selectedPhone.model) {

@@ -63,7 +63,7 @@ export function ProductCard({ product, selectedColor, showFullDetails = false }:
           <p className="text-gray-600 text-sm mb-4 line-clamp-3">{product.description}</p>
 
           <div className="mt-auto flex justify-between items-center">
-            <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
+            <span className="text-lg font-bold">Rs.{product.price.toFixed(2)}</span>
             <Link to={`/products/${product._id}`} className="block">
               <button
                 onClick={handleAddToCart}
