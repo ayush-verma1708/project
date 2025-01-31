@@ -3,16 +3,29 @@
     "builds": [
       {
         "src": "package.json",
-        "use": "@vercel/node"
+        "use": "@vercel/static-build",
+        "config": { "distDir": "dist" }
       }
     ],
-    "rewrites": [
+    "routes": [
       {
-        "source": "/(.*)",
-        "destination": "/index.html"
+        "src": "^/assets/(.*)",
+        "dest": "/assets/$1"
+      },
+      {
+        "src": "^/api/(.*)",
+        "dest": "/api/$1"
+      },
+      {
+        "src": "^/static/(.*)",
+        "dest": "/static/$1"
+      },
+      {
+        "handle": "filesystem"
+      },
+      {
+        "src": ".*",
+        "dest": "/index.html"
       }
-    ],
-    "cleanUrls": true,
-    "trailingSlash": false
+    ]
   }
-  
