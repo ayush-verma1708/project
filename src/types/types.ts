@@ -1,18 +1,16 @@
 export interface Product {
   id: string;
+  productType: string;
   name: string;
-  price: number;
   description: string;
-  images: string[];
+  price: number;
   category: string;
+  tags: string[];
+  images: string[];
+  stock: number;
   rating: number;
-  reviews: number;
-  features: string[]; // Added to describe key features of the product
-  specifications: {
-    [key: string]: string; // Added to describe various specifications like Material, Finish, etc.
-  };
-  colors: string[]; // Added to list available color options
-
+  popularityScore: number;
+  createdAt: string;
 }
 
 export interface CartItem extends Product {

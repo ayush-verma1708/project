@@ -8,7 +8,7 @@ import './index.css';
 const queryClient = new QueryClient();
 
 // Create the root using createRoot
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 // Render the application inside the root
 root.render(
