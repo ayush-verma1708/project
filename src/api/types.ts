@@ -86,3 +86,20 @@ export interface Settings {
   taxRate: number;
   supportEmail: string;
 }
+
+
+export interface Tag {
+  _id: string;
+  name: string;
+}
+
+export interface ProductType {
+  _id: string;
+  name: string;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+}
+

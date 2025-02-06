@@ -13,8 +13,8 @@ const productCategories = {
     title: 'Mobile Phone Skins',
     description: 'Premium protective skins for your smartphone',
     filters: {
-      categories: ['All', 'Embossed', 'Leather', 'Matte'],
-      tags: ['All', 'Premium', 'Designer', 'Limited Edition'],
+      categories: ['All', 'Luxury', 'Embossed', 'Leather'],
+      tags: ['All', 'premium', 'trendy', 'best seller'],
       sortOptions: ['Newest', 'Price: Low to High', 'Most Popular']
     }
   },
@@ -41,7 +41,6 @@ const productCategories = {
 
 export const ProductListing = () => {
   const { category } = useParams<{ category: keyof typeof productCategories }>();
-  console.log('Category:', category); // Debugging
 
   if (!category) {
     return <div>Category not found</div>;
@@ -78,35 +77,6 @@ export const ProductListing = () => {
   const { title, description, filters } = categoryConfig;
   const { categories, tags, sortOptions } = filters;
 
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: [
-  //     'products',
-  //     category,
-  //     currentPage,
-  //     searchQuery,
-  //     selectedCategories,
-  //     selectedTags,
-  //     sortBy,
-  //   ],
-  //   queryFn: () => {
-  //     console.log('Fetching products...'); // Debugging
-  //     return productService.getProductsByType(category, {
-  //       page: currentPage,
-  //       search: searchQuery,
-  //       categories: selectedCategories,
-  //       tags: selectedTags,
-  //       sort: sortBy,
-  //       limit: productsPerPage,
-  //     });
-  //   },
-  //   enabled: !!category,
-  //   onError: (err) => {
-  //     console.error('Error fetching products:', err); // Debugging
-  //   },
-  //   onSuccess: (data) => {
-  //     console.log('Products fetched successfully:', data); // Debugging
-  //   },
-  // });
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [
       'products',
@@ -118,7 +88,6 @@ export const ProductListing = () => {
       sortBy,
     ],
     queryFn: () => {
-      console.log('Fetching products...', category ); // Debugging
       return productService.getProductsByType(category, {
         page: currentPage,
         search: searchQuery,
@@ -140,84 +109,6 @@ export const ProductListing = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  //  const {category} = useParams< {category :keyof typeof productCategories}>();
-//  if (!category) {
-//   return <div>Category not found</div>;
-// }
-//   const [searchParams, setSearchParams] = useSearchParams();
-//   const [isFilterOpen, setIsFilterOpen] = useState(false);
-//   const [isSortOpen, setIsSortOpen] = useState(false);
-
-//   // Get initial state from URL params
-//   const initialPage = parseInt(searchParams.get('page') || '1');
-//   const initialSearch = searchParams.get('search') || '';
-//   const initialCategories = searchParams.get('categories')?.split(',') || ['All'];
-//   const initialTags = searchParams.get('tags')?.split(',') || ['All'];
-//   const initialSort = searchParams.get('sort') || 'Newest';
-
-//   const [currentPage, setCurrentPage] = useState(initialPage);
-//   const [searchQuery, setSearchQuery] = useState(initialSearch);
-//   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories);
-//   const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
-//   const [sortBy, setSortBy] = useState(initialSort);
-
-//   const productsPerPage = 12;
-
-//   const categoryConfig = category ? productCategories[category] : undefined;
-
-
-//   if (!categoryConfig) {
-//     return <div>Category not found</div>;
-//   }
-
-//   const { title, description, filters } = categoryConfig;
-//   const { categories, tags, sortOptions } = filters;
-
-//   // const { data, isLoading, isError, error } = useQuery({
-//   //   queryKey: [
-//   //     'products',
-//   //     category || '', // Using category to form product type
-//   //     currentPage || 1,
-//   //     searchQuery || '',
-//   //     selectedCategories || [],
-//   //     selectedTags || [],
-//   //     sortBy || 'Newest',
-//   //   ],
-//   //   queryFn: () =>
-//   //     productService.getProductsByType(category || '', {
-//   //       page: currentPage || 1,
-//   //       search: searchQuery || '',
-//   //       categories: selectedCategories || [],
-//   //       tags: selectedTags || [],
-//   //       sort: sortBy || 'Newest',
-//   //       limit: productsPerPage || 10,
-//   //     }),
-//   //   enabled: !!category, // Automatically fetch when category is available
-//   // });
-//   const { data, isLoading, isError, error } = useQuery({
-//     queryKey: [
-//       'products',
-//       category || '',
-//       currentPage || 1,
-//       searchQuery || '',
-//       selectedCategories || [],
-//       selectedTags || [],
-//       sortBy || 'Newest',
-//     ],
-//     queryFn: () =>
-//       productService.getProductsByType(category || '', {
-//         page: currentPage || 1,
-//         search: searchQuery || '',
-//         categories: selectedCategories || [],
-//         tags: selectedTags || [],
-//         sort: sortBy || 'Newest',
-//         limit: productsPerPage || 10,
-//       }),
-//     enabled: !!category,
-//     onError: (err) => {
-//       console.error('Error fetching products:', err);
-//     },
-//   });
   
   const debouncedSearch = debounce((query: string) => {
     setSearchQuery(query);
