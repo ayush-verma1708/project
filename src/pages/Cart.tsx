@@ -1,7 +1,7 @@
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import { X, ChevronRight } from 'lucide-react';
-
+import {CartItem} from '../types/types'
 export function CartPage() {
   const { state, removeItem, updateQuantity } = useCart();
 

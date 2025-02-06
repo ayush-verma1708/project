@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, Search, User, ShoppingCart } from 'lucide-react';
+import { Menu, X,  User, ShoppingCart } from 'lucide-react';
 import { CartButton } from './CartButton';
 
 

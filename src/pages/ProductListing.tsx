@@ -6,6 +6,7 @@ import { ProductCard } from '../components/ProductCard';
 import { productService } from '../api';
 import { debounce } from 'lodash';
 import {useParams, useSearchParams } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner'; // Import the LoadingSpinner component
 
 const productCategories = {
   'mobile-skins': {
@@ -36,6 +37,7 @@ const productCategories = {
     }
   }
 };
+  
 
 export const ProductListing = () => {
   const { category } = useParams<{ category: keyof typeof productCategories }>();
@@ -131,7 +133,7 @@ export const ProductListing = () => {
 
   
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />; // Use the custom spinner here
   }
 
   if (isError) {

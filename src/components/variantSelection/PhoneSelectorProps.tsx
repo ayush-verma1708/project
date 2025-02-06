@@ -98,6 +98,7 @@ const PhoneSelector: React.FC<PhoneSelectorProps> = ({ brands, setSelectedPhone 
           )}
         </motion.div>
       )}
+      
     </div>
   );
 };

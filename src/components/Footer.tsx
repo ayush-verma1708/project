@@ -115,6 +115,7 @@ export function Footer() {
     </footer>
   );
 }
+
 // import { Link } from 'react-router-dom';
 // import { motion } from 'framer-motion';
 // import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';

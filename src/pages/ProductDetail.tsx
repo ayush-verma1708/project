@@ -116,7 +116,7 @@ return (
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            ${product.price}
+            Rs. {product.price}
           </motion.div>
 
           <motion.div
@@ -150,21 +150,7 @@ return (
                 <ShoppingCart size={20} />
                 <span>Add to Cart</span>
               </motion.button>
-              {/* <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
-              >
-                <Heart size={20} />
-              </motion.button> */}
-              {/* <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                
-                className="p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
-              >
-                <Share2 size={20} />
-              </motion.button> */}
+            
             </div>
           </motion.div>
 

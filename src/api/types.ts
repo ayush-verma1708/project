@@ -28,14 +28,17 @@ export interface Customer {
 }
 
 export interface Product {
-  id: string;
+  _id: string;
+  productType: string;
   name: string;
   description: string;
   price: number;
   category: string;
-  stock: number;
-  variants: ProductVariant[];
+  tags: string[];
   images: string[];
+  stock: number;
+  rating: number;
+  popularityScore: number;
   createdAt: string;
 }
 
