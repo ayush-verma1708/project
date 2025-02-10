@@ -1,4 +1,4 @@
-import  { useState,useEffect  } from 'react';
+import  { useState,useEffect ,useRef  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import {  ShoppingCart,
@@ -12,9 +12,14 @@ import PhoneSelector from '../components/variantSelection/PhoneSelectorProps';
 import {mobiles} from '../sample/mobileDevicesList'
 import { productService } from '../api'; // Import the productService
 import ProductImageGallery from '../components/ProductImageGallery';
+import { CartButton } from '../components/CartButton';
 
 export default function ProductsDetail() {
-    const [showAddedNotification, setShowAddedNotification] = useState(false);
+  const [showAddedNotification, setShowAddedNotification] = useState(false);
+
+  // Create a ref for the CartButton (assuming it forwards its ref and exposes openMiniCart)
+  const cartButtonRef = useRef<any>(null);
+
   const { id } = useParams(); // Get the product ID from the URL
   const { addItem } = useCart(); // Destructure addItem from useCart
   const [product, setProduct] = useState<any>(null); // State to store the product
@@ -68,9 +73,16 @@ const handleAddToCart = () => {
     selectedModel: selectedPhone.model 
   });
 
+    // Gently open the mini cart by calling openMiniCart on the CartButton ref
+    if (cartButtonRef.current && typeof cartButtonRef.current.openMiniCart === 'function') {
+      cartButtonRef.current.openMiniCart();
+    }
+
   setShowAddedNotification(true);
   setTimeout(() => setShowAddedNotification(false), 2000);
 };
+
+
 if (loading) return <div>Loading...</div>;
 if (error) return <div>{error}</div>;
 if (!product) return <div>Product not found!</div>;
@@ -196,6 +208,7 @@ return (
         </motion.div>
       )}
     </AnimatePresence>
+       <CartButton ref={cartButtonRef} />
   </div>
 );
 }

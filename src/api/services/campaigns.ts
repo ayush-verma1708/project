@@ -25,4 +25,9 @@ export const campaignService = {
   delete: async (id: string) => {
     await apiClient.delete(`/campaigns/${id}`);
   },
+   // New search method
+   search: async (name: string) => {
+    const { data } = await apiClient.get<Campaign>(`/campaigns/search?name=${name}`);
+    return data;
+  },
 };
