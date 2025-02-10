@@ -121,13 +121,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // useEffect(() => {
-  //   // Load cart from localStorage on mount
-  //   const savedCart = localStorage.getItem('cart');
-  //   if (savedCart) {
-  //     dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
-  //   }
-  // }, []);
   useEffect(() => {
     // Load cart from localStorage on mount
     const savedCart = localStorage.getItem('cart');
@@ -135,18 +128,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
     }
   }, []);
-  // useEffect(() => {
-  //   if (state.items.length > 0) {
-  //     // Save the entire cart state (items, subtotal, tax, etc.) to localStorage
-  //     localStorage.setItem('cart', JSON.stringify({
-  //       items: state.items,
-  //       subtotal: state.subtotal,
-  //       tax: state.tax,
-  //       total: state.total,
-  //       itemCount: state.itemCount,
-  //     }));
-  //   }
-  // }, [state.items, state.subtotal, state.tax, state.total, state.itemCount]);
+  
   useEffect(() => {
     if (state.items.length > 0) {
       // Save the entire cart state (items, subtotal, tax, etc.) to localStorage whenever state.items changes
