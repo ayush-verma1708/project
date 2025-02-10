@@ -23,7 +23,7 @@ export function CartPage() {
               <AnimatePresence>
                 {state.items.map((item) => (
                   <motion.div
-                    key={`${item._id}-${item.selectedBrand}-${item.selectedModel}`}
+                    key={`${item.id}-${item.selectedBrand}-${item.selectedModel}`}
                     layout
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
