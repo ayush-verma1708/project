@@ -57,10 +57,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       
       const existingItemIndex = state.items.findIndex(
         (item) =>
-          item._id === id &&
+          item.id === id &&
           item.selectedBrand === selectedBrand &&
-          item.selectedModel === selectedModel &&
-          item.color === color
+          item.selectedModel === selectedModel 
+          // &&
+          // item.color === color
       );
       
       let newItems;
