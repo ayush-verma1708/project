@@ -81,7 +81,7 @@ const team = [
   }
 ];
 
-export function About() {
+export default function About() {
   const controls = useAnimation();
 
   return (

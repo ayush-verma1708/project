@@ -8,7 +8,7 @@ import { campaignService } from '../api/services/campaigns';  // Assuming the se
 // Tax rate constant (adjust as needed)
 const TAX_RATE = 0.18;
 
-export function CheckoutPage() {
+export default function CheckoutPage() {
   const { state } = useCart();
   const [shippingForm, setShippingForm] = useState({
     name: '',

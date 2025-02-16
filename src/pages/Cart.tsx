@@ -7,7 +7,7 @@ import { CartTotals } from '../components/cartItems/CartTotals';
 import { useRecommendations } from '../hook/useRecommendations';
 import { RecommendedProducts } from '../components/RecommendedProducts';
 
-export function CartPage() {
+export default function CartPage() {
   const { state,  } = useCart();
   const { recommendedProducts, isLoading, isError } = useRecommendations();
 

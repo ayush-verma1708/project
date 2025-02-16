@@ -22,7 +22,7 @@ export const CartButton = forwardRef((props, ref) => {
         onClick={() => setIsOpen(true)}
         className={`relative flex items-center justify-center p-2 rounded-md transition-all duration-200 ease-in-out ${
           state.itemCount > 0
-            ? 'bg-primary text-black hover:bg-primary-dark'
+            ? 'bg-primary text-white hover:bg-primary-dark'
             : 'bg-neutral-200 text-neutral-600 hover:bg-neutral-300'
         }`}
       >

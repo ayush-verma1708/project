@@ -2,6 +2,7 @@
 @import 'primereact/resources/themes/lara-light-indigo/theme.css';
 @import 'primereact/resources/primereact.min.css';
 @import 'primeicons/primeicons.css';
+
 /* Tailwind Directives */
 @tailwind base;
 @tailwind components;
@@ -14,6 +15,33 @@
 
   body {
     @apply bg-white text-black; /* White background with black text */
+  }
+
+  /* 🎨 Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f4e7d6; /* Light orange background */
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #dbb79f, #ff8c00); /* Soft Orange Gradient */
+    border-radius: 10px;
+    border: 2px solid #f4e7d6; /* Spacing effect */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #ff7300, #dbb79f); /* Darker on hover */
+  }
+
+  /* Firefox Scrollbar */
+  * {
+    scrollbar-color: #ff8c00 #f4e7d6;
+    scrollbar-width: thin;
   }
 }
 
@@ -42,6 +70,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;

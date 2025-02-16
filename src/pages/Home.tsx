@@ -1,19 +1,19 @@
-import { motion } from "framer-motion";
-import { Button } from "primereact/button";
 import { useQuery } from "@tanstack/react-query";
 // import { productService } from "../api/client";
 import { productService } from '../api';
-import { ShoppingCart, Menu, X, Heart, Leaf, Users, Globe, Truck, Star, ArrowRight } from 'lucide-react';
+import {  Leaf, Users, Globe, Truck, Star } from 'lucide-react';
 
 import { Link } from "react-router-dom";
 import EmailSubscriptionBanner from "../components/promotional/popUpBanner.tsx";
 import heroImage from "../assets/heroImage.jpg";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
-export function Home() {
+export default function Home() {
   // Fetch products with react-query
   const { data: products = [], isLoading, isError, error } = useQuery({
     queryKey: ['products'],
-    queryFn: productService.getAll,
+    queryFn: () => productService.getAll(),
     refetchOnWindowFocus: true,
   });
 
@@ -60,15 +60,16 @@ export function Home() {
 
 
   // Display limited products on homepage
-  const featuredProducts = products.slice(0, 3); // Show first 6 products
+  const featuredProducts = Array.isArray(products) ? products.slice(0, 3) : products.data.slice(0, 3); // Show first 6 products
 
   return (
     <>
       <EmailSubscriptionBanner />
 
       <div className="space-y-20">
+
         {/* Hero Section */}
-        <div>
+      {/* <section>
         <div className="relative h-[90vh]">
         <div 
   className="absolute inset-0 bg-cover bg-center" 
@@ -81,16 +82,143 @@ export function Home() {
               <div className="max-w-xl">
                 <h2 className="text-6xl font-serif text-white mb-6 leading-tight">Handcrafted Elegance for Every Home</h2>
                 <p className="text-xl text-white/90 mb-8 font-light">Transform your space with our bespoke curtains, where artistry meets sophistication</p>
-                <button className="bg-white text-orange px-10 py-4 rounded-full hover:bg-orange hover:text-white transition-colors duration-300 uppercase tracking-wider text-sm">
-                  Shop Now
-                </button>
+                <motion.button
+      whileHover={{ scale: 1.1, boxShadow: "0px 8px 20px rgba(255,140,0,0.4)" }}
+      whileTap={{ scale: 0.95 }}
+      className="relative flex items-center justify-center gap-2 bg-white text-orange-500 px-10 py-4 rounded-full 
+                 border border-orange-500 hover:bg-gradient-to-r from-orange-500 to-red-500 
+                 hover:text-white transition-all duration-300 uppercase tracking-wider text-sm font-semibold"
+    >
+      Shop Now
+      <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
+    </motion.button>
               </div>
             </div>
           </div>
         </div>
+      </section> */}
+  <section className="relative h-[90vh] overflow-hidden">
+      {/* Background Image Container */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-black/20"></div>
       </div>
 
-          <section className="py-24">
+      {/* Content Container */}
+      <div className="relative h-full flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-xl lg:max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-5xl md:text-6xl font-serif text-white mb-6 leading-tight">
+                Handcrafted Elegance for Every Home
+              </h2>
+              <p className="text-lg md:text-xl text-white/90 mb-8 font-light max-w-lg">
+                Transform your space with our bespoke curtains, where artistry meets sophistication
+              </p>
+
+              <motion.button
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0px 8px 20px rgba(255,140,0,0.4)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative inline-flex items-center justify-center gap-3 
+                         bg-white text-orange-500 px-8 md:px-10 py-4 rounded-full
+                         border border-orange-500 hover:bg-gradient-to-r from-orange-500 to-red-500
+                         hover:text-white transition-all duration-300 uppercase tracking-wider 
+                         text-sm font-semibold shadow-lg"
+              >
+                Shop Now
+                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
+              </motion.button>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Decorative Elements */}
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/20 to-transparent"></div>
+    </section>
+
+{/* Product Section */}
+<section className="py-24 bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-4xl font-serif text-center mb-4">
+          Premium Designs
+        </h2>
+        <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
+          Explore our exclusive collection of finely crafted designs, blending artistry and sophistication.
+        </p>
+
+        {isLoading ? (
+          <div className="min-h-[50vh] flex items-center justify-center">
+            <CircularText />
+          </div>
+        ) : isError ? (
+          <div className="min-h-[50vh] flex flex-col items-center justify-center text-red-500">
+            <svg 
+              className="w-12 h-12 mb-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+              />
+            </svg>
+            <p className="text-lg">Error loading products: {error?.message}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
+            {featuredProducts.map((product) => (
+              <div 
+                key={product._id} 
+                className="group relative flex flex-col items-center"
+              >
+                <div className="relative w-full overflow-hidden bg-gray-100">
+                  <div className="aspect-[3/4] relative">
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="absolute inset-0 w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-300" />
+                  </div>
+                  <Link 
+                    to={`/products/${product._id}`}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <span className="bg-white text-orange px-8 py-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 text-sm tracking-wider shadow-lg">
+                      View Product
+                    </span>
+                  </Link>
+                </div>
+                <div className="mt-6 text-center">
+                  <h3 className="font-serif text-xl mb-2">{product.name}</h3>
+                  <p className="text-gray-600 text-sm">Rs.{product.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section> 
+      {/* <section className="py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-serif text-center mb-4">Premium Designs</h2>
         <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
@@ -135,7 +263,7 @@ export function Home() {
           </div>
         )}
       </div>
-    </section>
+      </section> */}
 
             {/* Why Choose Us */}
             {/* <section className="py-24 bg-beige/30" style={{ backgroundColor: "#D87C46" }}>
@@ -155,7 +283,7 @@ export function Home() {
           </div>
         </div>
       </section> */}
- <section className="py-24 bg-[#D87C46]">
+      <section className="py-24 bg-[#D87C46]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-serif text-center mb-4 text-white">
           Why Choose Us
@@ -179,9 +307,10 @@ export function Home() {
           ))}
         </div>
       </div>
-    </section>
+      </section>
+       
         {/* Testimonials */}
-        <section className="py-24">
+      <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-serif text-center mb-4">What Our Clients Say</h2>
           <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">Read about experiences from our valued customers</p>
@@ -223,7 +352,7 @@ export function Home() {
           </div>
         </div>
       </section> */}
- <section className="py-24 bg-[#D87C46] text-white">
+    <section className="py-24 bg-[#D87C46] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-4xl font-serif mb-4">Join Our Community</h2>
