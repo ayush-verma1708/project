@@ -8,6 +8,7 @@ import { mobiles } from '../sample/mobileDevicesList';
 import { productService } from '../api'; // Import the productService
 import ProductImageGallery from '../components/ProductImageGallery';
 import Toast from "../components/Toast"; // Import Toast
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
@@ -38,7 +39,7 @@ export default function ProductsDetail() {
 
   // If loading, show a loading spinner
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>;
   }
 
   // If there's an error, display the error message

@@ -103,3 +103,11 @@ export interface Category {
   name: string;
 }
 
+export interface SubscriptionResponse {
+  message: string;
+}
+
+export interface SubscriptionData {
+  email: string;
+  subscribe?: boolean;
+}
