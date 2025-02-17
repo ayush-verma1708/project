@@ -30,14 +30,14 @@ export function Layout() {
   className="shadow-lg"
 /> */}
 <ScrollBanner 
-  text="🚀 Flash Sale: Get 30% Off – Limited Time!"
+  text="🚀 Flash Sale: Get 20% Off – Limited Time! Use Code EARLY20"
   backgroundColor="bg-gradient-to-r from-[#fdae61] via-[#f57c00] to-[#d84315]" 
   textColor="text-[#fef9f3]" 
   height="h-10"
   fontSize="text-s"
   baseVelocity={75}
   pauseOnHover={true}
-  reverse={false}
+  reverse={true}
   className="shadow-md border-b border-[#b57c50]"
 />
 
