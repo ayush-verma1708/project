@@ -14,7 +14,7 @@
   }
 
   body {
-    @apply bg-white text-black; /* White background with black text */
+    @apply bg-[#F5F5F5] text-[#333333]; /* White background with black text */
   }
 
   /* 🎨 Custom Scrollbar Styling */
@@ -24,14 +24,14 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #f4e7d6; /* Light orange background */
+    background: #E8E6E3; /* Light orange background */
     border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #dbb79f, #ff8c00); /* Soft Orange Gradient */
+    background: linear-gradient(45deg, #B0AFAF, #ff8c00); /* Soft Orange Gradient */
     border-radius: 10px;
-    border: 2px solid #f4e7d6; /* Spacing effect */
+    border: 2px solid #E8E6E3; /* Spacing effect */
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -40,7 +40,7 @@
 
   /* Firefox Scrollbar */
   * {
-    scrollbar-color: #ff8c00 #f4e7d6;
+    scrollbar-color: #ff8c00 #E8E6E3;
     scrollbar-width: thin;
   }
 }
@@ -51,15 +51,15 @@
   }
 
   .btn-primary {
-    @apply bg-black text-white hover:bg-gray-800; /* Black button with white text, hover to dark gray */
+    @apply bg-[#333333] text-[#F5F5F5] hover:bg-gray-800; /* Black button with white text, hover to dark gray */
   }
 
   .btn-secondary {
-    @apply bg-gray-100 text-black hover:bg-gray-200; /* Light gray button with black text */
+    @apply bg-[#E8E6E3] text-[#333333] hover:bg-gray-200; /* Light gray button with black text */
   }
 
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent; /* Black focus ring */
+    @apply w-full px-3 py-2 border border-[#B0AFAF] rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent; /* Black focus ring */
   }
 }
 

@@ -3,11 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import heroImage from "../../assets/heroImage.jpg";
 import heroImage2 from "../../assets/heroImage2.jpg";
+import heroImage3 from "../../assets/heroImage3.jpg";
 import heroImage4 from "../../assets/heroImage4.jpg";
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
 
   const slides = [
     {
@@ -15,21 +18,27 @@ const HeroSection = () => {
       title: "Premium Device Skins",
       subtitle: "Elevate your style with custom designs",
       position: "left",
-      bgColor: "from-purple-900 to-blue-900"
+      bgColor: "from-purple-900 to-blue-900",
+      link: "/category/premium-skins",
+      action: () =>  navigate('/category/mobile-skins') // Replace with your action
     },
     {
       image: heroImage2,
       title: "Precision Crafted",
       subtitle: "Perfect fit guaranteed for every device",
       position: "right",
-      bgColor: "from-orange-900 to-red-900"
+      bgColor: "from-orange-900 to-red-900",
+      link: "/category/precision-skins",
+      action: () =>  navigate('/category/mobile-skins') // Replace with your action
     },
     {
       image: heroImage4,
       title: "Limited Edition",
       subtitle: "Exclusive collections updated monthly",
       position: "left",
-      bgColor: "from-teal-900 to-emerald-900"
+      bgColor: "from-teal-900 to-emerald-900",
+      link: "/category/limited-edition",
+      action: () =>  navigate('/category/mobile-skins') // Replace with your action
     }
   ];
 
@@ -43,7 +52,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     if (!isHovered) {
-      const interval = setInterval(handleNext, 3500); // Increased interval for smoother transitions
+      const interval = setInterval(handleNext, 3500);
       return () => clearInterval(interval);
     }
   }, [isHovered, handleNext]);
@@ -60,9 +69,19 @@ const HeroSection = () => {
     }
   };
 
+  // Handle slide click
+  const handleSlideClick = useCallback(() => {
+    const currentSlide = slides[currentIndex];
+    if (currentSlide.action) {
+      currentSlide.action();
+    }
+    // You can also use react-router-dom's navigate here
+    // navigate(currentSlide.link);
+  }, [currentIndex, slides]);
+
   return (
     <section 
-      className="relative h-[90vh] overflow-hidde"
+      className="relative h-[90vh] overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -78,7 +97,7 @@ const HeroSection = () => {
         />
       </AnimatePresence>
 
-      {/* Image Slideshow with improved transitions */}
+      {/* Image Slideshow with improved transitions and click handling */}
       <AnimatePresence initial={false}>
         <motion.div
           key={`slide-${currentIndex}`}
@@ -86,7 +105,10 @@ const HeroSection = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="absolute inset-0"
+          className="absolute inset-0 cursor-pointer"
+          onClick={handleSlideClick}
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.3 }}
         >
           <motion.div 
             className="absolute inset-0 bg-cover bg-center transform"
@@ -109,6 +131,8 @@ const HeroSection = () => {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="max-w-xl bg-black/40 p-6 rounded-lg backdrop-blur-sm"
+            onClick={handleSlideClick}
+            style={{ cursor: 'pointer' }}
           >
             <motion.h2 
               className="text-5xl md:text-6xl font-bold text-white mb-6"
@@ -136,6 +160,10 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering parent's onClick
+                handleSlideClick();
+              }}
             >
               Shop Now
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -150,7 +178,10 @@ const HeroSection = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="p-2 rounded-full bg-black/20 hover:bg-black/30 text-white backdrop-blur-sm transition-all duration-300"
-          onClick={handlePrev}
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePrev();
+          }}
         >
           <ChevronLeft className="w-6 h-6" />
         </motion.button>
@@ -159,7 +190,10 @@ const HeroSection = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="p-2 rounded-full bg-black/20 hover:bg-black/30 text-white backdrop-blur-sm transition-all duration-300"
-          onClick={handleNext}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleNext();
+          }}
         >
           <ChevronRight className="w-6 h-6" />
         </motion.button>
@@ -170,7 +204,10 @@ const HeroSection = () => {
         {slides.map((_, index) => (
           <motion.button
             key={index}
-            onClick={() => setCurrentIndex(index)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex(index);
+            }}
             className={`h-2 rounded-full transition-all duration-300
               ${index === currentIndex 
                 ? "w-8 bg-white" 
