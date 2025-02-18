@@ -106,6 +106,8 @@ export interface Category {
 export interface SubscriptionResponse {
   message: string;
   isSubscribed?: boolean; // Add this line
+  status: number;
+  couponCode?: string;
 }
 
 export interface SubscriptionData {

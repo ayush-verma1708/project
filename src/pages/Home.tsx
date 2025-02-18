@@ -6,6 +6,7 @@ import {  Leaf, Users, Globe, Truck, Star } from 'lucide-react';
 import EmailSubscriptionBanner from "../components/promotional/popUpBanner.tsx";
 import HeroSection from "../components/HeroSection/HeroSection.tsx";
 import { useNavigate } from "react-router-dom"; // Use for React Router
+import JoinCommunitySection from "../components/promotional/JoinCommunitySection.tsx";
 
 export default function Home() {
 
@@ -204,10 +205,9 @@ export default function Home() {
 </section>
 
 
-<section className="py-24 bg-[#E8E6E3] text-[#333333]">
+{/* <section className="py-24 bg-[#E8E6E3] text-[#333333]">
   <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
     <div className="max-w-2xl mx-auto text-center">
-      {/* Section Heading */}
       <h2 className="text-4xl font-serif font-semibold mb-4 text-[#333333] tracking-wide">
         Join Our Community
       </h2>
@@ -215,7 +215,6 @@ export default function Home() {
         Get 10% off your first order and stay updated with our latest collections.
       </p>
 
-      {/* Input and Button */}
       <div className="flex gap-4 max-w-md mx-auto">
         <input
           type="email"
@@ -228,6 +227,10 @@ export default function Home() {
       </div>
     </div>
   </div>
+</section> */}
+
+<section>
+  <JoinCommunitySection/>
 </section>
 
      
