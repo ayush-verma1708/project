@@ -105,6 +105,7 @@ export interface Category {
 
 export interface SubscriptionResponse {
   message: string;
+  isSubscribed?: boolean; // Add this line
 }
 
 export interface SubscriptionData {

@@ -10,6 +10,15 @@ export const subscriptionService = {
     return data;
   },
 
+
+  // Update subscription status if the email exists but is not subscribed
+  updateSubscription: async (email: string): Promise<SubscriptionResponse> => {
+    const { data } = await apiClient.post<SubscriptionResponse>('/subscription/update-subscription', {
+      email,
+    });
+    return data;
+  },
+
   // Toggle subscription status (enable/disable)
   toggleSubscription: async (email: string, subscribe: boolean): Promise<SubscriptionResponse> => {
     const { data } = await apiClient.post<SubscriptionResponse>('/subscription/toggle-subscription', {
