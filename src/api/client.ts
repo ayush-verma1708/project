@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8021/api',
+  baseURL: 'https://mobiiwrap-admin-backend.onrender.com/api',
 
   headers: {
     'Content-Type': 'application/json',
