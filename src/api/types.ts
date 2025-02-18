@@ -67,9 +67,9 @@ export interface OrderItem {
 
 export interface Feedback {
   id: string;
-  customer: string;
-  product: string;
-  feedbackType: string;
+  emailOrPhone: string;  // Replacing 'customer' with email or phone number
+  product?: string;      // Optional, can be null for general feedback
+  feedbackType: 'productFeedback' | 'siteFeedback';  // Enum for feedback type
   rating: number;
   comment: string;
   createdAt: string;

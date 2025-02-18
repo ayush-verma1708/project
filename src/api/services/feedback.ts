@@ -1,4 +1,4 @@
-import { Feedback, PaginatedResponse } from '../types';
+import { Feedback, PaginatedResponse } from '../types';  // Ensure Feedback type is updated in types
 import apiClient from '../client';
 
 export const feedbackService = {

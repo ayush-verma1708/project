@@ -21,7 +21,8 @@ const PrivacyPolicy = lazy(() => import("./pages/Termspages/PrivacyPolicy"));
 const ReturnAndRefundPolicy = lazy(() => import("./pages/Termspages/ReturnAndRefundPolicy"));
 const ShippingPolicy = lazy(() => import("./pages/Termspages/ShippingPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/Termspages/TermsAndConditions"));
-
+const Blog = lazy(() => import("./pages/Blog"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 export default function App() {
   return (
@@ -34,9 +35,11 @@ export default function App() {
             {/* Core Pages */}
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path="blog" element={<Blog />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="products/:id" element={<ProductDetail />} />
+      <Route path = "contact" element = {<Contact />} />
 
             {/* Product Routes */}
             <Route path="category/:category" element={<ProductListing />} />
