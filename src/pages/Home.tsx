@@ -171,7 +171,7 @@ export default function Home() {
   <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
     {/* Section Title */}
     <h2 className="text-4xl font-serif text-center mb-4 text-[#333333] tracking-wide">
-      What Our Clients Say
+      What Our Customers Say
     </h2>
     <p className="text-[#777777] text-center mb-16 max-w-2xl mx-auto text-lg">
       Read about experiences from our valued customers.

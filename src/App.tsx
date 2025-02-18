@@ -4,17 +4,7 @@ import { CartProvider } from './context/CartContext';
 import ScrollToTop from './components/ScrollToTop.tsx';
 import { NotFound } from './components/notAvailable/404notFound.tsx';
 
-// Page imports
-// import { Home } from './pages/Home';
-// import { ProductListing } from './pages/ProductListing';
-// import ProductDetail from './pages/ProductDetail';
-// import { CartPage } from './pages/Cart';
-// import { CheckoutPage } from './pages/Checkout';
-// import { About } from './pages/About';
-// import PrivacyPolicy from './pages/Termspages/PrivacyPolicy';
-// import ReturnAndRefundPolicy from './pages/Termspages/ReturnAndRefundPolicy.tsx';
-// import ShippingPolicy from './pages/Termspages/ShippingPolicy.tsx';
-// import TermsAndConditions from './pages/Termspages/TermsAndConditions.tsx';
+
 import { Suspense, lazy } from "react";
 import CircularText from './components/Loading/CircularPageLoading';
 
