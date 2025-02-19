@@ -24,7 +24,6 @@ const TermsAndConditions = lazy(() => import("./pages/Termspages/TermsAndConditi
 const Blog = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
 const FAQ = lazy(() => import("./pages/FAQ"));
-
 export default function App() {
   return (
     <CartProvider>
@@ -39,12 +38,14 @@ export default function App() {
             <Route path="blog" element={<Blog />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="checkout" element={<CheckoutPage />} />
-            <Route path="products/:id" element={<ProductDetail />} />
             <Route path = "contact" element = {<Contact />} />
             <Route path = "faq" element = {<FAQ />} />
 
             {/* Product Routes */}
-            <Route path="category/:category" element={<ProductListing />} />
+            {/* <Route path="category/:category/:id" element={<ProductDetail />} />
+            <Route path="category/:category" element={<ProductListing />} /> */}
+<Route path="category/:categoryName" element={<ProductListing />} />
+<Route path="category/:categoryName/:productName" element={<ProductDetail />} />
 
             {/* Policy Pages */}
             <Route path="policies">

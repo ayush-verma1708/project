@@ -3,6 +3,31 @@ import apiClient from '../client';
 
 export const productService = {
   // Get all products with optional filters
+  // getAll: async (filters?: {
+  //   page?: number;
+  //   search?: string;
+  //   categories?: string[];
+  //   tags?: string[];
+  //   sort?: string;
+  //   limit?: number;
+  // }) => {
+  //   try {
+  //     const { data } = await apiClient.get<PaginatedResponse<Product>>('/products', {
+  //       params: {
+  //         page: filters?.page || 1,
+  //         search: filters?.search || '',
+  //         categories: filters?.categories?.join(','),
+  //         tags: filters?.tags?.join(','),
+  //         sort: filters?.sort || 'Newest',
+  //         limit: filters?.limit || 12
+  //       }
+  //     });
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //     throw new Error("Failed to fetch products");
+  //   }
+  // },
   getAll: async (filters?: {
     page?: number;
     search?: string;
@@ -10,14 +35,14 @@ export const productService = {
     tags?: string[];
     sort?: string;
     limit?: number;
-  }) => {
+}) => {
     try {
       const { data } = await apiClient.get<PaginatedResponse<Product>>('/products', {
         params: {
           page: filters?.page || 1,
           search: filters?.search || '',
-          categories: filters?.categories?.join(','),
-          tags: filters?.tags?.join(','),
+          categories: filters?.categories?.length ? filters.categories.join(',') : undefined,
+          tags: filters?.tags?.length ? filters.tags.join(',') : undefined,
           sort: filters?.sort || 'Newest',
           limit: filters?.limit || 12
         }
@@ -27,7 +52,19 @@ export const productService = {
       console.error("Error fetching products:", error);
       throw new Error("Failed to fetch products");
     }
-  },
+},
+
+getByName: async (name: string): Promise<Product> => {
+  try {
+    const { data } = await apiClient.get<Product>(`/products/search`, { // ✅ Correct endpoint
+      params: { search: name }, // ✅ Correct parameter
+    });
+    return data; // ✅ Expecting a single product
+  } catch (error) {
+    console.error(`Error fetching product with name "${name}":`, error);
+    throw new Error('Failed to fetch product');
+  }
+},
 
   // Get products by type with filters
   getProductsByType: async (productType: string, filters?: {
@@ -99,6 +136,8 @@ export const productService = {
     }
   }
 };
+
+
 // import { Product, PaginatedResponse } from '../types';
 // import apiClient from '../client';
 

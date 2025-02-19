@@ -124,7 +124,9 @@ export default function  ProductListing() {
   const [sortBy, setSortBy] = useState(initialSort);
 
   const productsPerPage = 12;
-  const { category } = useParams<{ category: keyof typeof productCategories }>();
+  const { categoryName } = useParams<{ category: keyof typeof productCategories }>();
+  const category = categoryName
+ 
 
   if (!category) return <div>Category not found</div>;
   const categoryConfig = productCategories[category];

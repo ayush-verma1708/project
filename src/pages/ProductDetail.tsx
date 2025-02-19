@@ -10,11 +10,13 @@ import ProductImageGallery from '../components/ProductImageGallery';
 import Toast from "../components/Toast"; // Import Toast
 import LoadingSpinner from '../components/LoadingSpinner';
 import FAQSection from '../components/FAQ/FAQSmall';
+import Breadcrumbs from '../components/BreadCrumble/Breadcrumbs';
 
 export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
   const cartButtonRef = useRef<any>(null);
   const { id } = useParams(); // Get the product ID from the URL
+  const { productName } = useParams(); // Get the product ID from the URL
   const { addItem } = useCart(); // Destructure addItem from useCart
   const [product, setProduct] = useState<any>(null); // State to store the product
   const [loading, setLoading] = useState(true); // Loading state
@@ -22,22 +24,25 @@ export default function ProductsDetail() {
   const [selectedPhone, setSelectedPhone] = useState({ brand: '', model: '' });
   const [errorMessage, setErrorMessage] = useState(""); // State for error toast
 
+
+
   // Fetch product details using getById
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const fetchedProduct = await productService.getById(id!); // Fetch product by ID
-        setProduct(fetchedProduct);
+        const fetchedProduct = await productService.getByName(productName!);
+        console.log("Fetched Product:", fetchedProduct);
+        setProduct(fetchedProduct); // ✅ Expecting an object, not an array
         setLoading(false);
       } catch (err) {
         setError('Product not found!');
         setLoading(false);
       }
     };
-
-    fetchProduct();
-  }, [id]); // Re-fetch when product ID changes
-
+  
+    if (productName) fetchProduct();
+  }, [productName]); // ✅ Re-fetch when productName changes
+  
   // If loading, show a loading spinner
   if (loading) {
     return <LoadingSpinner/>;
@@ -75,6 +80,8 @@ export default function ProductsDetail() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Render breadcrumbs at the top */}
+          <Breadcrumbs />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image Gallery */}
           <ProductImageGallery images={product.images} productName={product.name} />

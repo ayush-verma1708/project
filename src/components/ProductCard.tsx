@@ -37,7 +37,7 @@ export function ProductCard({ product,  showFullDetails = false }: ProductCardPr
       whileInView={{ opacity: 1, y: 0 }} // This ensures it comes in smoothly on scroll
       viewport={{ once: true }} // Trigger the animation only once when it's in view
     >
-      <Link to={`/products/${product._id}`} className="block flex-1 flex flex-col">
+      <Link  to={`/category/${product.productType?.name}/${product.name}`} className="block flex-1 flex flex-col">
         <div className="relative aspect-square overflow-hidden">
           <img
             ref={handleImageRef}
@@ -60,7 +60,7 @@ export function ProductCard({ product,  showFullDetails = false }: ProductCardPr
 
           <div className="mt-auto flex justify-between items-center">
             <span className="text-lg font-bold">Rs.{product.price.toFixed(2)}</span>
-            <Link to={`/products/${product._id}`} className="block">
+            <Link  to={`/category/${product.categoryName}/${product.name}`} className="block">
               <button
                 onClick={handleAddToCart}
                 className="p-2 text-white bg-blue-500 rounded-md"

@@ -6,10 +6,8 @@ import EmailSubscriptionBanner from "../components/promotional/popUpBanner.tsx";
 import HeroSection from "../components/HeroSection/HeroSection.tsx";
 import { useNavigate } from "react-router-dom"; // Use for React Router
 import JoinCommunitySection from "../components/promotional/JoinCommunitySection.tsx";
-import { Footer } from "../components/Footer.tsx";
 import  WhyUs  from "../components/WhyUs";
 import Testimonials from "../components/Testimonials";
-import ScrollBanner from "../components/Banner/ScrollBanner.tsx";
 import FAQSection from "../components/FAQ/FAQSmall.tsx";
 
 export default function Home() {

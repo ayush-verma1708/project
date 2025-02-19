@@ -24,8 +24,7 @@ const JoinCommunitySection: React.FC = () => {
     try {
       const response = await subscriptionService.subscribe(email);
 
-      console.log("API Response: ", response); // Log the full response
-
+  
       if (response.status === 409) {
         // If email is already subscribed
         setStatus("exists");
