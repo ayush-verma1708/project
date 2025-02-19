@@ -19,29 +19,27 @@ export const CartButton = forwardRef((props, ref) => {
   return (
     <>
       <button
-        onClick={() => setIsOpen(true)}
-        className={`relative flex items-center justify-center p-2 rounded-md transition-all duration-200 ease-in-out ${
-          state.itemCount > 0
-            ? 'bg-primary text-white hover:bg-primary-dark'
-            : 'bg-neutral-200 text-neutral-600 hover:bg-neutral-300'
-        }`}
+  onClick={(e) => { e.stopPropagation(); setIsOpen(true); }}
+  className={`relative flex items-center justify-center p-2 rounded-md transition-all duration-200 ease-in-out ${
+    state.itemCount > 0
+      ? 'bg-primary text-white hover:bg-primary-dark'
+      : 'bg-neutral-200 text-neutral-600 hover:bg-neutral-300'
+  }`}
+>
+  <ShoppingCart size={24} />
+  <AnimatePresence>
+    {state.itemCount > 0 && (
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0 }}
+        className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
       >
-        {/* Cart Icon */}
-        <ShoppingCart size={24} />
-        {/* Badge for item count */}
-        <AnimatePresence>
-          {state.itemCount > 0 && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
-            >
-              {state.itemCount}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </button>
+        {state.itemCount}
+      </motion.div>
+    )}
+  </AnimatePresence>
+</button>
       <MiniCart isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );

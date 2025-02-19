@@ -23,6 +23,7 @@ const ShippingPolicy = lazy(() => import("./pages/Termspages/ShippingPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/Termspages/TermsAndConditions"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 
 export default function App() {
   return (
@@ -39,7 +40,8 @@ export default function App() {
             <Route path="cart" element={<CartPage />} />
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="products/:id" element={<ProductDetail />} />
-      <Route path = "contact" element = {<Contact />} />
+            <Route path = "contact" element = {<Contact />} />
+            <Route path = "faq" element = {<FAQ />} />
 
             {/* Product Routes */}
             <Route path="category/:category" element={<ProductListing />} />

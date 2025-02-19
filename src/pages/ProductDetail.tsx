@@ -9,6 +9,7 @@ import { productService } from '../api'; // Import the productService
 import ProductImageGallery from '../components/ProductImageGallery';
 import Toast from "../components/Toast"; // Import Toast
 import LoadingSpinner from '../components/LoadingSpinner';
+import FAQSection from '../components/FAQ/FAQSmall';
 
 export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
@@ -159,6 +160,8 @@ export default function ProductsDetail() {
         </div>
       </div>
 
+
+<FAQSection/>
       {/* Added to Cart Notification */}
       <AnimatePresence>
          {/* Toast Notification for Errors */}

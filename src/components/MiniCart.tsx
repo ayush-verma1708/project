@@ -7,11 +7,34 @@ import { EmptyCart } from '../components/cartItems/EmptyCart';
 import { CartTotals } from '../components/cartItems/CartTotals';
 import { useRecommendations } from '../hook/useRecommendations';
 import { RecommendedProducts } from '../components/RecommendedProducts';
+import { useEffect, useRef } from 'react';
 
 export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { state } = useCart();
   const { recommendedProducts, isLoading, isError } = useRecommendations();
+  
+  
+  const cartRef = useRef(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Ensure the event target is outside the MiniCart
+      if (cartRef.current && !cartRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      // Use "mousedown" instead of "click" for better outside click detection
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  
   return (
     <AnimatePresence>
       {isOpen && (
@@ -27,9 +50,10 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
               <ShoppingBag size={20} />
               <h2 className="text-lg font-semibold">Your Cart ({state.items.length})</h2>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-2 hover:bg-gray-100 rounded-full">
               <X size={20} />
             </button>
+
           </div>
 
           {/* Scrollable Content: Cart Items and Recommendations */}
@@ -52,9 +76,8 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             )}
 
             {/* Recommended Products placed after cart items */}
-            {recommendedProducts.length > 0 && (
+            {/* {recommendedProducts.length > 0 && (
               <div className="mt-4">
-                <h3 className="text-lg font-semibold mb-2">You might also like</h3>
                 <RecommendedProducts
                   products={recommendedProducts}
                   isLoading={isLoading}
@@ -62,7 +85,7 @@ export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                   layout="mini"
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Footer: Checkout Totals */}

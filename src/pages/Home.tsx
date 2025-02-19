@@ -10,6 +10,7 @@ import { Footer } from "../components/Footer.tsx";
 import  WhyUs  from "../components/WhyUs";
 import Testimonials from "../components/Testimonials";
 import ScrollBanner from "../components/Banner/ScrollBanner.tsx";
+import FAQSection from "../components/FAQ/FAQSmall.tsx";
 
 export default function Home() {
   // Fetch products with react-query
@@ -106,6 +107,10 @@ export default function Home() {
 {/* Why Us */}
 <section>
 <WhyUs />
+</section>
+
+<section>
+<FAQSection/>
 </section>
 
 {/* Testimonials */}
