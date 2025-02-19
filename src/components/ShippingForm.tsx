@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Edit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface ShippingFormProps {
   onSubmit: (data: any) => void;
   initialValues: {
-    name: string;
+    firstName: string;
+    lastName: string;
     address: string;
+    apartment: string;
     city: string;
-    zip: string;
-    country: string;
+    pin: string;
+    phone: string;
+    email: string;
   };
   isSubmitted: boolean;
   setIsSubmitted: (value: boolean) => void;
@@ -18,11 +22,14 @@ interface ShippingFormProps {
 }
 
 interface Errors {
-  name: string;
+  firstName: string;
+  lastName: string;
   address: string;
+  apartment: string;
   city: string;
-  zip: string;
-  country: string;
+  pin: string;
+  phone: string;
+  email: string;
 }
 
 const ShippingForm: React.FC<ShippingFormProps> = ({
@@ -35,22 +42,27 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
 }) => {
   const [shippingForm, setShippingForm] = useState(initialValues);
   const [errors, setErrors] = useState<Errors>({
-    name: '',
+    firstName: '',
+    lastName: '',
     address: '',
+    apartment: '',
     city: '',
-    zip: '',
-    country: '',
+    pin: '',
+    phone: '',
+    email: '',
   });
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors: Errors = { name: '', address: '', city: '', zip: '', country: '' };
+    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '', pin: '',  phone: '', email: '' };
 
-    if (!shippingForm.name.trim()) {
-      newErrors.name = 'Name is required';
+    if (!shippingForm.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
       isValid = false;
-    } else if (shippingForm.name.trim().split(' ').length < 2) {
-      newErrors.name = 'Please enter full name';
+    }
+
+    if (!shippingForm.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
       isValid = false;
     }
 
@@ -64,16 +76,29 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
       isValid = false;
     }
 
-    if (!shippingForm.zip.trim()) {
-      newErrors.zip = 'ZIP code is required';
+    if (!shippingForm.pin.trim()) {
+      newErrors.pin = 'PIN code is required';
       isValid = false;
-    } else if (!/^\d{6}$/.test(shippingForm.zip)) {
-      newErrors.zip = 'Invalid ZIP (5 digits required)';
+    } else if (!/^\d{6}$/.test(shippingForm.pin)) {
+      newErrors.pin = 'Invalid PIN (6 digits required)';
       isValid = false;
     }
 
-    if (!shippingForm.country.trim()) {
-      newErrors.country = 'Country is required';
+
+
+    if (!shippingForm.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+      isValid = false;
+    } else if (!/^\d{10}$/.test(shippingForm.phone)) {
+      newErrors.phone = 'Invalid phone number (10 digits required)';
+      isValid = false;
+    }
+
+    if (!shippingForm.email.trim()) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(shippingForm.email)) {
+      newErrors.email = 'Invalid email address';
       isValid = false;
     }
 
@@ -114,17 +139,57 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">First Name</label>
+                <input
+                  name="firstName"
+                  value={shippingForm.firstName}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md"
+                  placeholder="First Name"
+                />
+                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Last Name</label>
+                <input
+                  name="lastName"
+                  value={shippingForm.lastName}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md"
+                  placeholder="Last Name"
+                />
+                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <label className="block text-sm font-medium mb-1">Phone</label>
               <input
-                name="name"
-                value={shippingForm.name}
+                name="phone"
+                type="tel"
+                value={shippingForm.phone}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md"
-                placeholder="John Doe"
+                placeholder="+91"
               />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
             </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={shippingForm.email}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md"
+                placeholder="example@example.com"
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+
 
             <div>
               <label className="block text-sm font-medium mb-1">Address</label>
@@ -133,9 +198,21 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
                 value={shippingForm.address}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md"
-                placeholder="123 Main St"
+                placeholder="Address"
               />
               {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Apartment, suite, etc. (optional)</label>
+              <input
+                name="apartment"
+                value={shippingForm.apartment}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md"
+                placeholder="Optional*"
+              />
+              {errors.apartment && <p className="text-red-500 text-sm mt-1">{errors.apartment}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -146,44 +223,39 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
                   value={shippingForm.city}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-md"
+                  placeholder="City"
                 />
                 {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">ZIP Code</label>
+                <label className="block text-sm font-medium mb-1">PIN Code</label>
                 <input
-                  name="zip"
+                  name="pin"
                   type="number"
-                  value={shippingForm.zip}
+                  value={shippingForm.pin}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-md"
+                  placeholder="110001"
                 />
-                {errors.zip && <p className="text-red-500 text-sm mt-1">{errors.zip}</p>}
+                {errors.pin && <p className="text-red-500 text-sm mt-1">{errors.pin}</p>}
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Country</label>
-              <select
-                name="country"
-                value={shippingForm.country}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">Select Country</option>
-                <option value="US">United States</option>
-                <option value="IN">India</option>
-                <option value="CA">Canada</option>
-              </select>
-              {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
-            </div>
-
+         
             <button
               type="submit"
               className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 mt-4"
             >
               Save Shipping Info
             </button>
+
+            <div className="mt-4 text-sm text-gray-600">
+              <p>
+                By clicking below and completing your order, you agree to purchase your item(s) from Mobiiwrap as merchant of record for this transaction, on Mobiiwrap's 
+                <a href="/policies/terms" className="text-blue-600 hover:underline"> Terms of Service</a> and 
+                <a href="/policies/privacy" className="text-blue-600 hover:underline"> Privacy Policy</a>.
+              </p>
+            </div>
           </motion.form>
         ) : (
           <motion.div
@@ -193,11 +265,14 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             className="space-y-4"
           >
             <div className="space-y-2">
-              <p><span className="font-medium">Name:</span> {shippingForm.name}</p>
+              <p><span className="font-medium">First Name:</span> {shippingForm.firstName}</p>
+              <p><span className="font-medium">Last Name:</span> {shippingForm.lastName}</p>
               <p><span className="font-medium">Address:</span> {shippingForm.address}</p>
+              <p><span className="font-medium">Apartment:</span> {shippingForm.apartment}</p>
               <p><span className="font-medium">City:</span> {shippingForm.city}</p>
-              <p><span className="font-medium">ZIP:</span> {shippingForm.zip}</p>
-              <p><span className="font-medium">Country:</span> {shippingForm.country}</p>
+              <p><span className="font-medium">PIN:</span> {shippingForm.pin}</p>
+              <p><span className="font-medium">Phone:</span> {shippingForm.phone}</p>
+              <p><span className="font-medium">Email:</span> {shippingForm.email}</p>
             </div>
             <button
               onClick={() => setIsEditing(true)}
@@ -208,6 +283,16 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <footer className="mt-6 border-t pt-4">
+  <ul className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+  <li><Link to="/policies/privacy">Privacy Policy</Link></li>
+              <li><Link to="/policies/returns">Return & Refund Policy</Link></li>
+              <li><Link to="/policies/shipping">Shipping Policy</Link></li>
+              <li><Link to="/policies/terms">Terms & Conditions</Link></li>
+  </ul>
+</footer>
+
     </motion.div>
   );
 };
