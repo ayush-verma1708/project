@@ -63,7 +63,11 @@ export default function Home() {
                 {featuredProducts.map((product) => (
                   <div
                     key={product._id}
-                    onClick={() => navigate(`/products/${product._id}`)} // Click to navigate
+                    onClick={() => navigate(
+              
+                         `/category/${product.productType?.name}/${product.name}
+                      
+                      `)} // Click to navigate
                     className="cursor-pointer bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
                   >
                     {/* Product Image */}

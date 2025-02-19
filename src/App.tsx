@@ -37,7 +37,6 @@ export default function App() {
             <Route path="about" element={<About />} />
             <Route path="blog" element={<Blog />} />
             <Route path="cart" element={<CartPage />} />
-            <Route path="checkout" element={<CheckoutPage />} />
             <Route path = "contact" element = {<Contact />} />
             <Route path = "faq" element = {<FAQ />} />
 
@@ -57,7 +56,9 @@ export default function App() {
 
             {/* 404 Catch-all */}
             <Route path="*" element={<NotFound />} />
+          
           </Route>
+            <Route path="checkout" element={<CheckoutPage />} />
         </Routes>
         </Suspense>
 
