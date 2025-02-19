@@ -32,8 +32,8 @@ export default function App() {
         <Suspense fallback={<CircularText text="Loading..." />}>
         <Routes>
           <Route path="/" element={<Layout />}>
-            {/* Core Pages */}
             <Route index element={<Home />} />
+            {/* Core Pages */}
             <Route path="about" element={<About />} />
             <Route path="blog" element={<Blog />} />
             <Route path="cart" element={<CartPage />} />

@@ -84,6 +84,7 @@ const HeroSection = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+     
       {/* Background gradient with smoother transition */}
       <AnimatePresence mode="wait">
         <motion.div 
