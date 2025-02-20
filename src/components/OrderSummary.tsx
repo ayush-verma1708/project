@@ -24,6 +24,7 @@ interface OrderSummaryProps {
   setDisableCouponApply: (value: boolean) => void;
   rateLimitMessage: string;
   setRateLimitMessage: (value: string) => void;
+  onOrderSubmit: () => void; // Add the new prop
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
@@ -47,6 +48,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   setDisableCouponApply,
   rateLimitMessage,
   setRateLimitMessage,
+  onOrderSubmit, // Destructure the new prop
 }) => {
   const discountedSubtotal = subtotal * (1 - discount);
   const tax = discountedSubtotal * taxRate;
@@ -225,16 +227,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         </div>
       </div>
 
-      <Link
-        to="/payment"
+      <motion.button
+        onClick={onOrderSubmit} // Call the onOrderSubmit function when clicked
         className={`mt-6 block w-full text-center py-3 rounded-md transition-colors ${
           isSubmitted
             ? 'bg-black text-white hover:bg-gray-800'
             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
         }`}
+        whileTap={{ scale: 0.95 }}
+        disabled={!isSubmitted}
       >
         Proceed to Payment <ChevronRight className="inline" size={18} />
-      </Link>
+      </motion.button>
     </motion.div>
   );
 };

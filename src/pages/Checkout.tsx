@@ -1,11 +1,12 @@
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { campaignService } from '../api/services/campaigns';
 import ShippingForm from '../components/ShippingForm';
 import OrderSummary from '../components/OrderSummary';
+import { orderService } from '../api/services/orders';
 
 // Tax rate constant (adjust as needed)
 const TAX_RATE = 0.18;
@@ -13,11 +14,17 @@ const TAX_RATE = 0.18;
 export default function CheckoutPage() {
   const { state } = useCart();
   const [shippingForm, setShippingForm] = useState({
-    name: '',
-    address: '',
-    city: '',
-    zip: '',
-    country: '',
+    name: 'John Doe',
+    address: '123 Main St',
+    city: 'Springfield',
+    zip: '123456',
+    country: 'USA',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    phone: '1234567890',
+    apartment: 'Apt 1',
+    pin: '123456',
   });
   const [errors, setErrors] = useState({
     name: '',
@@ -85,11 +92,56 @@ export default function CheckoutPage() {
     return isValid;
   };
 
+  const handleOrderSubmission = async () => {
+    try {
+      const orderData = {
+        _id: '', // Add a default or generated ID
+        status: 'pending', // Add a default status
+        user: {
+          firstName: shippingForm.firstName,
+          lastName: shippingForm.lastName,
+          email: shippingForm.email,
+          phone: shippingForm.phone,
+        },
+        products: state.items.map(item => ({
+          product: item._id,
+          quantity: item.quantity,
+          price: item.price,
+          extraInfo: {
+            model: item.selectedModel,
+            brand: item.selectedBrand,
+          },
+        })),
+        shippingInfo: shippingForm,
+        coupon: validCoupon,
+        subtotal: state.subtotal,
+        discount: discount * 100, // Convert to percentage
+        tax: tax,
+        total: total,
+      };
+
+      const sanitizedOrderData = { ...orderData, coupon: orderData.coupon || undefined };
+
+      console.log('Order data:', sanitizedOrderData);
+      const response = await orderService.create(sanitizedOrderData);
+      if (response) {
+        alert('Order placed successfully!');
+        // Redirect to order confirmation page or reset the form
+      } else {
+        alert('Failed to place order. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert('An error occurred while placing the order. Please try again.');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitted(true);
       setIsEditing(false);
+      handleOrderSubmission();
     }
   };
 
@@ -183,6 +235,7 @@ export default function CheckoutPage() {
               setIsSubmitted={setIsSubmitted}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
+              // onChange={handleChange}
             />
           </section>
 
@@ -208,6 +261,7 @@ export default function CheckoutPage() {
               setDisableCouponApply={setDisableCouponApply}
               rateLimitMessage={rateLimitMessage}
               setRateLimitMessage={setRateLimitMessage}
+              onOrderSubmit={handleOrderSubmission} // Pass the handleOrderSubmission function
             />
           </section>
         </div>

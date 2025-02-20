@@ -54,7 +54,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '', pin: '',  phone: '', email: '' };
+    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '', pin: '', phone: '', email: '' };
 
     if (!shippingForm.firstName.trim()) {
       newErrors.firstName = 'First name is required';
@@ -83,8 +83,6 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
       newErrors.pin = 'Invalid PIN (6 digits required)';
       isValid = false;
     }
-
-
 
     if (!shippingForm.phone.trim()) {
       newErrors.phone = 'Phone number is required';
@@ -190,7 +188,6 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
-
             <div>
               <label className="block text-sm font-medium mb-1">Address</label>
               <input
@@ -241,7 +238,6 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
               </div>
             </div>
 
-         
             <button
               type="submit"
               className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 mt-4"
@@ -285,14 +281,13 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
       </AnimatePresence>
 
       <footer className="mt-6 border-t pt-4">
-  <ul className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-  <li><Link to="/policies/privacy">Privacy Policy</Link></li>
-              <li><Link to="/policies/returns">Return & Refund Policy</Link></li>
-              <li><Link to="/policies/shipping">Shipping Policy</Link></li>
-              <li><Link to="/policies/terms">Terms & Conditions</Link></li>
-  </ul>
-</footer>
-
+        <ul className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+          <li><Link to="/policies/privacy">Privacy Policy</Link></li>
+          <li><Link to="/policies/returns">Return & Refund Policy</Link></li>
+          <li><Link to="/policies/shipping">Shipping Policy</Link></li>
+          <li><Link to="/policies/terms">Terms & Conditions</Link></li>
+        </ul>
+      </footer>
     </motion.div>
   );
 };

@@ -48,15 +48,15 @@ export interface ProductVariant {
   additionalPrice: number;
 }
 
-export interface Order {
-  id: string;
-  customer: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  shippingAddress: string;
-  createdAt: string;
-}
+// export interface Order {
+//   id: string;
+//   customer: string;
+//   items: OrderItem[];
+//   totalAmount: number;
+//   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+//   shippingAddress: string;
+//   createdAt: string;
+// }
 
 export interface OrderItem {
   product: string;
@@ -113,4 +113,59 @@ export interface SubscriptionResponse {
 export interface SubscriptionData {
   email: string;
   subscribe?: boolean;
+}
+
+
+
+
+export interface User {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+export interface ShippingInfo {
+  firstName: string;
+  lastName: string;
+  address: string;
+  apartment?: string;
+  city: string;
+  pin: string;
+  phone: string;
+  email: string;
+}
+
+export interface ProductItem {
+  product: string; // Assuming it stores the product ID (MongoDB ObjectId)
+  quantity: number;
+  customData?: Record<string, any>; // For additional product details (e.g., brand, model, etc.)
+}
+
+export interface Coupon {
+  _id: string;
+  code: string;
+  discount: number;
+}
+
+export interface Order {
+  _id: string;
+  user: User;
+  products: ProductItem[];
+  shippingInfo: ShippingInfo;
+  coupon?: Coupon;
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  trackingNumber?: string; // For tracking feature
+  createdAt: string;
+}
+
+export interface PaginatedResponse<T> {
+  total: number;
+  page: number;
+  limit: number;
+  data: T[];
 }
