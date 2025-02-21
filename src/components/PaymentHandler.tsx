@@ -92,6 +92,7 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
       };
 
       const razorpayOrder = await razorpayService.createOrder(Math.round(total), 'INR');
+      console.log('Razorpay Order Response:', razorpayOrder);
       if (!razorpayOrder || !razorpayOrder.razorpayOrderId) {
         setPaymentError('Failed to create order. Please try again.');
         setIsProcessing(false);
