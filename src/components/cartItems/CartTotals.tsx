@@ -1,4 +1,4 @@
-export function CartTotals({ subtotal, tax, total, layout }: { 
+export  function CartTotals({ subtotal, tax, total, layout }: { 
     subtotal: number; 
     tax: number; 
     total: number; 

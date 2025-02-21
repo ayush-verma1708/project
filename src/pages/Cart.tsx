@@ -4,7 +4,8 @@ import Breadcrumbs from '../components/BreadCrumble/Breadcrumbs';
 import { useCart } from '../context/CartContext';
 import { CartItems } from '../components/cartItems/CartItem';
 import { EmptyCart } from '../components/cartItems/EmptyCart';
-import { CartTotals } from '../components/cartitems/CartTotals';
+// import  CartTotals  from '../components/cartitems/CartTotals';
+import {CartTotals} from '../components/cartItems/CartTotals';
 
 export default function CartPage() {
   const { state } = useCart();
