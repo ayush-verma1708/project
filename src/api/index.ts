@@ -11,4 +11,5 @@ export * from './services/categoryService';
 export * from './services/tagService';
 export * from './services/productTypeService';
 export * from './services/subscription';
+export * from './services/razorpayService';
 export * from './types';

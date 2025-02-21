@@ -1,12 +1,13 @@
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { campaignService } from '../api/services/campaigns';
 import ShippingForm from '../components/ShippingForm';
 import OrderSummary from '../components/OrderSummary';
 import { orderService } from '../api/services/orders';
+import { razorpayService } from '../api/services/razorpayService';
 
 // Tax rate constant (adjust as needed)
 const TAX_RATE = 0.18;
@@ -22,9 +23,11 @@ export default function CheckoutPage() {
     phone: '1234567890',
     apartment: 'Apt 1',
     pin: '123456',
+    country: 'USA', // Added country property
   });
   const [errors, setErrors] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     address: '',
     city: '',
     country: '',
@@ -40,6 +43,16 @@ export default function CheckoutPage() {
   const [rateLimitMessage, setRateLimitMessage] = useState('');
   const [validCouponId, setValidCouponId] = useState('');
 
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   // Calculate prices
   const discountedSubtotal = state.subtotal * (1 - discount);
   const tax = discountedSubtotal * TAX_RATE;
@@ -47,14 +60,17 @@ export default function CheckoutPage() {
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { name: '', address: '', city: '', pin: '', country: '' };
+    const newErrors = { firstName: '', lastName: '', address: '', city: '', pin: '', country: '' };
 
-    // Name validation
-    if (!shippingForm.name.trim()) {
-      newErrors.name = 'Name is required';
+    // First name validation
+    if (!shippingForm.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
       isValid = false;
-    } else if (shippingForm.name.trim().split(' ').length < 2) {
-      newErrors.name = 'Please enter full name';
+    }
+
+    // Last name validation
+    if (!shippingForm.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
       isValid = false;
     }
 
@@ -75,7 +91,7 @@ export default function CheckoutPage() {
       newErrors.pin = 'pin code is required';
       isValid = false;
     } else if (!/^\d{6}$/.test(shippingForm.pin)) {
-      newErrors.pin = 'Invalid pin (5 digits required)';
+      newErrors.pin = 'Invalid pin (6 digits required)';
       isValid = false;
     }
 
@@ -91,6 +107,11 @@ export default function CheckoutPage() {
 
   const handleOrderSubmission = async () => {
     try {
+      if (!validateForm()) {
+        return;
+      }
+
+      // Step 1: Prepare order details (without saving to DB yet)
       const orderData = {
         user: {
           firstName: shippingForm.firstName,
@@ -108,27 +129,68 @@ export default function CheckoutPage() {
           },
         })),
         shippingInfo: shippingForm,
-        coupon: validCouponId,
+        coupon: validCouponId || undefined,
         subtotal: state.subtotal,
         discount: discount * 100, // Convert to percentage
         tax: tax,
         total: total,
       };
 
-      const sanitizedOrderData = { ...orderData, coupon: orderData.coupon || undefined };
+      console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
 
-      // console.log('Order data:', sanitizedOrderData);
-      console.log("Order Data:", JSON.stringify(sanitizedOrderData, null, 2));
-      const response = await orderService.create(sanitizedOrderData);
-      if (response) {
-        alert('Order placed successfully!');
-        // Redirect to order confirmation page or reset the form
-      } else {
-        alert('Failed to place order. Please try again.');
+      // Step 2: Create Razorpay Order
+      const razorpayOrder = await razorpayService.createOrder(Math.round(total), 'INR'); // Convert to smallest currency unit and round
+
+      console.log("Razorpay Order:", razorpayOrder);
+      if (!razorpayOrder || !razorpayOrder.razorpayOrderId) {
+        alert('Failed to initiate payment.');
+        return;
       }
+
+      // Step 3: Open Razorpay Payment Modal
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Public Key
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Your Store Name',
+        description: 'Order Payment',
+        order_id: razorpayOrder.razorpayOrderId,
+        handler: async (response: any) => {
+          // Step 4: Verify Payment on Backend
+          const paymentData = {
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          };
+
+          try {
+            const verifyResponse = await razorpayService.verifyPayment(paymentData, orderData);
+            
+            if (verifyResponse.success) {
+              alert('Payment successful! Order placed.');
+            } else {
+              alert('Payment verification failed.');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            alert('Payment verification failed. Please contact support.');
+          }
+        },
+        prefill: {
+          name: `${shippingForm.firstName} ${shippingForm.lastName}`,
+          email: shippingForm.email,
+          contact: shippingForm.phone,
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
     } catch (error) {
-      console.error('Error placing order:', error);
-      alert('An error occurred while placing the order. Please try again.');
+      console.error('Error processing order:', error);
+      alert('An error occurred during checkout.');
     }
   };
 
@@ -151,7 +213,7 @@ export default function CheckoutPage() {
   const handleApplyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     setCouponError(''); // Reset error message before applying
-  
+
     try {
       // Fetch coupon data from the API
       const response = await campaignService.search(code); // Assuming search returns an array
@@ -161,24 +223,24 @@ export default function CheckoutPage() {
         setDiscount(0);
         return;
       }
-  
+
       // Validate coupon based on active status and dates
       const currentDate = new Date();
       const startDate = new Date(coupon.startDate);
       const endDate = new Date(coupon.endDate);
-  
+
       if (!coupon.active) {
         setCouponError('This coupon is no longer active');
         setDiscount(0);
         return;
       }
-  
+
       if (currentDate < startDate || currentDate > endDate) {
         setCouponError('Coupon code has expired');
         setDiscount(0);
         return;
       }
-  
+
       // Apply the discount if validation is successful
       setDiscount(coupon.discount / 100);
       setCouponError(''); // Clear any previous error
