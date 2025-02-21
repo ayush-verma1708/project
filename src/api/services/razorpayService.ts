@@ -15,9 +15,23 @@ export const razorpayService = {
   // Step 2: Verify payment after Razorpay callback
   verifyPayment: async (paymentData: any, orderDetails: any) => {
     try {
+      // Create a new object to avoid circular references
+      const sanitizedOrderDetails = {
+        user: orderDetails.user,
+        products: orderDetails.products,
+        shippingInfo: orderDetails.shippingInfo,
+        coupon: orderDetails.coupon,
+        subtotal: orderDetails.subtotal,
+        discount: orderDetails.discount,
+        tax: orderDetails.tax,
+        total: orderDetails.total,
+        paymentMethod: orderDetails.paymentMethod,
+        paymentStatus: orderDetails.paymentStatus,
+      };
+
       const { data } = await apiClient.post('/payments/verify-payment', {
         ...paymentData,
-        orderDetails,
+        orderDetails: sanitizedOrderDetails,
       });
 
       return data;

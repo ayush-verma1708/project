@@ -6,8 +6,7 @@ import { motion } from 'framer-motion';
 import { campaignService } from '../api/services/campaigns';
 import ShippingForm from '../components/ShippingForm';
 import OrderSummary from '../components/OrderSummary';
-import { orderService } from '../api/services/orders';
-import { razorpayService } from '../api/services/razorpayService';
+import PaymentHandler from '../components/PaymentHandler';
 
 // Tax rate constant (adjust as needed)
 const TAX_RATE = 0.18;
@@ -44,13 +43,11 @@ export default function CheckoutPage() {
   const [validCouponId, setValidCouponId] = useState('');
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
+    const savedCoupon = localStorage.getItem('validCoupon');
+    if (savedCoupon) {
+      setCouponCode(savedCoupon);
+      handleApplyCoupon();
+    }
   }, []);
 
   // Calculate prices
@@ -103,111 +100,6 @@ export default function CheckoutPage() {
 
     setErrors(newErrors);
     return isValid;
-  };
-
-  const handleOrderSubmission = async () => {
-    try {
-      if (!validateForm()) {
-        return;
-      }
-
-      // Step 1: Prepare order details (without saving to DB yet)
-      const orderData = {
-        user: {
-          firstName: shippingForm.firstName,
-          lastName: shippingForm.lastName,
-          email: shippingForm.email,
-          phone: shippingForm.phone,
-        },
-        products: state.items.map(item => ({
-          product: item._id,
-          quantity: item.quantity,
-          price: item.price,
-          extraInfo: {
-            model: item.selectedModel,
-            brand: item.selectedBrand,
-          },
-        })),
-        shippingInfo: shippingForm,
-        coupon: validCouponId || undefined,
-        subtotal: state.subtotal,
-        discount: discount * 100, // Convert to percentage
-        tax: tax,
-        total: total,
-      };
-
-      console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
-
-      // Step 2: Create Razorpay Order
-      const razorpayOrder = await razorpayService.createOrder(Math.round(total), 'INR'); // Convert to smallest currency unit and round
-
-      console.log("Razorpay Order:", razorpayOrder);
-      if (!razorpayOrder || !razorpayOrder.razorpayOrderId) {
-        alert('Failed to initiate payment.');
-        return;
-      }
-
-      // Step 3: Open Razorpay Payment Modal
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Public Key
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
-        name: 'Your Store Name',
-        description: 'Order Payment',
-        order_id: razorpayOrder.razorpayOrderId,
-        handler: async (response: any) => {
-          // Step 4: Verify Payment on Backend
-          const paymentData = {
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpayOrderId: response.razorpay_order_id,
-            razorpaySignature: response.razorpay_signature,
-          };
-
-          try {
-            const verifyResponse = await razorpayService.verifyPayment(paymentData, orderData);
-            
-            if (verifyResponse.success) {
-              alert('Payment successful! Order placed.');
-            } else {
-              alert('Payment verification failed.');
-            }
-          } catch (error) {
-            console.error('Payment verification error:', error);
-            alert('Payment verification failed. Please contact support.');
-          }
-        },
-        prefill: {
-          name: `${shippingForm.firstName} ${shippingForm.lastName}`,
-          email: shippingForm.email,
-          contact: shippingForm.phone,
-        },
-        theme: {
-          color: '#3399cc',
-        },
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error('Error processing order:', error);
-      alert('An error occurred during checkout.');
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setIsSubmitted(true);
-      setIsEditing(false);
-      handleOrderSubmission();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setShippingForm(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
-    setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleApplyCoupon = async () => {
@@ -289,13 +181,12 @@ export default function CheckoutPage() {
         <div className="grid lg:grid-cols-2 gap-8">
           <section>
             <ShippingForm
-              onSubmit={handleSubmit}
+              onSubmit={(e) => handleSubmit(e, 'Online')}
               initialValues={shippingForm}
               isSubmitted={isSubmitted}
               setIsSubmitted={setIsSubmitted}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
-              // onChange={handleChange}
             />
           </section>
 
@@ -321,8 +212,20 @@ export default function CheckoutPage() {
               setDisableCouponApply={setDisableCouponApply}
               rateLimitMessage={rateLimitMessage}
               setRateLimitMessage={setRateLimitMessage}
-              onOrderSubmit={handleOrderSubmission} // Pass the handleOrderSubmission function
+              onOrderSubmit={() => setIsSubmitted(true)} // Set isSubmitted to true when order is submitted
             />
+            {isSubmitted && (
+              <PaymentHandler
+                shippingForm={shippingForm}
+                state={state}
+                discount={discount}
+                tax={tax}
+                total={total}
+                validCouponId={validCouponId}
+                validateForm={validateForm}
+                setErrors={setErrors}
+              />
+            )}
           </section>
         </div>
       </main>
