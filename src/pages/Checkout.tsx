@@ -14,11 +14,8 @@ const TAX_RATE = 0.18;
 export default function CheckoutPage() {
   const { state } = useCart();
   const [shippingForm, setShippingForm] = useState({
-    name: 'John Doe',
     address: '123 Main St',
     city: 'Springfield',
-    zip: '123456',
-    country: 'USA',
     firstName: 'John',
     lastName: 'Doe',
     email: 'john.doe@example.com',
@@ -30,7 +27,6 @@ export default function CheckoutPage() {
     name: '',
     address: '',
     city: '',
-    zip: '',
     country: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -42,6 +38,7 @@ export default function CheckoutPage() {
   const [applyAttemptCount, setApplyAttemptCount] = useState(0);
   const [disableCouponApply, setDisableCouponApply] = useState(false);
   const [rateLimitMessage, setRateLimitMessage] = useState('');
+  const [validCouponId, setValidCouponId] = useState('');
 
   // Calculate prices
   const discountedSubtotal = state.subtotal * (1 - discount);
@@ -50,7 +47,7 @@ export default function CheckoutPage() {
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { name: '', address: '', city: '', zip: '', country: '' };
+    const newErrors = { name: '', address: '', city: '', pin: '', country: '' };
 
     // Name validation
     if (!shippingForm.name.trim()) {
@@ -74,11 +71,11 @@ export default function CheckoutPage() {
     }
 
     // ZIP validation
-    if (!shippingForm.zip.trim()) {
-      newErrors.zip = 'ZIP code is required';
+    if (!shippingForm.pin.trim()) {
+      newErrors.pin = 'pin code is required';
       isValid = false;
-    } else if (!/^\d{6}$/.test(shippingForm.zip)) {
-      newErrors.zip = 'Invalid ZIP (5 digits required)';
+    } else if (!/^\d{6}$/.test(shippingForm.pin)) {
+      newErrors.pin = 'Invalid pin (5 digits required)';
       isValid = false;
     }
 
@@ -95,8 +92,6 @@ export default function CheckoutPage() {
   const handleOrderSubmission = async () => {
     try {
       const orderData = {
-        _id: '', // Add a default or generated ID
-        status: 'pending', // Add a default status
         user: {
           firstName: shippingForm.firstName,
           lastName: shippingForm.lastName,
@@ -113,7 +108,7 @@ export default function CheckoutPage() {
           },
         })),
         shippingInfo: shippingForm,
-        coupon: validCoupon,
+        coupon: validCouponId,
         subtotal: state.subtotal,
         discount: discount * 100, // Convert to percentage
         tax: tax,
@@ -122,7 +117,8 @@ export default function CheckoutPage() {
 
       const sanitizedOrderData = { ...orderData, coupon: orderData.coupon || undefined };
 
-      console.log('Order data:', sanitizedOrderData);
+      // console.log('Order data:', sanitizedOrderData);
+      console.log("Order Data:", JSON.stringify(sanitizedOrderData, null, 2));
       const response = await orderService.create(sanitizedOrderData);
       if (response) {
         alert('Order placed successfully!');
@@ -186,7 +182,9 @@ export default function CheckoutPage() {
       // Apply the discount if validation is successful
       setDiscount(coupon.discount / 100);
       setCouponError(''); // Clear any previous error
+      
       setValidCoupon(code); // Save the valid coupon code in state
+      setValidCouponId(coupon._id);
       localStorage.setItem('validCoupon', code); // Save the valid coupon code
       alert(`Coupon applied! Discount: ${coupon.discount}%`);
     } catch (error) {

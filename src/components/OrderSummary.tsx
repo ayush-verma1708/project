@@ -115,7 +115,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     >
       <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
 
-      <div className="space-y-4 mb-6">
+      {/* <div className="space-y-4 mb-6">
         {items.map(item => (
           <div key={item._id} className="flex justify-between items-center border-b pb-4">
             <div className="flex items-center gap-4">
@@ -126,6 +126,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               />
               <div>
                 <h3 className="font-medium">{item.name}</h3>
+                <h3 className="font-medium">Quantity: {item.quantity}</h3>
                 <p className="text-sm text-gray-500">Model: {item?.selectedModel}</p>
                 <p className="text-sm text-gray-500">Brand: {item?.selectedBrand}</p>
               </div>
@@ -135,7 +136,38 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
           </div>
         ))}
+      </div> */}
+<div className="space-y-4 mb-6">
+  {items.map((item) => (
+    <div
+      key={item._id}
+      className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 bg-white rounded-2xl shadow-md"
+    >
+      {/* Product Image */}
+      <img
+        src={item.images[0]}
+        alt={item.name}
+        className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg"
+      />
+
+      {/* Product Details */}
+      <div className="flex-1">
+        <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+        <p className="text-sm text-gray-500">Model: {item?.selectedModel}</p>
+        <p className="text-sm text-gray-500">Brand: {item?.selectedBrand}</p>
+        <p className="text-sm font-medium text-gray-700">Quantity: {item.quantity}</p>
       </div>
+
+      {/* Price */}
+      <div className="text-right">
+        <p className="text-lg font-semibold text-gray-900">
+          ₹{(item.price * item.quantity).toFixed(2)}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
+
 
       <div>
         <label htmlFor="couponCode" className="block text-sm font-medium mb-1">Coupon Code</label>
