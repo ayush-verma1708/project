@@ -2,7 +2,6 @@ import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { campaignService } from '../api/services/campaigns';
 import ShippingForm from '../components/ShippingForm';
 import OrderSummary from '../components/OrderSummary';
@@ -22,6 +21,7 @@ export default function CheckoutPage() {
     phone: '',
     apartment: '',
     pin: '',
+    state:'',
     country: 'India',
   });
   const [errors, setErrors] = useState({
@@ -30,6 +30,8 @@ export default function CheckoutPage() {
     address: '',
     city: '',
     country: '',
+    state:'',
+    pin: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -68,13 +70,14 @@ export default function CheckoutPage() {
   const validateForm = () => {
     console.log('Validating shippingForm in CheckoutPage:', shippingForm); // Log values being validated
     let isValid = true;
-    const newErrors = { firstName: '', lastName: '', address: '', city: '', pin: '' };
+    const newErrors = { firstName: '', lastName: '', address: '', city: '', pin: '', state: '' };
     if (!shippingForm.firstName.trim()) { newErrors.firstName = 'First name is required'; isValid = false; }
     if (!shippingForm.lastName.trim()) { newErrors.lastName = 'Last name is required'; isValid = false; }
     if (!shippingForm.address.trim()) { newErrors.address = 'Address is required'; isValid = false; }
     if (!shippingForm.city.trim()) { newErrors.city = 'City is required'; isValid = false; }
     if (!shippingForm.pin.trim()) { newErrors.pin = 'Pin code is required'; isValid = false; }
     else if (!/^\d{6}$/.test(shippingForm.pin)) { newErrors.pin = 'Invalid pin (6 digits required)'; isValid = false; }
+    if (!shippingForm.state.trim()) { newErrors.state = 'State is required'; isValid = false; } // Added state validation
 
     console.log('Validation result:', { isValid, newErrors });
     setErrors(newErrors);
@@ -136,7 +139,6 @@ export default function CheckoutPage() {
   };
 
   const handleShippingSubmit = (updatedShippingForm: any) => {
-    console.log('Submitted shippingForm from ShippingForm:', updatedShippingForm); // Log submitted values
     setShippingForm(updatedShippingForm); // Update CheckoutPage's shippingForm
     setIsSubmitted(true);
     setErrors({ // Clear errors after submission
@@ -145,6 +147,8 @@ export default function CheckoutPage() {
       address: '',
       city: '',
       pin: '',
+      state: '',
+      country: '',
     });
   };
 
@@ -270,6 +274,10 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+
+
+
 // import { useCart } from '../context/CartContext';
 // import { Link } from 'react-router-dom';
 // import { ChevronLeft } from 'lucide-react';

@@ -11,6 +11,7 @@ interface ShippingFormProps {
     apartment: string;
     city: string;
     pin: string;
+    state: string; // Added state
     phone: string;
     email: string;
   };
@@ -27,6 +28,7 @@ interface Errors {
   apartment: string;
   city: string;
   pin: string;
+  state: string; // Added state
   phone: string;
   email: string;
 }
@@ -47,6 +49,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
     apartment: '',
     city: '',
     pin: '',
+    state: '', // Added state
     phone: '',
     email: '',
   });
@@ -54,7 +57,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '', pin: '', phone: '', email: '' };
+    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '',state: '',  pin: '', phone: '', email: '' };
     if (!shippingForm.firstName.trim()) {
       newErrors.firstName = 'First name is required';
       isValid = false;
@@ -83,6 +86,10 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
       isValid = false;
     } else if (!/^\d{10}$/.test(shippingForm.phone)) {
       newErrors.phone = 'Invalid phone number (10 digits required)';
+      isValid = false;
+    }
+    if (!shippingForm.state.trim()) { // Added state validation
+      newErrors.state = 'State is required';
       isValid = false;
     }
     if (!shippingForm.email.trim()) {
@@ -225,6 +232,17 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
                 />
                 {errors.pin && <p className="text-red-500 text-xs mt-1">{errors.pin}</p>}
               </div>
+              <div>
+              <label className="block text-sm font-medium mb-1">State</label>
+              <input
+                name="state"
+                value={shippingForm.state}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="State"
+              />
+              {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
+            </div>
             </div>
             <button
               type="submit"
@@ -241,6 +259,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             <p><span className="font-medium">Apartment:</span> {shippingForm.apartment}</p>
             <p><span className="font-medium">City:</span> {shippingForm.city}</p>
             <p><span className="font-medium">PIN:</span> {shippingForm.pin}</p>
+            <p><span className="font-medium">State:</span> {shippingForm.state}</p> {/* Added state display */}
             <p><span className="font-medium">Phone:</span> {shippingForm.phone}</p>
             <p><span className="font-medium">Email:</span> {shippingForm.email}</p>
             <button

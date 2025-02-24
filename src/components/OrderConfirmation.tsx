@@ -81,6 +81,10 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ orderId, items, t
               {shippingForm?.address
                 ? `${shippingForm.address}, ${shippingForm.apartment && `${shippingForm.apartment}, `}${shippingForm.city}, ${shippingForm.pin}`
                 : 'Address not available'}<br />
+                {shippingForm?.city && shippingForm?.state && shippingForm?.pin
+                ? `${shippingForm.city}, ${shippingForm.state} ${shippingForm.pin}`
+                : 'Location not available'}
+              <br />
               {shippingForm?.phone || 'Phone not available'}<br />
               {shippingForm?.email || 'Email not available'}
             </p>
@@ -102,6 +106,9 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ orderId, items, t
 };
 
 export default OrderConfirmation;
+
+
+
 // import React from 'react';
 // import { motion } from 'framer-motion';
 // import { CheckCircle } from 'lucide-react';
