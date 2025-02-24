@@ -47,7 +47,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       {/* Categories Section */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-gray-800 border-b pb-1">
-          Departments
+          Category
         </h3>
         <div className="flex flex-col gap-1">
           {categories.map((category) => (
@@ -72,7 +72,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       {/* Tags Section */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-gray-800 border-b pb-1">
-          Brands & Features
+          Tags
         </h3>
         <div className="flex flex-col gap-1">
           {tags.map((tag) => (

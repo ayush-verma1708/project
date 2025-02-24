@@ -98,17 +98,7 @@ export default function Home() {
                 ))}
               </div>
             )}
-            {/* View All Button */}
-            {!isLoading && !isError && (
-              <div className="text-center mt-12">
-                <button
-                  onClick={() => navigate('/products')}
-                  className="text-orange-500 hover:text-orange-600 font-medium text-lg underline"
-                >
-                  View All Products
-                </button>
-              </div>
-            )}
+          
           </div>
         </section>
 

@@ -7,6 +7,7 @@ import { NotFound } from './components/notAvailable/404notFound.tsx';
 
 import { Suspense, lazy } from "react";
 import CircularText from './components/Loading/CircularPageLoading';
+import { Store } from './pages/Store.tsx';
 
 
 
@@ -24,6 +25,8 @@ const TermsAndConditions = lazy(() => import("./pages/Termspages/TermsAndConditi
 const Blog = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+// const Store = lazy(() => import("./pages/Store")); // Ensure this is correct
+
 export default function App() {
   return (
     <CartProvider>
@@ -43,8 +46,10 @@ export default function App() {
             {/* Product Routes */}
             {/* <Route path="category/:category/:id" element={<ProductDetail />} />
             <Route path="category/:category" element={<ProductListing />} /> */}
+<Route path="category" element={<Store />} /> {/* Simplified to Store */}
 <Route path="category/:categoryName" element={<ProductListing />} />
 <Route path="category/:categoryName/:productName" element={<ProductDetail />} />
+
 
             {/* Policy Pages */}
             <Route path="policies">
