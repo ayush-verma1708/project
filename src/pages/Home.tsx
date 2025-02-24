@@ -8,6 +8,8 @@ import JoinCommunitySection from "../components/promotional/JoinCommunitySection
 import WhyUs from "../components/WhyUs";
 import Testimonials from "../components/Testimonials";
 import FAQSection from "../components/FAQ/FAQSmall.tsx";
+import FiveStarReviews from "../components/Reviews/FiveStarReviews.tsx";
+
 
 export default function Home() {
   const { data: products = [], isLoading, isError, error } = useQuery({
@@ -58,7 +60,9 @@ export default function Home() {
                 {featuredProducts.map((product) => (
                   <div
                     key={product._id}
-                    onClick={() => navigate(`/category/${product.productType?.name}/${product.name}`)}
+                    onClick={() => navigate
+                      (`/category/${product.productType?.name}/${product.name}`)}
+                   
                     className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
                   >
                     {/* Product Image */}
@@ -82,7 +86,9 @@ export default function Home() {
                         className="mt-6 bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition-all text-lg font-medium group-hover:ring-2 group-hover:ring-orange-300 group-hover:scale-105"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/products/${product._id}`);
+                          navigate
+                      (`/category/${product.productType?.name}/${product.name}`)                          
+                          // (`/products/${product._id}`);
                         }}
                       >
                         View Product
@@ -126,6 +132,7 @@ export default function Home() {
           <JoinCommunitySection />
         </section>
       </div>
+      <FiveStarReviews /> {/* Add the new component here */}
     </>
   );
 }
