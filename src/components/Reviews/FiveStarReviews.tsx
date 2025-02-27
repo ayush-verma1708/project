@@ -46,7 +46,7 @@ export default function FiveStarReviews() {
   if (isDismissed || !visibleReview) return null; // Hide if dismissed or no review
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-4 max-w-xs md:bottom-8 md:right-8">
+    <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-4 max-w-xs md:bottom-8 md:right-8">
       {/* Close Button */}
       <button
         onClick={() => setIsDismissed(true)}
