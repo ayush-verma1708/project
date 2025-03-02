@@ -6,9 +6,10 @@ import { NotFound } from './components/notAvailable/404notFound.tsx';
 
 
 import { Suspense, lazy } from "react";
-import CircularText from './components/Loading/CircularPageLoading';
+import CircularText from './components/LoadingSpinner.tsx';
 import { Store } from './pages/Store.tsx';
 
+import LockScreen from "./pages/LockScreen/LockScreen.tsx"; // Import it
 
 
 // Lazy Load Pages
@@ -28,11 +29,18 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 // const Store = lazy(() => import("./pages/Store")); // Ensure this is correct
 
 export default function App() {
+
+  const isUnlocked = localStorage.getItem("siteUnlocked") === "true";
+
+  if (!isUnlocked) {
+    return <LockScreen />; // Show lock screen if not unlocked
+  }
+
   return (
     <CartProvider>
       <Router>
         <ScrollToTop />
-        <Suspense fallback={<CircularText text="Loading..." />}>
+        <Suspense fallback={<CircularText/>}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
