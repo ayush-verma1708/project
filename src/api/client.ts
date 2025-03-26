@@ -4,7 +4,6 @@ import axios from 'axios';
 const apiClient = axios.create({
   baseURL: 'https://mobiiwrap-admin-backend.onrender.com/api',
   // baseURL: 'http://localhost:8021/api',
-
   headers: {
     'Content-Type': 'application/json',
   },
