@@ -8,10 +8,10 @@ import OrderSummary from '../components/OrderSummary';
 import PaymentHandler from '../components/PaymentHandler';
 import OrderConfirmation from '../components/OrderConfirmation';
 
-const TAX_RATE = 0;
+const TAX_RATE = 0.18;
 
 export default function CheckoutPage() {
-  const { state, clearCart} = useCart();
+  const { state , clearCart} = useCart();
   const [shippingForm, setShippingForm] = useState({ // Restore setShippingForm
     firstName: '',
     address: '',
@@ -120,17 +120,13 @@ export default function CheckoutPage() {
     }
   };
 
-  
-
   const handlePaymentSuccess = (orderId: string) => {
     setIsConfirmed(true);
     setOrderId(orderId);
     setCheckoutError(null);
     clearCart(); // Clear cart after successful payment
-    localStorage.removeItem('validCoupon'); // Clear coupon from localStorage
+    validCouponId && localStorage.removeItem('validCoupon'); // Remove coupon from local storage
   };
-
-
 
   const handlePaymentError = (errorMsg: string) => {
     setCheckoutError(errorMsg);

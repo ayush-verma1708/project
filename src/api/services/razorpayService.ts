@@ -23,7 +23,7 @@ export const razorpayService = {
         coupon: orderDetails.coupon,
         subtotal: orderDetails.subtotal,
         discount: orderDetails.discount,
-        tax: orderDetails.tax,
+        tax: orderDetails.tax || 0 ,
         total: orderDetails.total,
         paymentMethod: orderDetails.paymentMethod,
         paymentStatus: orderDetails.paymentStatus,
