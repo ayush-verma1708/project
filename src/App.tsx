@@ -54,9 +54,9 @@ export default function App() {
             {/* Product Routes */}
             {/* <Route path="category/:category/:id" element={<ProductDetail />} />
             <Route path="category/:category" element={<ProductListing />} /> */}
-<Route path="category" element={<Store />} /> {/* Simplified to Store */}
-<Route path="category/:categoryName" element={<ProductListing />} />
-<Route path="category/:categoryName/:productName" element={<ProductDetail />} />
+            <Route path="category" element={<Store />} /> {/* Simplified to Store */}
+            <Route path="category/:categoryName" element={<ProductListing />} />
+            <Route path="category/:categoryName/:productName" element={<ProductDetail />} />
 
 
             {/* Policy Pages */}

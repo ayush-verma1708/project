@@ -11,6 +11,7 @@ export interface Product {
   rating: number;
   popularityScore: number;
   createdAt: string;
+  instagramLink: string;
 }
 
 export interface CartItem extends Product {
