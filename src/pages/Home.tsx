@@ -9,7 +9,7 @@ import WhyUs from "../components/WhyUs";
 import Testimonials from "../components/Testimonials";
 import FAQSection from "../components/FAQ/FAQSmall.tsx";
 import FiveStarReviews from "../components/Reviews/FiveStarReviews.tsx";
-
+import InstagramVideoEmbed from "../components/InstaComp/InstagramVideoEmbed.tsx";
 
 export default function Home() {
   const { data: products = [], isLoading, isError, error } = useQuery({
@@ -31,6 +31,12 @@ export default function Home() {
         {/* Hero Section */}
         <section>
           <HeroSection />
+        </section>
+
+        <section>
+{/* <InstagramVideoEmbed/> Example URL */}
+<InstagramVideoEmbed url="https://www.instagram.com/p/DHx103hzyji/" />
+
         </section>
 
         {/* Product Section */}
