@@ -11,6 +11,7 @@ import Toast from "../components/Toast"; // Import Toast
 import LoadingSpinner from '../components/LoadingSpinner';
 import FAQSection from '../components/FAQ/FAQSmall';
 import Breadcrumbs from '../components/BreadCrumble/Breadcrumbs';
+import ProductVideoPlayer from '../components/ProductVideoPlayer';
 
 export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
@@ -84,7 +85,9 @@ export default function ProductsDetail() {
           <Breadcrumbs />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image Gallery */}
-          <ProductImageGallery images={product.images} productName={product.name} />
+          <ProductImageGallery images={product.images} productName={product.name}  />
+          {/* Video */}
+          
           {/* Product Info */}
           <div className="space-y-6">
             <div>
@@ -164,6 +167,11 @@ export default function ProductsDetail() {
               <p className="text-gray-600">{product.description}</p>
             </div>
           </div>
+          <ProductVideoPlayer 
+  videoLink={product.instagramLink}
+  posterImage={product.images[0]} // Optional - first product image as poster
+  productName={product.name}
+/>
         </div>
       </div>
 

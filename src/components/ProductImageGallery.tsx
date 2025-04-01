@@ -269,6 +269,7 @@ const ProductImageGallery = memo(({ images, productName }: ProductImageGalleryPr
 });
 
 export default ProductImageGallery;
+
 // import { useState, useRef } from 'react';
 // import { motion, AnimatePresence } from 'framer-motion';
 // import clsx from 'clsx';
