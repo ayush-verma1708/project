@@ -470,12 +470,8 @@ export default function ProductListing() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-8 px-4 mb-6">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">{title}</h1>
-          <p className="text-blue-100 max-w-2xl">{description}</p>
-        </div>
-      </div>
+      <div className=" text-white py-2 px-4 mb-6">
+      </div> 
 
       <div className="max-w-7xl mx-auto px-4">
         {/* Main content container */}
@@ -799,8 +795,7 @@ export default function ProductListing() {
         )}
       </AnimatePresence>
     </div>
-  </div>
+      </div>
   </div>
   );
 }
-
