@@ -108,7 +108,6 @@ const HeroSection = () => {
           className="absolute inset-0 cursor-pointer"
           onClick={handleSlideClick}
           whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
         >
           <motion.div 
             className="absolute inset-0 bg-cover bg-center transform"

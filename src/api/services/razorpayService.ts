@@ -29,11 +29,21 @@ export const razorpayService = {
         paymentStatus: orderDetails.paymentStatus,
       };
 
+      // const { data } = await apiClient.post('/payments/verify-payment', {
+      //   ...paymentData,
+      //   orderDetails: sanitizedOrderDetails,
+      // });
+      // const { data } = await apiClient.post('/payments/verify-payment', {
+      //   ...paymentData,
+      //   orderDetails: sanitizedOrderDetails,
+      // });
+
       const { data } = await apiClient.post('/payments/verify-payment', {
-        ...paymentData,
+        razorpayPaymentId: paymentData.razorpayPaymentId,    // Use camelCase
+        razorpayOrderId: paymentData.razorpayOrderId,        // Use camelCase
+        razorpaySignature: paymentData.razorpaySignature,    // Use camelCase
         orderDetails: sanitizedOrderDetails,
       });
-
       return data;
     } catch (error) {
       console.error('Payment verification error:', error);

@@ -109,14 +109,14 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
         order_id: razorpayOrder.razorpayOrderId,
         handler: async (response: any) => {
           const paymentData = {
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpayOrderId: response.razorpay_order_id,
-            razorpaySignature: response.razorpay_signature,
+            razorpayPaymentId: response.razorpay_payment_id,  // Convert to camelCase
+            razorpayOrderId: response.razorpay_order_id,      // Convert to camelCase
+            razorpaySignature: response.razorpay_signature,   // Convert to camelCase
           };
           try {
             const verifyResponse = await razorpayService.verifyPayment(paymentData, orderData);
             if (verifyResponse.success) {
-              onPaymentSuccess(razorpayOrder.razorpayOrderId); // Only call on verified success
+              onPaymentSuccess(razorpayOrder.paymentData.razorpayOrderId); // Only call on verified success
             } else {
               setPaymentError('Payment verification failed. Contact support if charged.');
               onPaymentError('Payment verification failed.');

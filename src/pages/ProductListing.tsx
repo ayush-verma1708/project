@@ -334,6 +334,21 @@ export default function ProductListing() {
   // Available ratings for filter
   const ratings = [4, 3, 2, 1];
 
+// Set default price range based on available products
+const [liked, setLiked] = useState(false);
+const [showPopup, setShowPopup] = useState(false);
+const [score, setScore] = useState(0);
+
+const handleLike = () => {
+  setLiked(!liked);
+  if (!liked) {
+    setScore(score + 1); // Increase product score when liked
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 1500); // Hide popup after 1.5 sec
+  }
+};
+
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [
       'products',
@@ -707,16 +722,39 @@ export default function ProductListing() {
                           <div className="group relative">
                             {/* Wishlist button */}
                             <button
-                              className="absolute top-2 right-2 z-10 p-1.5 bg-white bg-opacity-70 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-100"
-                              aria-label="Add to wishlist"
-                            >
-                              <Heart size={18} className="text-gray-600 hover:text-red-500 transition-colors" />
-                            </button>
+        onClick={handleLike}
+        className={`absolute top-2 right-2 z-10 p-1.5 bg-white bg-opacity-70 rounded-full opacity-0 
+        group-hover:opacity-100 transition-opacity hover:bg-opacity-100
+        transform ${liked ? "scale-110" : "scale-100"} transition-transform duration-200 ease-out`}
+        aria-label="Add to wishlist"
+      >
+        <Heart
+          size={18}
+          className={`transition-colors duration-300 ${
+            liked ? "text-red-500 scale-110" : "text-gray-600 hover:text-red-500"
+          }`}
+        />
+      </button>
+
+      {/* Floating Popup Animation */}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: -10, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+            className="absolute top-10 right-2 bg-black text-white px-3 py-1.5 rounded-lg text-sm shadow-lg"
+          >
+            ❤️ Thanks for liking!
+          </motion.div>
+        )}
+      </AnimatePresence>
                             
                             <ProductCard 
                               product={product} 
                               showFullDetails={viewMode === 'list'}
-                              onAddToCart={(product) => console.log('Added to cart:', product)}
+                            
                             />
                           </div>
                         </motion.div>
