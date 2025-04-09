@@ -29,18 +29,18 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #B0AFAF, #ff8c00); /* Soft Orange Gradient */
+    background: linear-gradient(45deg, #B0AFAF, #ffe4ec); /* Soft Orange Gradient */
     border-radius: 10px;
     border: 2px solid #E8E6E3; /* Spacing effect */
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #ff7300, #dbb79f); /* Darker on hover */
+    background: linear-gradient(45deg, #ffb3cc, #dbb79f); /* Darker on hover */
   }
 
   /* Firefox Scrollbar */
   * {
-    scrollbar-color: #ff8c00 #E8E6E3;
+    scrollbar-color: #ffe4ec #E8E6E3;
     scrollbar-width: thin;
   }
 }
