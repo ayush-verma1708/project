@@ -14,7 +14,7 @@ const HeroSection = () => {
 
   const slides = [
     {
-      image: heroImage,
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg",
       title: "Premium Device Skins",
       subtitle: "Elevate your style with our custom-designed, high-quality skins",
       position: "left",
@@ -24,7 +24,7 @@ const HeroSection = () => {
       action: () => navigate('/category/mobile-skins')
     },
     {
-      image: heroImage2,
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg",
       title: "Precision Crafted",
       subtitle: "Perfect fit guaranteed with our laser-cut precision",
       position: "right",
@@ -34,7 +34,7 @@ const HeroSection = () => {
       action: () => navigate('/category/mobile-skins')
     },
     {
-      image: heroImage4,
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg",
       title: "Limited Edition",
       subtitle: "Exclusive collections updated monthly",
       position: "center",

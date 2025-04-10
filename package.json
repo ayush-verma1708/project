@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.1",
     "@iconify/react": "^5.2.0",
     "@mui/material": "^6.4.0",
     "@tanstack/react-query": "^5.66.0",
@@ -37,6 +38,7 @@
     "@types/estree": "^1.0.7",
     "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4.17.15",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^22.13.4",
     "@types/prop-types": "^15.7.14",
     "@types/react": "^18.3.20",

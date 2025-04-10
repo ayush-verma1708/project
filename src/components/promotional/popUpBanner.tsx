@@ -63,10 +63,13 @@ const EmailSubscriptionBanner: React.FC = () => {
         </button>
 
         <div className="flex flex-col md:flex-row">
-          <div
-            className="hidden md:block flex-1 bg-cover bg-center"
-            style={{ backgroundImage: `url(${promotionImage})`, opacity: 0.95 }}
-          />
+        <div
+  className="hidden md:block flex-1 bg-cover bg-center"
+  style={{ 
+    backgroundImage: `url(https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/promotionImage2_qczrft.png)`, 
+    opacity: 0.95 
+  }}
+/>
 
           <div className="flex-1 p-8 space-y-6 text-center md:text-left">
             {status === "success" || status === "exists" ? (
