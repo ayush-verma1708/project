@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingBag, User, Menu, X, ChevronDown } from 'lucide-react';
+import { Search, Menu, X, ChevronDown } from 'lucide-react';
 import { CartButton } from './CartButton';
 import { SearchModal } from './GeneralComp/SearchModal';
 import MobileNavigation from '../layout/MobileNavigation.tsx';
@@ -12,6 +12,9 @@ export function Navigation() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isHoveringShop, setIsHoveringShop] = useState(false);
+  const [isShopOpen, setIsShopOpen] = useState(false);
+  const shopDropdownRef = useRef(null);
+  const shopButtonRef = useRef(null);
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -51,6 +54,36 @@ export function Navigation() {
     return () => document.removeEventListener('keydown', handleEsc);
   }, [isSearchOpen]);
 
+  // Close shop dropdown when clicking outside or pressing ESC
+  useEffect(() => {
+    if (!isShopOpen) return;
+    
+    const handleOutsideClick = (e) => {
+      if (
+        shopDropdownRef.current && 
+        !shopDropdownRef.current.contains(e.target) &&
+        shopButtonRef.current && 
+        !shopButtonRef.current.contains(e.target)
+      ) {
+        setIsShopOpen(false);
+      }
+    };
+    
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        setIsShopOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEsc);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isShopOpen]);
+
   const toggleDropdown = (dropdown) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
@@ -59,6 +92,13 @@ export function Navigation() {
     e.stopPropagation(); // Stop event propagation
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const toggleShopDropdown = (e) => {
+    e.preventDefault();
+    setIsShopOpen(!isShopOpen);
+  };
+  
+  const isShopDropdownVisible = isShopOpen || isHoveringShop;
   
   return (
     <>
@@ -90,37 +130,59 @@ export function Navigation() {
               <div 
                 className="relative"
                 onMouseEnter={() => setIsHoveringShop(true)}
-                onMouseLeave={() => setIsHoveringShop(false)}
+                onMouseLeave={() => {
+                  setIsHoveringShop(false);
+                  // Don't close dropdown if it was opened by click
+                  if (!isShopOpen) return;
+                }}
               >
                 <button 
-                  className="hover:text-orange-500 transition-colors flex items-center gap-1 py-2"
+                  ref={shopButtonRef}
+                  className={`transition-colors flex items-center gap-1 py-2 ${
+                    isShopDropdownVisible ? 'text-orange-500' : 'hover:text-orange-500'
+                  }`}
+                  onClick={toggleShopDropdown}
+                  aria-expanded={isShopDropdownVisible}
                 >
                   SHOP
-                  <ChevronDown className={`w-4 h-4 transition-transform ${isHoveringShop ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isShopDropdownVisible ? 'rotate-180' : ''}`} />
                 </button>
                 
                 {/* Shop Dropdown */}
                 <AnimatePresence>
-                  {isHoveringShop && (
+                  {isShopDropdownVisible && (
                     <motion.div
+                      ref={shopDropdownRef}
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 mt-1 w-64 bg-white shadow-lg rounded-md overflow-hidden border border-gray-100"
+                      className="absolute top-full left-0 mt-1 w-64 bg-white shadow-lg rounded-md overflow-hidden border border-gray-100 z-50"
                       onMouseEnter={() => setIsHoveringShop(true)}
-                      onMouseLeave={() => setIsHoveringShop(false)}
+                      onMouseLeave={() => {
+                        setIsHoveringShop(false);
+                        // Don't close dropdown if it was opened by click
+                        if (!isShopOpen) return;
+                      }}
                     >
                       <div className="py-2">
                         <Link 
                           to="/category/mobile-skins" 
                           className="block px-4 py-2 text-sm hover:bg-gray-50 hover:text-orange-500"
+                          onClick={() => {
+                            setIsShopOpen(false);
+                            setIsHoveringShop(false);
+                          }}
                         >
                           Mobile Skins
                         </Link>
                         <Link 
                           to="/category/laptop-skins" 
                           className="block px-4 py-2 text-sm hover:bg-gray-50 hover:text-orange-500"
+                          onClick={() => {
+                            setIsShopOpen(false);
+                            setIsHoveringShop(false);
+                          }}
                         >
                           Laptop Skins
                         </Link>
@@ -159,14 +221,6 @@ export function Navigation() {
               >
                 <Search className="w-5 h-5" />
               </button>
-              
-              <Link 
-                to="/account" 
-                className="text-gray-700 hover:text-orange-500 transition-colors"
-                aria-label="Account"
-              >
-                <User className="w-5 h-5" />
-              </Link>
               
               <CartButton/>
             </div>
@@ -302,14 +356,7 @@ export function Navigation() {
                     <Search className="w-5 h-5" />
                     <span>Search</span>
                   </button>
-                  {/* <Link 
-                    to="/account" 
-                    className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="w-5 h-5" />
-                    <span>Account</span>
-                  </Link> */}
+                
                 </div>
               </div>
             </motion.div>
@@ -322,15 +369,13 @@ export function Navigation() {
 
       {/* Background Overlay for Desktop Shop Dropdown */}
       <AnimatePresence>
-        {isHoveringShop && (
+        {isShopDropdownVisible && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black z-40 hidden md:block"
-            onMouseEnter={() => setIsHoveringShop(true)}
-            onMouseLeave={() => setIsHoveringShop(false)}
+            className="fixed inset-0 bg-black z-40 hidden md:block pointer-events-none"
           />
         )}
       </AnimatePresence>

@@ -126,26 +126,30 @@ export default function Home() {
         <section className="py-8 bg-white border-b">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <TrustBadge
-                icon="truck"
-                title="Free Shipping"
-                description="On orders above ₹1,500"
-              />
-              <TrustBadge
-                icon="undo"
-                title="Easy Returns"
-                description="30-day return policy"
-              />
+            <TrustBadge
+  icon="truck"
+  title="Free Shipping"
+  description="On orders over ₹499"
+/>
+
+
+<TrustBadge
+  icon="camera"
+  title="Real Product Shots"
+  description="No mockups, just real images"
+/>
+
               <TrustBadge
                 icon="shield"
                 title="Secure Payments"
                 description="Multiple payment methods"
               />
-              <TrustBadge
-                icon="headset"
-                title="24/7 Support"
-                description="Dedicated customer service"
-              />
+             <TrustBadge
+  icon="star"
+  title="Top Quality"
+  description="Premium materials & craftsmanship"
+/>
+
             </div>
           </div>
         </section>
@@ -295,7 +299,7 @@ export default function Home() {
       
         <FAQSection />
         {/* Testimonials */}
-        <section className="py-16 bg-white">
+        {/* <section className="py-16 bg-white">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold mb-2">What Our Customers Say</h2>
@@ -329,7 +333,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+         */}
      
       </main>
 
