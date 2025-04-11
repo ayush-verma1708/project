@@ -5,7 +5,6 @@ import { productService } from "../api";
 import MobileNavigation from "../components2/layout/MobileNavigation.tsx";
 
 // Components2
-import PopupBanner from "../components2/banners/PopupBanner.tsx";
 import PromoBanner from "../components2/banners/PromoBanner.tsx";
 // import ProductCard from "../components2/product/ProductCard.tsx";
 import TrendingProductCard from "../components2/product/TrendingProductCard.tsx";
@@ -13,9 +12,11 @@ import CountdownTimer from "../components2/ui/countdown-timer.tsx";
 import TrustBadge from "../components2/ui/trust-badge.tsx";
 import TestimonialCard from "../components2/ui/testimonial-card.tsx";
 import { ProductCard } from "../components/ProductCard.tsx";
-import JoinCommunitySection from "../components/promotional/JoinCommunitySection.tsx"
-import InstagramFeed from "../components/Social/InstagramFeed.tsx";
 import EmailSubscriptionBanner from "../components/promotional/popUpBanner.tsx";
+import FAQSection from "../components/FAQ/FAQSmall.tsx";
+import JoinCommunitySection from "../components/promotional/JoinCommunitySection.tsx"
+import PopupBanner from "../components2/banners/PopupBanner.tsx";
+import InstagramFeed from "../components/Social/InstagramFeed.tsx";
 
 export default function Home() {
   const { data: products = [], isLoading, isError, error } = useQuery({
@@ -291,34 +292,8 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Newsletter */}
-        {/* <section className="py-16 bg-gray-900 text-white">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="max-w-xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
-              <p className="opacity-80 mb-8">
-                Subscribe to our newsletter for exclusive offers, new arrivals, and insider-only discounts
-              </p>
-              
-              <form className="flex flex-col sm:flex-row gap-3" onSubmit={(e) => e.preventDefault()}>
-                <input 
-                  type="email" 
-                  placeholder="Your email address" 
-                  className="flex-1 px-4 py-3 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-800 border border-gray-700" 
-                  required 
-                />
-                <button 
-                  type="submit" 
-                  className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors"
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
-          </div>
-        </section> */}
-        <JoinCommunitySection />
-        
+      
+        <FAQSection />
         {/* Testimonials */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 max-w-7xl">
@@ -355,44 +330,9 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Instagram Feed */}
-        {/* <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold mb-2">Follow Us on Instagram</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                @boutiqueshop • Tag us for a chance to be featured
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-              {[...Array(6)].map((_, i) => (
-                <a 
-                  key={i} 
-                  href="#" 
-                  className="relative group aspect-square overflow-hidden"
-                >
-                  <img 
-                    src={`https://images.unsplash.com/photo-${1590600000 + i * 100000}?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80`} 
-                    alt="Instagram post" 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                    </svg>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section> */}
-        {/* <InstagramFeed/> */}
+     
       </main>
-{/*       
-      <Footer /> */}
-      
-      {/* Back to Top Button */}
+
       <button
         className={`fixed right-6 bottom-20 md:bottom-6 bg-gray-900 text-white p-3 rounded-full shadow-md transition-opacity duration-300 ${
           showBackToTop ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -405,8 +345,6 @@ export default function Home() {
         </svg>
       </button>
       
-      {/* Mobile Navigation */}
-      <MobileNavigation />
     </>
   );
 }

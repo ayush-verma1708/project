@@ -3,15 +3,11 @@ import { Layout } from './components/Layout';
 import { CartProvider } from './context/CartContext';
 import ScrollToTop from './components/ScrollToTop.tsx';
 import { NotFound } from './components/notAvailable/404notFound.tsx';
-
-
 import { Suspense, lazy } from "react";
 import CircularText from './components/LoadingSpinner.tsx';
 import { Store } from './pages/Store.tsx';
-
 import LockScreen from "./pages/LockScreen/LockScreen.tsx"; // Import it
-
-
+import { useEffect } from "react";
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Home"));
 const ProductListing = lazy(() => import("./pages/ProductListing"));
@@ -30,12 +26,23 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 
 export default function App() {
 
-  const isUnlocked = localStorage.getItem("siteUnlocked") === "true";
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      document.title = document.hidden ? "Come back! ⚡" : "Mobiiwrap";
+    };
 
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+
+  const isUnlocked = localStorage.getItem("siteUnlocked") === "true";
   if (!isUnlocked) {
     return <LockScreen />; // Show lock screen if not unlocked
   }
-
   return (
     <CartProvider>
       <Router>
@@ -50,15 +57,12 @@ export default function App() {
             <Route path="cart" element={<CartPage />} />
             <Route path = "contact" element = {<Contact />} />
             <Route path = "faq" element = {<FAQ />} />
-
             {/* Product Routes */}
             {/* <Route path="category/:category/:id" element={<ProductDetail />} />
             <Route path="category/:category" element={<ProductListing />} /> */}
             <Route path="category" element={<Store />} /> {/* Simplified to Store */}
             <Route path="category/:categoryName" element={<ProductListing />} />
             <Route path="category/:categoryName/:productName" element={<ProductDetail />} />
-
-
             {/* Policy Pages */}
             <Route path="policies">
               <Route path="privacy" element={<PrivacyPolicy />} />
@@ -66,15 +70,12 @@ export default function App() {
               <Route path="shipping" element={<ShippingPolicy />} />
               <Route path="terms" element={<TermsAndConditions />} />
             </Route>
-
             {/* 404 Catch-all */}
             <Route path="*" element={<NotFound />} />
-          
           </Route>
             <Route path="checkout" element={<CheckoutPage />} />
         </Routes>
         </Suspense>
-
       </Router>
     </CartProvider>
   );

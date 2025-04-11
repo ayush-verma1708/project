@@ -17,30 +17,29 @@
     @apply bg-[#F5F5F5] text-[#333333]; /* White background with black text */
   }
 
-  /* 🎨 Custom Scrollbar Styling */
+  /* 🎨 Custom Scrollbar Styling - Minimal Classy Look */
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #E8E6E3; /* Light orange background */
+    background: #ffffff; /* Clean white background */
     border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #B0AFAF, #ffe4ec); /* Soft Orange Gradient */
+    background: #e48333; /* Solid orange thumb */
     border-radius: 10px;
-    border: 2px solid #E8E6E3; /* Spacing effect */
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #ffb3cc, #dbb79f); /* Darker on hover */
+    background: #ff8c00; /* Slightly brighter orange on hover */
   }
 
-  /* Firefox Scrollbar */
+  /* Firefox Scrollbar - Matching minimal style */
   * {
-    scrollbar-color: #ffe4ec #E8E6E3;
+    scrollbar-color: #e48333 #ffffff; /* Orange thumb, white track for Firefox */
     scrollbar-width: thin;
   }
 }
