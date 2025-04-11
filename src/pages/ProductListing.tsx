@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Filter, ChevronDown, Heart, Grid3X3, List, SlidersHorizontal } from 'lucide-react';
+import { Search, X, Filter, ChevronDown, Heart, Grid3X3, List, SlidersHorizontal, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { ProductCard } from '../components/ProductCard';
 import { productService } from '../api';
@@ -43,8 +43,8 @@ const PriceRangeSlider = ({
         <div 
           className="absolute h-1 bg-blue-500 rounded top-1/2 transform -translate-y-1/2"
           style={{ 
-            left: `${((currentMin - minPrice) / (maxPrice - minPrice)) * 100}%`, 
-            right: `${100 - ((currentMax - minPrice) / (maxPrice - minPrice)) * 100}%` 
+            left: `${((currentMin - minPrice) / (maxPrice - minPrice || 1)) * 100}%`, 
+            right: `${100 - ((currentMax - minPrice) / (maxPrice - minPrice || 1)) * 100}%` 
           }}
         ></div>
         <input
@@ -103,6 +103,8 @@ interface FilterPanelProps {
   currentPriceRange: { min: number; max: number };
   handlePriceChange: (min: number, max: number) => void;
   resetFilters: () => void;
+  popularityFilter: 'all' | 'popular' | 'trending';
+  handlePopularityChange: (option: 'all' | 'popular' | 'trending') => void;
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
@@ -119,10 +121,13 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   currentPriceRange,
   handlePriceChange,
   resetFilters,
+  popularityFilter,
+  handlePopularityChange,
 }) => {
   const [expandedSections, setExpandedSections] = useState({
     categories: true,
     price: true,
+    popularity: true,
     ratings: true,
     tags: true
   });
@@ -217,7 +222,45 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         />
       </FilterSection>
 
-      <FilterSection title="Customer Rating" section="ratings">
+      {/* <FilterSection title="Popularity" section="popularity">
+        <div className="space-y-2">
+          <label
+            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+          >
+            <input
+              type="radio"
+              checked={popularityFilter === 'all'}
+              onChange={() => handlePopularityChange('all')}
+              className="h-4 w-4 text-blue-600 rounded"
+            />
+            <span className="text-sm text-gray-700">All Products</span>
+          </label>
+          <label
+            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+          >
+            <input
+              type="radio"
+              checked={popularityFilter === 'popular'}
+              onChange={() => handlePopularityChange('popular')}
+              className="h-4 w-4 text-blue-600 rounded"
+            />
+            <span className="text-sm text-gray-700">Popular</span>
+          </label>
+          <label
+            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
+          >
+            <input
+              type="radio"
+              checked={popularityFilter === 'trending'}
+              onChange={() => handlePopularityChange('trending')}
+              className="h-4 w-4 text-blue-600 rounded"
+            />
+            <span className="text-sm text-gray-700">Trending</span>
+          </label>
+        </div>
+      </FilterSection> */}
+
+      {/* <FilterSection title="Customer Rating" section="ratings">
         <div className="space-y-2">
           {ratings.map((rating) => (
             <label
@@ -244,7 +287,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             </label>
           ))}
         </div>
-      </FilterSection>
+      </FilterSection> */}
 
       <FilterSection title="Tags" section="tags">
         <div className="flex flex-wrap gap-2">
@@ -273,6 +316,7 @@ export default function ProductListing() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [hasProducts, setHasProducts] = useState<boolean | null>(null);
 
   // Initialize state from URL params
   const initialPage = parseInt(searchParams.get('page') || '1');
@@ -283,6 +327,7 @@ export default function ProductListing() {
   const initialRating = searchParams.get('rating') ? parseInt(searchParams.get('rating') || '0') : null;
   const initialPriceMin = parseInt(searchParams.get('minPrice') || '0');
   const initialPriceMax = parseInt(searchParams.get('maxPrice') || '2000');
+  const initialPopularity = (searchParams.get('popularity') as 'all' | 'popular' | 'trending') || 'all';
 
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
@@ -295,6 +340,14 @@ export default function ProductListing() {
     min: initialPriceMin,
     max: initialPriceMax
   });
+  const [popularityFilter, setPopularityFilter] = useState<'all' | 'popular' | 'trending'>(initialPopularity);
+  const [comingSoonState, setComingSoonState] = useState({
+    message: '',
+    isComingSoon: false,
+    isLoaded: false
+  });
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
+  const [showPopup, setShowPopup] = useState<Record<string, boolean>>({});
 
   const productsPerPage = 12;
   const { categoryName } = useParams<{ categoryName: string }>();
@@ -310,20 +363,30 @@ export default function ProductListing() {
     }
   }, [category, navigate]);
   
-  if (!category || !productCategories[category]) {
+  // if (!category || !productCategories[category]) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen">
+  //       <div className="text-center">
+  //         <h2 className="text-2xl font-bold mb-2">Category not found</h2>
+  //         <p className="text-gray-600 mb-4">We couldn't find the category you're looking for.</p>
+  //         <button 
+  //           onClick={() => navigate('/')}
+  //           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+  //         >
+  //           Go Home
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  if (!productCategories[category].available) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Category not found</h2>
-          <p className="text-gray-600 mb-4">We couldn't find the category you're looking for.</p>
-          <button 
-            onClick={() => navigate('/')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Go Home
-          </button>
-        </div>
-      </div>
+      <ComingSoonPage 
+        title={productCategories[category].title}
+        description={productCategories[category].description}
+        expectedDate={productCategories[category].expectedDate}
+      />
     );
   }
 
@@ -334,20 +397,27 @@ export default function ProductListing() {
   // Available ratings for filter
   const ratings = [4, 3, 2, 1];
 
-// Set default price range based on available products
-const [liked, setLiked] = useState(false);
-const [showPopup, setShowPopup] = useState(false);
-const [score, setScore] = useState(0);
-
-const handleLike = () => {
-  setLiked(!liked);
-  if (!liked) {
-    setScore(score + 1); // Increase product score when liked
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 1500); // Hide popup after 1.5 sec
-  }
-};
-
+  const handleLike = (productId: string) => {
+    setLiked(prev => {
+      const newState = { ...prev, [productId]: !prev[productId] };
+      return newState;
+    });
+    
+    if (!liked[productId]) {
+      // Show popup for this specific product
+      setShowPopup(prev => ({ ...prev, [productId]: true }));
+      
+      // Also send request to update product popularity on server
+      productService.incrementPopularity(productId).catch(error => {
+        console.error("Failed to update product popularity", error);
+      });
+      
+      // Hide popup after delay
+      setTimeout(() => {
+        setShowPopup(prev => ({ ...prev, [productId]: false }));
+      }, 1500);
+    }
+  };
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [
@@ -360,20 +430,88 @@ const handleLike = () => {
       sortBy,
       selectedRating,
       currentPriceRange.min,
-      currentPriceRange.max
+      currentPriceRange.max,
+      popularityFilter
     ],
-    queryFn: () => {
-      return productService.getProductsByType(category, {
-        page: currentPage,
-        search: searchQuery,
-        categories: selectedCategories.includes('All') ? [] : selectedCategories,
-        tags: selectedTags.includes('All') ? [] : selectedTags,
-        sort: sortBy,
-        rating: selectedRating,
-        minPrice: currentPriceRange.min,
-        maxPrice: currentPriceRange.max,
-        limit: productsPerPage,
-      });
+    queryFn: async () => {
+      try {
+        // Check if we have any filters applied
+        const hasActiveFilters = 
+          searchQuery !== '' || 
+          !selectedCategories.includes('All') ||
+          !selectedTags.includes('All') ||
+          selectedRating !== null ||
+          popularityFilter !== 'all' ||
+          currentPriceRange.min !== priceRange.min ||
+          currentPriceRange.max !== priceRange.max;
+        
+        const result = await productService.getProductsByType(category, {
+          page: currentPage,
+          search: searchQuery,
+          categories: selectedCategories.includes('All') ? [] : selectedCategories,
+          tags: selectedTags.includes('All') ? [] : selectedTags,
+          sort: sortBy,
+          rating: selectedRating,
+          minPrice: currentPriceRange.min,
+          maxPrice: currentPriceRange.max,
+          popularity: popularityFilter !== 'all' ? popularityFilter : undefined,
+          limit: productsPerPage,
+        });
+        
+        // If we got zero results and we're not sure if the category has products yet
+        if (result.total === 0 && hasProducts === null) {
+          // Check if the category has any products without filters
+          if (!hasActiveFilters) {
+            // If no filters and still zero results, this is a truly empty category
+            setHasProducts(false);
+            setComingSoonState({
+              isComingSoon: true,
+              message: `Products for ${title} will be available soon! Stay tuned.`,
+              isLoaded: true
+            });
+          } else {
+            // We have filters, so we need to check if category has any products without filters
+            try {
+              const unfilteredCheck = await productService.getProductsByType(category, {
+                page: 1,
+                limit: 1
+              });
+              
+              const categoryHasProducts = unfilteredCheck.total > 0;
+              setHasProducts(categoryHasProducts);
+              
+              if (!categoryHasProducts) {
+                setComingSoonState({
+                  isComingSoon: true,
+                  message: `Products for ${title} will be available soon! Stay tuned.`,
+                  isLoaded: true
+                });
+              } else {
+                setComingSoonState({
+                  isComingSoon: false,
+                  message: '',
+                  isLoaded: true
+                });
+              }
+            } catch (err) {
+              console.error("Error checking category products:", err);
+            }
+          }
+        } else if (result.total > 0 && hasProducts === null) {
+          // If we have products, mark the category as having products
+          setHasProducts(true);
+          setComingSoonState({
+            isComingSoon: false,
+            message: '',
+            isLoaded: true
+          });
+        }
+        
+        return result;
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        throw err;
+      }
     },
     enabled: !!category,
     staleTime: 60000, // 1 minute before refetch
@@ -382,17 +520,20 @@ const handleLike = () => {
   // Update price range based on available products (min and max)
   useEffect(() => {
     if (data?.minPrice !== undefined && data?.maxPrice !== undefined) {
-      setPriceRange({
-        min: data.minPrice,
-        max: data.maxPrice
-      });
-      
-      // Only update current price range if user hasn't set it yet
-      if (initialPriceMin === 0 && initialPriceMax === 2000) {
-        setCurrentPriceRange({
+      // Only update the price range if we have valid min/max values
+      if (data.minPrice !== data.maxPrice) {
+        setPriceRange({
           min: data.minPrice,
           max: data.maxPrice
         });
+        
+        // Only update current price range if user hasn't set it yet
+        if (initialPriceMin === 0 && initialPriceMax === 2000) {
+          setCurrentPriceRange({
+            min: data.minPrice,
+            max: data.maxPrice
+          });
+        }
       }
     }
   }, [data?.minPrice, data?.maxPrice]);
@@ -414,7 +555,8 @@ const handleLike = () => {
       if (value !== null && value !== undefined && value !== '' && 
           // Don't add default values to URL
           !(key === 'minPrice' && value === 0) && 
-          !(key === 'maxPrice' && value === 2000)) {
+          !(key === 'maxPrice' && value === 2000) &&
+          !(key === 'popularity' && value === 'all')) {
         newParams.set(key, value.toString());
       } else {
         newParams.delete(key);
@@ -453,9 +595,19 @@ const handleLike = () => {
   };
 
   const handlePriceChange = (min: number, max: number) => {
+    // Validation to prevent slider bugs
+    if (min < 0) min = 0;
+    if (max <= min) max = min + 100;
+    
     setCurrentPriceRange({ min, max });
     setCurrentPage(1);
     updateURLParams({ minPrice: min, maxPrice: max });
+  };
+
+  const handlePopularityChange = (option: 'all' | 'popular' | 'trending') => {
+    setPopularityFilter(option);
+    setCurrentPage(1);
+    updateURLParams({ popularity: option });
   };
 
   const handleSortChange = (sortOption: string) => {
@@ -471,21 +623,31 @@ const handleLike = () => {
     setSelectedRating(null);
     setSearchQuery('');
     setCurrentPage(1);
-    setCurrentPriceRange({ min: priceRange.min, max: priceRange.max });
+    setPopularityFilter('all');
+    
+    // Reset price range to the data's min/max or defaults if not available
+    if (data?.minPrice !== undefined && data?.maxPrice !== undefined) {
+      setCurrentPriceRange({ min: data.minPrice, max: data.maxPrice });
+    } else {
+      setCurrentPriceRange({ min: 0, max: 2000 });
+    }
+    
     setSearchParams(new URLSearchParams());
   };
+
 
   // Count active filters
   const activeFiltersCount = 
     (selectedCategories.filter(c => c !== 'All').length) +
     (selectedTags.filter(t => t !== 'All').length) +
     (selectedRating !== null ? 1 : 0) +
+    (popularityFilter !== 'all' ? 1 : 0) +
     ((currentPriceRange.min !== priceRange.min || currentPriceRange.max !== priceRange.max) ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Banner */}
-      <div className=" text-white py-2 px-4 mb-6">
+      <div className="text-white py-2 px-4 mb-6">
       </div> 
 
       <div className="max-w-7xl mx-auto px-4">
@@ -508,6 +670,8 @@ const handleLike = () => {
                 currentPriceRange={currentPriceRange}
                 handlePriceChange={handlePriceChange}
                 resetFilters={resetFilters}
+                popularityFilter={popularityFilter}
+                handlePopularityChange={handlePopularityChange}
               />
             </div>
           </aside>
@@ -626,6 +790,15 @@ const handleLike = () => {
                       </button>
                     </span>
                   )}
+
+                  {popularityFilter !== 'all' && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-700 border border-orange-200 rounded-full text-sm">
+                      {popularityFilter === 'popular' ? 'Popular' : 'Trending'}
+                      <button onClick={() => handlePopularityChange('all')} className="hover:text-orange-500">
+                        <X size={14} />
+                      </button>
+                    </span>
+                  )}
                   
                   {(currentPriceRange.min !== priceRange.min || currentPriceRange.max !== priceRange.max) && (
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-sm">
@@ -691,23 +864,27 @@ const handleLike = () => {
                         ))
                     : data?.products?.length === 0 ? (
                       <div className="col-span-full bg-white p-12 rounded-lg shadow text-center">
-                        <img 
-                          src="/api/placeholder/200/200" 
-                          alt="No results"
-                          className="mx-auto mb-4"
-                        />
-                        <p className="text-lg font-medium text-gray-700 mb-2">
-                          No products found
-                        </p>
-                        <p className="text-gray-500 mb-4">
-                          Try adjusting your filters or search terms.
-                        </p>
-                        <button
-                          onClick={resetFilters}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                        >
-                          Clear Filters
-                        </button>
+                        {/* Only show "No products found" if the category has products but filters don't match */}
+                        {hasProducts ? (
+                          <>
+                            <p className="text-lg font-medium text-gray-700 mb-2">
+                              No products found
+                            </p>
+                            <p className="text-gray-500 mb-4">
+                              Try adjusting your filters or search terms.
+                            </p>
+                            <button
+                              onClick={resetFilters}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                            >
+                              Clear Filters
+                            </button>
+                          </>
+                        ) : (
+                          <div className="flex justify-center">
+                            <AlertCircle size={64} className="text-blue-500" />
+                          </div>
+                        )}
                       </div>
                     ) : (
                       data?.products?.map((product) => (
@@ -722,39 +899,38 @@ const handleLike = () => {
                           <div className="group relative">
                             {/* Wishlist button */}
                             <button
-        onClick={handleLike}
-        className={`absolute top-2 right-2 z-10 p-1.5 bg-white bg-opacity-70 rounded-full opacity-0 
-        group-hover:opacity-100 transition-opacity hover:bg-opacity-100
-        transform ${liked ? "scale-110" : "scale-100"} transition-transform duration-200 ease-out`}
-        aria-label="Add to wishlist"
-      >
-        <Heart
-          size={18}
-          className={`transition-colors duration-300 ${
-            liked ? "text-red-500 scale-110" : "text-gray-600 hover:text-red-500"
-          }`}
-        />
-      </button>
+                              onClick={() => handleLike(product._id)}
+                              className={`absolute top-2 right-2 z-10 p-1.5 bg-white bg-opacity-70 rounded-full opacity-0 
+                              group-hover:opacity-100 transition-opacity hover:bg-opacity-100
+                              transform ${liked[product._id] ? "scale-110" : "scale-100"} transition-transform duration-200 ease-out`}
+                              aria-label="Add to wishlist"
+                            >
+                              <Heart
+                                size={18}
+                                className={`transition-colors duration-300 ${
+                                  liked[product._id] ? "text-red-500 scale-110" : "text-gray-600 hover:text-red-500"
+                                }`}
+                              />
+                            </button>
 
-      {/* Floating Popup Animation */}
-      <AnimatePresence>
-        {showPopup && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
-            animate={{ opacity: 1, y: -10, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            transition={{ duration: 0.5 }}
-            className="absolute top-10 right-2 bg-black text-white px-3 py-1.5 rounded-lg text-sm shadow-lg"
-          >
-            ❤️ Thanks for liking!
-          </motion.div>
-        )}
-      </AnimatePresence>
+                            {/* Floating Popup Animation */}
+                            <AnimatePresence>
+                              {showPopup[product._id] && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                  animate={{ opacity: 1, y: -10, scale: 1 }}
+                                  exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                                  transition={{ duration: 0.5 }}
+                                  className="absolute top-10 right-2 bg-black text-white px-3 py-1.5 rounded-lg text-sm shadow-lg"
+                                >
+                                  ❤️ Thanks for liking!
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
                             
                             <ProductCard 
                               product={product} 
                               showFullDetails={viewMode === 'list'}
-                            
                             />
                           </div>
                         </motion.div>
@@ -762,78 +938,115 @@ const handleLike = () => {
                     )}
                 </div>
 
-                {/* //             Pagination */}
-             {data?.totalPages > 1 && (
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-gray-600 text-sm">
-                  Showing {(currentPage - 1) * productsPerPage + 1} -{' '}
-                  {Math.min(currentPage * productsPerPage, data?.total || 0)} of{' '}
-                  {data?.total || 0} products
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="px-3 py-2 border rounded-md hover:bg-gray-100 disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: data?.totalPages || 0 }, (_, i) => i + 1).map(page => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 border rounded-md transition-colors ${
-                        currentPage === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => setCurrentPage(p => Math.min(p + 1, data?.totalPages || 1))}
-                    disabled={currentPage === data?.totalPages}
-                    className="px-3 py-2 border rounded-md hover:bg-gray-100 disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
+                {/* Pagination */}
+                {data?.totalPages > 1 && (
+                  <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p className="text-gray-600 text-sm">
+                      Showing {(currentPage - 1) * productsPerPage + 1} -{' '}
+                      {Math.min(currentPage * productsPerPage, data?.total || 0)} of{' '}
+                      {data?.total || 0} products
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-2 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      {Array.from({ length: data?.totalPages || 0 }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-4 py-2 border rounded-md transition-colors ${
+                            currentPage === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setCurrentPage(p => Math.min(p + 1, data?.totalPages || 1))}
+                        disabled={currentPage === data?.totalPages}
+                        className="px-3 py-2 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
-      </div>
+          </div>
 
-      {/* Mobile Filter Modal */}
-      <AnimatePresence>
-        {isFilterOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex md:hidden"
-            onClick={() => setIsFilterOpen(false)}
-          >
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'tween' }}
-              className="bg-white h-full w-3/4 max-w-sm p-6 overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Filters</h2>
-                <button onClick={() => setIsFilterOpen(false)} className="p-2 hover:bg-gray-100 rounded">
-                  <X size={24} />
-                </button>
+          {/* Mobile Filter Modal */}
+          <AnimatePresence>
+            {isFilterOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black bg-opacity-50 z-50 flex md:hidden"
+                onClick={() => setIsFilterOpen(false)}
+              >
+                <motion.div
+                  initial={{ x: '-100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '-100%' }}
+                  transition={{ type: 'tween' }}
+                  className="bg-white h-full w-3/4 max-w-sm p-6 overflow-y-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-semibold text-gray-800">Filters</h2>
+                    <button onClick={() => setIsFilterOpen(false)} className="p-2 hover:bg-gray-100 rounded">
+                      <X size={24} />
+                    </button>
+                  </div>
+                  
+                  {/* Mobile Filter Content */}
+                  <FilterPanel
+                    categories={categories}
+                    selectedCategories={selectedCategories}
+                    handleCategoryChange={handleCategoryChange}
+                    tags={tags}
+                    selectedTags={selectedTags}
+                    handleTagChange={handleTagChange}
+                    ratings={ratings}
+                    selectedRating={selectedRating}
+                    handleRatingChange={handleRatingChange}
+                    priceRange={priceRange}
+                    currentPriceRange={currentPriceRange}
+                    handlePriceChange={handlePriceChange}
+                    resetFilters={resetFilters}
+                    popularityFilter={popularityFilter}
+                    handlePopularityChange={handlePopularityChange}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Coming Soon State - Only show outside the product grid when category has no products */}
+          {comingSoonState.isLoaded && comingSoonState.isComingSoon && !hasProducts && (
+            <div className="bg-white p-12 rounded-lg shadow text-center mt-6">
+              <div className="flex justify-center mb-6">
+                <AlertCircle size={64} className="text-blue-500" />
               </div>
-             
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Coming Soon!</h2>
+              <p className="text-gray-600 max-w-md mx-auto">
+                {comingSoonState.message}
+              </p>
+              <button 
+                onClick={() => navigate('/')}
+                className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+              >
+                Back to Home
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-  </div>
+    </div>
   );
 }

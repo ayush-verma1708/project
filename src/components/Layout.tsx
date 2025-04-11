@@ -8,7 +8,7 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       
-<ScrollBanner 
+{/* <ScrollBanner 
   text="🚀 Flash Sale: Get 20% Off – Limited Time! Use Code EARLY20"
   // backgroundColor="bg-gradient-to-r from-[#fdae61] via-[#f57c00] to-[#d84315]" 
   backgroundColor="bg-gradient-to-r from-[#ffe4ec] via-[#ffccdd] to-[#ffb3cc]"
@@ -20,7 +20,7 @@ export function Layout() {
   pauseOnHover={true}
   reverse={true}
   className="shadow-md border-b border-[#b57c50]"
-/>
+/> */}
 
       <Navigation />
       
