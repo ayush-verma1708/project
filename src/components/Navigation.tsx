@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X, ChevronDown } from 'lucide-react';
 import { CartButton } from './CartButton';
-import { SearchModal } from './GeneralComp/SearchModal';
+import { SearchModal } from './Search/SearchModal.tsx';
 import MobileNavigation from '../layout/MobileNavigation.tsx';
 
 export function Navigation() {

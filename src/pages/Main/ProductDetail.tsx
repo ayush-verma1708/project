@@ -2,16 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import { ShoppingCart, Check, Truck, RotateCcw, Shield } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import PhoneSelector from '../components/variantSelection/PhoneSelectorProps';
-import { mobiles } from '../sample/mobileDevicesList';
-import { productService } from '../api'; // Import the productService
-import ProductImageGallery from '../components/ProductImageGallery';
-import Toast from "../components/Toast"; // Import Toast
-import LoadingSpinner from '../components/LoadingSpinner';
-import FAQSection from '../components/FAQ/FAQSmall';
-import Breadcrumbs from '../components/BreadCrumble/Breadcrumbs';
-import ProductVideoPlayer from '../components/ProductVideoPlayer';
+import { useCart } from '../../context/CartContext';
+import PhoneSelector from '../../components/variantSelection/PhoneSelectorProps';
+import { mobiles } from '../../sample/mobileDevicesList';
+import { productService } from '../../api'; // Import the productService
+import ProductImageGallery from '../../components/ProductImageGallery';
+import Toast from "../../components/Toast"; // Import Toast
+import {LoadingSpinner} from '../../components/Loading/LoadingSpinner';
+import FAQSection from '../../components/FAQ/FAQSmall';
+import Breadcrumbs from '../../components/Breadcrumb/Breadcrumbs';
+import ProductVideoPlayer from '../../components/ProductVideoPlayer';
 
 export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);

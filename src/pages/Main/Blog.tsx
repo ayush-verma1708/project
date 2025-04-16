@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Blog() {
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedPost, setSelectedPost] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   
@@ -45,7 +45,17 @@ export default function Blog() {
     return matchesSearch && matchesCategory;
   });
 
-  const handlePostClick = (postId) => {
+  interface BlogPost {
+    id: number;
+    title: string;
+    excerpt: string;
+    category: string;
+    date: string;
+    readTime: string;
+    imageColor: string;
+  }
+
+  const handlePostClick = (postId: BlogPost['id']): void => {
     setSelectedPost(postId);
     // Scroll to top when a post is selected
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -64,7 +74,7 @@ export default function Blog() {
           {/* Abstract pattern overlay */}
           <div className="absolute inset-0 opacity-20" 
             style={{
-              backgroundImage: "url('https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage4_dxppil.jpg')"
+              backgroundImage: "url('https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage4_dxppil.jpg')"
             }}
           />
         </div>
@@ -202,7 +212,7 @@ export default function Blog() {
               {/* Category tabs */}
               <div className="mb-8">
                 <div className="flex flex-wrap gap-2">
-                  {categories.map((category, index) => (
+                  {categories.map((category) => (
                     <button
                       key={category}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${

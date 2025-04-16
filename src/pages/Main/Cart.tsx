@@ -1,11 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import Breadcrumbs from '../components/BreadCrumble/Breadcrumbs';
-import { useCart } from '../context/CartContext';
-import { CartItems } from '../components/cartItems/CartItem';
-import { EmptyCart } from '../components/cartItems/EmptyCart';
+import Breadcrumbs from '../../components/Breadcrumb/Breadcrumbs';
+import { useCart } from '../../context/CartContext';
+import { CartItems } from '../../components/Cart/CartItem';
+import { EmptyCart } from '../../components/Cart/EmptyCart';
 // import  CartTotals  from '../components/cartitems/CartTotals';
-import {CartTotals} from '../components/cartItems/CartTotals';
+import {CartTotals} from '../../components/Cart/CartTotals';
 
 export default function CartPage() {
   const { state } = useCart();

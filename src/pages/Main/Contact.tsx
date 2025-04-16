@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { feedbackService } from '../api/services/feedback';
+import { feedbackService } from '../../api/services/feedback';
 
 export default function ContactUs() {
   // Form states

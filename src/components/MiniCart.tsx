@@ -2,9 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, X, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
-import { CartItems } from '../components/cartItems/CartItem';
-import { EmptyCart } from '../components/cartItems/EmptyCart';
-import { CartTotals } from '../components/cartItems/CartTotals';
+import { CartItems } from './Cart/CartItem';
+import { EmptyCart } from './Cart/EmptyCart';
+import { CartTotals } from './Cart/CartTotals';
 import { useEffect, useRef, useState } from 'react';
 
 export function MiniCart({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, ShoppingBag, Search, User } from 'lucide-react';
-import { CartButton } from '../components/CartButton';
-import { SearchModal } from '../components/GeneralComp/SearchModal';
+import { SearchModal } from '../components/Search/SearchModal';
 
+import { CartButton } from '../components/CartButton';
 export default function MobileNavigation() {
   const [cartItems] = useState(3); // Replace with actual cart count
   const [isSearchOpen, setIsSearchOpen] = useState(false);

@@ -1,5 +1,5 @@
 import React from "react";
-import "./Policy.css";
+import "../../css/Policy.css"
 
 const TermsAndConditions: React.FC = () => {
   return (

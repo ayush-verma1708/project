@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Loader2 } from "lucide-react"; // Import an icon
-import "./CircularText.css";
+import "../../css/CircularText.css"; // Import your CSS file
 
 const getRotationTransition = (duration, from, loop = true) => ({
   from: from,

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function AboutUs() {
@@ -27,7 +27,7 @@ export default function AboutUs() {
  
   {/* Animated background image */}
   <motion.div 
-    className="absolute inset-0 bg-[url('https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage3_ptgjy3.jpg')] bg-cover bg-center"
+    className="absolute inset-0 bg-[url('https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage3_ptgjy3.jpg')] bg-cover bg-center"
     initial={{ opacity: 0.8, scale: 1 }}
     animate={{ 
       opacity: 1,

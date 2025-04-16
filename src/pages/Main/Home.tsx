@@ -1,22 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
-import { productService } from "../api";
-import MobileNavigation from "../components2/layout/MobileNavigation.tsx";
+import { productService } from "../../api/index.ts";
 
+import PromoBanner from "../../components2/banners/PromoBanner.tsx";
+import TrendingProductCard from "../../components2/product/TrendingProductCard.tsx";
+import CountdownTimer from "../../components2/ui/countdown-timer.tsx";
+import TrustBadge from "../../components2/ui/trust-badge.tsx";
+import { ProductCard } from "../../components/ProductCard.tsx";
+import EmailSubscriptionBanner from "../../components/promotional/popUpBanner.tsx";
+import FAQSection from "../../components/FAQ/FAQSmall.tsx";
+
+import FiveStarReviews from "../../components/Reviews/FiveStarReviews.tsx";
 // Components2
-import PromoBanner from "../components2/banners/PromoBanner.tsx";
+
 // import ProductCard from "../components2/product/ProductCard.tsx";
-import TrendingProductCard from "../components2/product/TrendingProductCard.tsx";
-import CountdownTimer from "../components2/ui/countdown-timer.tsx";
-import TrustBadge from "../components2/ui/trust-badge.tsx";
-import TestimonialCard from "../components2/ui/testimonial-card.tsx";
-import { ProductCard } from "../components/ProductCard.tsx";
-import EmailSubscriptionBanner from "../components/promotional/popUpBanner.tsx";
-import FAQSection from "../components/FAQ/FAQSmall.tsx";
-import JoinCommunitySection from "../components/promotional/JoinCommunitySection.tsx"
-import PopupBanner from "../components2/banners/PopupBanner.tsx";
-import InstagramFeed from "../components/Social/InstagramFeed.tsx";
+import MobileNavigation from "../../components2/layout/MobileNavigation.tsx";
+import TestimonialCard from "../../components2/ui/testimonial-card.tsx";
+import JoinCommunitySection from "../../components/promotional/JoinCommunitySection.tsx"
+import PopupBanner from "../../components2/banners/PopupBanner.tsx";
+import InstagramFeed from "../../components/Social/InstagramFeed.tsx";
 
 export default function Home() {
   const { data: products = [], isLoading, isError, error } = useQuery({
@@ -53,17 +56,17 @@ export default function Home() {
       const collections = [
         { 
           name: "Summer Collection", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cmrixhrt1ve4yqu7oelv.jpg", 
+          image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cmrixhrt1ve4yqu7oelv.jpg", 
           link: "/category/mobile-skins" 
         },
         { 
           name: "Premium Selection", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744193204/Mobiiwrap%20pictures/Transparent%20skin/cqculgftifbvlqoqihev.jpg", 
+          image: "https://res.cloudinary.com/dskopgpgi/image/uploadd/f_auto,q_auto,w_1920/v1744193204/Mobiiwrap%20pictures/Transparent%20skin/cqculgftifbvlqoqihev.jpg", 
           link: "/category/mobile-skins" 
         },
         { 
           name: "Limited Editions", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744193207/Mobiiwrap%20pictures/Transparent%20skin/wd5mjtvxhxn2tnvwvbnt.jpg", 
+          image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193207/Mobiiwrap%20pictures/Transparent%20skin/wd5mjtvxhxn2tnvwvbnt.jpg", 
           link: "/category/mobile-skins" 
         }
       ];
@@ -91,7 +94,7 @@ export default function Home() {
           <div className="h-[70vh] md:h-[80vh] bg-gray-100 overflow-hidden">
             <div className="absolute inset-0">
               <img 
-                src="https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg" 
+                src="https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage_jzaflq.jpg" 
                 alt="Premium lifestyle products" 
                 className="w-full h-full object-cover"
               />
@@ -218,7 +221,7 @@ export default function Home() {
                 </div>
                 <div className="hidden md:block relative">
                   <img 
-                    src="https://res.cloudinary.com/dskopgpgi/image/upload/v1744193209/Mobiiwrap%20pictures/Transparent%20skin/h86gb3xpejcfhstvsxjj.jpg" 
+                    src="https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193209/Mobiiwrap%20pictures/Transparent%20skin/h86gb3xpejcfhstvsxjj.jpg" 
                     alt="Flash sale products" 
                     className="w-full h-full object-cover"
                   />
@@ -295,7 +298,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+     
       
         <FAQSection />
         {/* Testimonials */}
@@ -348,7 +351,7 @@ export default function Home() {
           <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
         </svg>
       </button>
-      
+      <FiveStarReviews />
     </>
   );
 }

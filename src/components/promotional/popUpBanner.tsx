@@ -66,7 +66,7 @@ const EmailSubscriptionBanner: React.FC = () => {
         <div
   className="hidden md:block flex-1 bg-cover bg-center"
   style={{ 
-    backgroundImage: `url(https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/promotionImage2_qczrft.png)`, 
+    backgroundImage: `url(https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/promotionImage2_qczrft.png)`, 
     opacity: 0.95 
   }}
 />

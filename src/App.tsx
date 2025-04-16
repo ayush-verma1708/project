@@ -4,28 +4,29 @@ import { CartProvider } from './context/CartContext';
 import ScrollToTop from './components/ScrollToTop.tsx';
 import { NotFound } from './components/notAvailable/404notFound.tsx';
 import { Suspense, lazy } from "react";
-import CircularText from './components/LoadingSpinner.tsx';
-import { Store } from './pages/Store.tsx';
+import  { LoadingSpinner }  from './components/Loading/LoadingSpinner.tsx';
 import LockScreen from "./pages/LockScreen/LockScreen.tsx"; // Import it
-import { useEffect } from "react";
+import {useState, useEffect } from "react";
+import { Navigate } from 'react-router-dom';
+
 // Lazy Load Pages
-const Home = lazy(() => import("./pages/Home"));
-const ProductListing = lazy(() => import("./pages/ProductListing"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const CartPage = lazy(() => import("./pages/Cart"));
-const CheckoutPage = lazy(() => import("./pages/Checkout"));
-const About = lazy(() => import("./pages/About"));
+const Home = lazy(() => import("./pages/Main/Home.tsx"));
+const ProductListing = lazy(() => import("./pages/Main/ProductListing.tsx"));
+const ProductDetail = lazy(() => import("./pages/Main/ProductDetail.tsx"));
+const CartPage = lazy(() => import("./pages/Main/Cart.tsx"));
+const CheckoutPage = lazy(() => import("./pages/Main/Checkout.tsx"));
+const About = lazy(() => import("./pages/Main/About.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/Termspages/PrivacyPolicy"));
 const ReturnAndRefundPolicy = lazy(() => import("./pages/Termspages/ReturnAndRefundPolicy"));
 const ShippingPolicy = lazy(() => import("./pages/Termspages/ShippingPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/Termspages/TermsAndConditions"));
-const Blog = lazy(() => import("./pages/Blog"));
-const Contact = lazy(() => import("./pages/Contact"));
-const FAQ = lazy(() => import("./pages/FAQ"));
+const Blog = lazy(() => import("./pages/Main/Blog.tsx"));
+const Contact = lazy(() => import("./pages/Main/Contact.tsx"));
+const FAQ = lazy(() => import("./pages/Main/FAQ.tsx"));
 // const Store = lazy(() => import("./pages/Store")); // Ensure this is correct
 
 export default function App() {
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const handleVisibilityChange = () => {
       document.title = document.hidden ? "Come back! ⚡" : "Mobiiwrap";
@@ -33,8 +34,14 @@ export default function App() {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     
+    // Simulate loading completion (replace with your actual loading logic)
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Adjust this timeout based on your actual loading time
+
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -47,7 +54,8 @@ export default function App() {
     <CartProvider>
       <Router>
         <ScrollToTop />
-        <Suspense fallback={<CircularText/>}>
+        {isLoading && <LoadingSpinner />}
+        <Suspense fallback={<LoadingSpinner/>}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
@@ -60,7 +68,7 @@ export default function App() {
             {/* Product Routes */}
             {/* <Route path="category/:category/:id" element={<ProductDetail />} />
             <Route path="category/:category" element={<ProductListing />} /> */}
-            <Route path="category" element={<Store />} /> {/* Simplified to Store */}
+           <Route path="category" element={<Navigate to="/category/mobile-skins" replace />} />
             <Route path="category/:categoryName" element={<ProductListing />} />
             <Route path="category/:categoryName/:productName" element={<ProductDetail />} />
             {/* Policy Pages */}

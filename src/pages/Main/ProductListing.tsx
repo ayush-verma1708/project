@@ -1,13 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, ChevronDown, Grid3X3, List,  AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { ProductCard } from '../components/ProductCard';
-import { productService } from '../api';
+import { ProductCard } from '../../components/ProductCard';
+import { productService } from '../../api';
 import debounce from 'lodash/debounce';
 import {  useLocation } from 'wouter';
-import { productCategories } from '../constants/productCategories';
-import { FilterPanel } from '../components/FilterPanel';
-import { Product } from '../types/types';
+import { productCategories } from '../../constants/productCategories';
+import { FilterPanel } from '../../components/FilterPanel';
+import { Product } from '../../types/types';
 
 export default function ProductListing() {
   const [location, navigate] = useLocation();

@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import heroImage from "../../assets/heroImage.jpg";
-import heroImage2 from "../../assets/heroImage2.jpg";
-import heroImage4 from "../../assets/heroImage4.jpg";
 import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -14,7 +11,7 @@ const HeroSection = () => {
 
   const slides = [
     {
-      image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg",
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage_jzaflq.jpg",
       title: "Premium Device Skins",
       subtitle: "Elevate your style with our custom-designed, high-quality skins",
       position: "left",
@@ -24,7 +21,7 @@ const HeroSection = () => {
       action: () => navigate('/category/mobile-skins')
     },
     {
-      image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg",
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage_jzaflq.jpg",
       title: "Precision Crafted",
       subtitle: "Perfect fit guaranteed with our laser-cut precision",
       position: "right",
@@ -34,7 +31,7 @@ const HeroSection = () => {
       action: () => navigate('/category/mobile-skins')
     },
     {
-      image: "https://res.cloudinary.com/dskopgpgi/image/upload/v1744241247/heroImage_jzaflq.jpg",
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage_jzaflq.jpg",
       title: "Limited Edition",
       subtitle: "Exclusive collections updated monthly",
       position: "center",
@@ -236,6 +233,8 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+
+
 // import { useState, useEffect, useCallback } from "react";
 // import { motion, AnimatePresence } from "framer-motion";
 // import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";

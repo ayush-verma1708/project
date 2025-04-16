@@ -1,12 +1,12 @@
-import { useCart } from '../context/CartContext';
+import { useCart } from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { campaignService } from '../api/services/campaigns';
-import ShippingForm from '../components/ShippingForm';
-import OrderSummary from '../components/OrderSummary';
-import PaymentHandler from '../components/PaymentHandler';
-import OrderConfirmation from '../components/OrderConfirmation';
+import { campaignService } from '../../api/services/campaigns';
+import ShippingForm from '../../components/ShippingForm';
+import OrderSummary from '../../components/OrderSummary';
+import PaymentHandler from '../../components/PaymentHandler';
+import OrderConfirmation from '../../components/OrderConfirmation';
 
 const TAX_RATE = 0;
 
