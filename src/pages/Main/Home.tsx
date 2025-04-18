@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { productService } from "../../api/index.ts";
-
 import PromoBanner from "../../components2/banners/PromoBanner.tsx";
 import TrendingProductCard from "../../components2/product/TrendingProductCard.tsx";
 import CountdownTimer from "../../components2/ui/countdown-timer.tsx";
@@ -10,7 +9,6 @@ import TrustBadge from "../../components2/ui/trust-badge.tsx";
 import { ProductCard } from "../../components/ProductCard.tsx";
 import EmailSubscriptionBanner from "../../components/promotional/popUpBanner.tsx";
 import FAQSection from "../../components/FAQ/FAQSmall.tsx";
-
 import FiveStarReviews from "../../components/Reviews/FiveStarReviews.tsx";
 // Components2
 
@@ -61,7 +59,7 @@ export default function Home() {
         },
         { 
           name: "Premium Selection", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/uploadd/f_auto,q_auto,w_1920/v1744193204/Mobiiwrap%20pictures/Transparent%20skin/cqculgftifbvlqoqihev.jpg", 
+          image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cqculgftifbvlqoqihev.jpg", 
           link: "/category/mobile-skins" 
         },
         { 
@@ -109,12 +107,12 @@ export default function Home() {
                   Discover premium quality products crafted for those who appreciate the finer things in life.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/shop">
+                  <Link to="/category/mobile-skins">
                     <span className="block bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-lg transition-colors text-center">
                       Shop Now
                     </span>
                   </Link>
-                  <Link href="/collections">
+                  <Link to="/category/mobile-skins">
                     <span className="block bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium px-6 py-3 rounded-lg transition-colors border border-white/30 text-center">
                       Explore Collections
                     </span>
@@ -171,7 +169,7 @@ export default function Home() {
               {featuredCollections.map((collection, index) => (
                 <Link 
                   key={index} 
-                  href={collection.link}
+                  to={collection.link}
                 >
                   <div className="group relative rounded-xl overflow-hidden h-80 cursor-pointer">
                     <img 
@@ -213,7 +211,7 @@ export default function Home() {
                     <CountdownTimer hours={23} minutes={59} seconds={59} />
                   </div>
                   
-                  <Link href="/category/mobile-skins">
+                  <Link to="/category/mobile-skins">
                     <span className="inline-block bg-white hover:bg-gray-100 text-orange-600 font-medium px-6 py-3 rounded-lg transition-colors">
                       Shop the Sale
                     </span>
@@ -239,7 +237,7 @@ export default function Home() {
                 <h2 className="text-3xl font-bold mb-2">New Arrivals</h2>
                 <p className="text-gray-600">The latest additions to our collection</p>
               </div>
-              <Link href="/category/mobile-skins">
+              <Link to="/category/mobile-skins">
                 <span className="text-orange-500 hover:text-orange-600 font-medium">
                   View All →
                 </span>
@@ -287,11 +285,11 @@ export default function Home() {
                   product={product} 
                   onAddToCart={() => {
                     // Add to cart logic would go here
-                    window.location.href = `/product/${product._id}`;
+                    window.location.to = `/product/${product._id}`;
                   }}
                   onViewDetails={() => {
                     // View details logic
-                    window.location.href = `/product/${product._id}`;
+                    window.location.to = `/product/${product._id}`;
                   }}
                 />
               ))}

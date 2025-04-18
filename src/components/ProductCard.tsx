@@ -102,90 +102,133 @@ export function ProductCard({ product, showFullDetails = false }: ProductCardPro
     }
   };
 
+  // const renderProductMedia = () => {
+  //   if (product.instagramLink) {
+  //     return (
+  //       <div
+  //         className="relative overflow-hidden aspect-square w-full group"
+  //         onMouseEnter={handleHover}
+  //         onMouseLeave={handleLeave}
+  //         onTouchStart={handleTouchStart}
+  //         onTouchEnd={handleTouchEnd}
+  //       >
+  //         {/* Fallback image */}
+  //         <img
+  //           src={product.images[0]}
+  //           alt={product.name}
+  //           loading="lazy"
+  //           decoding="async"
+  //           className={`w-full h-full object-cover transition-opacity duration-300 absolute inset-0 ${
+  //             isHovered ? 'opacity-0' : 'opacity-100'
+  //           }`}
+  //           onLoad={() => setLoaded(true)}
+  //         />
+          
+  //         {/* Video element with animated play button */}
+  //         <div className={`relative w-full h-full ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+  //           <video
+  //             ref={videoRef}
+  //             className="w-full h-full object-cover"
+  //             src={product.instagramLink}
+  //             poster={product.images[0]}
+  //             preload="metadata"
+  //             muted
+  //             loop
+  //             playsInline
+  //           />
+            
+  //           {/* Animated play indicator that pulses when not hovered */}
+  //           {!isHovered && (
+  //             <motion.div 
+  //               className="absolute inset-0 flex items-center justify-center bg-black/20"
+  //               initial={{ opacity: 0 }}
+  //               animate={{ opacity: 1 }}
+  //               transition={{ duration: 0.3 }}
+  //             >
+  //               <motion.div
+  //                 className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center"
+  //                 animate={{
+  //                   scale: [1, 1.1, 1],
+  //                   opacity: [0.8, 1, 0.8]
+  //                 }}
+  //                 transition={{
+  //                   duration: 1.5,
+  //                   repeat: Infinity,
+  //                   ease: "easeInOut"
+  //                 }}
+  //               >
+  //                 <Play className="text-white fill-white ml-1" size={20} />
+  //               </motion.div>
+  //             </motion.div>
+  //           )}
+  //         </div>
+          
+  //         {/* Overlay gradient */}
+  //         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 z-10" />
+  //       </div>
+  //     );
+  //   } else {
+  //     return (
+  //       <div className="relative overflow-hidden aspect-square w-full">
+  //         <img
+  //           src={product.images[0]}
+  //           alt={product.name}
+  //           loading="lazy"
+  //           decoding="async"
+  //           className={`w-full h-full object-cover transition-transform duration-300 ${
+  //             loaded ? 'opacity-100 hover:scale-105' : 'opacity-0'
+  //           }`}
+  //           onLoad={() => setLoaded(true)}
+  //         />
+  //         {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
+  //         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10" />
+  //       </div>
+  //     );
+  //   }
+  // };
+
   const renderProductMedia = () => {
-    if (product.instagramLink) {
-      return (
-        <div
-          className="relative overflow-hidden aspect-square w-full group"
-          onMouseEnter={handleHover}
-          onMouseLeave={handleLeave}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Fallback image */}
+    const hasSecondImage = product.images.length > 1;
+  
+    return (
+      <div
+        className="relative overflow-hidden aspect-square w-full group"
+        onMouseEnter={handleHover}
+        onMouseLeave={handleLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* First image */}
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          className={`w-full h-full object-cover transition-opacity duration-300 absolute inset-0 ${
+            isHovered && hasSecondImage ? 'opacity-0' : 'opacity-100'
+          }`}
+          onLoad={() => setLoaded(true)}
+        />
+  
+        {/* Second image (only if available) */}
+        {hasSecondImage && (
           <img
-            src={product.images[0]}
-            alt={product.name}
+            src={product.images[1]}
+            alt={`${product.name} - alternate`}
             loading="lazy"
             decoding="async"
             className={`w-full h-full object-cover transition-opacity duration-300 absolute inset-0 ${
-              isHovered ? 'opacity-0' : 'opacity-100'
+              isHovered ? 'opacity-100' : 'opacity-0'
             }`}
-            onLoad={() => setLoaded(true)}
           />
-          
-          {/* Video element with animated play button */}
-          <div className={`relative w-full h-full ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              src={product.instagramLink}
-              poster={product.images[0]}
-              preload="metadata"
-              muted
-              loop
-              playsInline
-            />
-            
-            {/* Animated play indicator that pulses when not hovered */}
-            {!isHovered && (
-              <motion.div 
-                className="absolute inset-0 flex items-center justify-center bg-black/20"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.div
-                  className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.8, 1, 0.8]
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <Play className="text-white fill-white ml-1" size={20} />
-                </motion.div>
-              </motion.div>
-            )}
-          </div>
-          
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 z-10" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="relative overflow-hidden aspect-square w-full">
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            loading="lazy"
-            decoding="async"
-            className={`w-full h-full object-cover transition-transform duration-300 ${
-              loaded ? 'opacity-100 hover:scale-105' : 'opacity-0'
-            }`}
-            onLoad={() => setLoaded(true)}
-          />
-          {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10" />
-        </div>
-      );
-    }
+        )}
+  
+        {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 z-10" />
+      </div>
+    );
   };
+  
 
   return (
     <motion.div

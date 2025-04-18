@@ -169,3 +169,14 @@ export interface PaginatedResponse<T> {
   limit: number;
   data: T[];
 }
+// Add or ensure the following export exists
+export interface CartItem {
+  _id: string;
+  name: string;
+  images: string[];
+  selectedBrand: string;
+  selectedModel: string;
+  description?: string;
+  quantity: number;
+  price: number;
+}
