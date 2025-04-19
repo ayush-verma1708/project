@@ -12,7 +12,7 @@ interface PaymentHandlerProps {
   validCouponId: string;
   validateForm: () => boolean;
   setErrors: (errors: any) => void;
-  onPaymentSuccess: (orderId: string) => void;
+  onPaymentSuccess: (paymentId: string) => void;
   onPaymentError: (errorMsg: string) => void;
 }
 
@@ -65,32 +65,6 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
     }
 
     try {
-      const orderData = {
-        user: {
-          firstName: shippingForm.firstName,
-          lastName: shippingForm.lastName,
-          email: shippingForm.email,
-          phone: shippingForm.phone,
-        },
-        products: state.items.map(item => ({
-          product: item._id,
-          quantity: item.quantity,
-          price: item.price,
-          extraInfo: {
-            model: item.selectedModel,
-            brand: item.selectedBrand,
-          },
-        })),
-        shippingInfo: shippingForm,
-        coupon: validCouponId || undefined,
-        subtotal: state.subtotal,
-        discount: discount * 100,
-        tax: tax,
-        total: total,
-        paymentMethod: 'Online',
-        paymentStatus: 'Pending',
-      };
-
       const razorpayOrder = await razorpayService.createOrder(Math.round(total), 'INR');
       console.log('Razorpay Order Response:', razorpayOrder);
       if (!razorpayOrder || !razorpayOrder.razorpayOrderId) {
@@ -101,9 +75,7 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
       }
 
       const options = {
-        // key: import.meta.env.RAZORPAY_KEY_ID,
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Mobiiwrap',
@@ -116,13 +88,42 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
             razorpayOrderId: response.razorpay_order_id,
             razorpaySignature: response.razorpay_signature,
           };
-          console.log('Payment data being sent for verification:', paymentData);
-          console.log('Order data being sent:', orderData);
+          
+          const orderDetails = {
+            user: {
+              firstName: shippingForm.firstName,
+              lastName: shippingForm.lastName,
+              email: shippingForm.email,
+              phone: shippingForm.phone,
+            },
+            products: state.items.map((item: any) => ({
+              product: item._id,
+              quantity: item.quantity,
+              price: item.price,
+              extraInfo: {
+                model: item.selectedModel,
+                brand: item.selectedBrand,
+              },
+            })),
+            shippingInfo: shippingForm,
+            coupon: validCouponId ? {
+              _id: validCouponId,
+              code: validCouponId,
+              discount: discount * 100
+            } : undefined,
+            subtotal: state.subtotal,
+            discount: discount * 100,
+            tax: tax,
+            total: total,
+            paymentMethod: 'Online',
+            paymentStatus: 'Completed',
+          };
+          
           try {
-            const verifyResponse = await razorpayService.verifyPayment(paymentData, orderData);
+            const verifyResponse = await razorpayService.verifyPayment(paymentData, orderDetails);
             console.log('Verification response:', verifyResponse);
             if (verifyResponse.success) {
-              console.log('Payment verification successful, orderId:', verifyResponse.orderId);
+              console.log('Payment verification successful');
               onPaymentSuccess(verifyResponse.orderId);
             } else {
               console.error('Payment verification failed:', verifyResponse);
@@ -161,7 +162,6 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
       });
 
       rzp.on('modal.closed', () => {
-        // If no payment was completed, treat it as a cancellation
         console.log("modal closed");
         setPaymentError('Payment cancelled. Please try again to complete your order.');
         onPaymentError('Payment cancelled.');
@@ -179,10 +179,6 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
         }
       }, 60000); // 60-second timeout
 
-      rzp.isPaymentCompleted = false; // Track payment completion
-      rzp.on('payment.success', () => {
-        rzp.isPaymentCompleted = true; // Mark as completed only on success
-      });
     } catch (error) {
       setPaymentError('An error occurred during checkout. Please try again.');
       onPaymentError('Checkout error.');
@@ -210,7 +206,7 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
         </div>
         {discount > 0 && (
           <div className="flex justify-between text-sm text-green-600">
-            <span>Savings</span>
+            <span>Discount</span>
             <span>-₹{(state.subtotal * discount).toFixed(2)}</span>
           </div>
         )}
@@ -218,24 +214,21 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
           <span>Tax</span>
           <span>₹{tax.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-lg font-semibold mt-2">
+        <div className="border-t border-gray-200 my-2"></div>
+        <div className="flex justify-between font-medium">
           <span>Total</span>
           <span>₹{total.toFixed(2)}</span>
         </div>
       </div>
-      <motion.button
+      <button
         onClick={handleOrderSubmission}
-        className={`w-full mt-4 bg-indigo-600 text-white py-3 rounded-lg flex items-center justify-center ${
-          isProcessing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'
-        }`}
         disabled={isProcessing}
-        whileHover={{ scale: isProcessing ? 1 : 1.02 }}
-        whileTap={{ scale: isProcessing ? 1 : 0.98 }}
+        className={`mt-6 w-full py-3 px-4 rounded-md text-white font-medium transition-colors ${
+          isProcessing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+        }`}
       >
-        {isProcessing ? 'Processing...' : `Pay ₹${total.toFixed(2)} Now`}
-      </motion.button>
-        {isProcessing ? 'Reload the page is payment not done' : ``}
-      <p className="text-xs text-gray-500 mt-2 text-center">Secured by Razorpay</p>
+        {isProcessing ? 'Processing...' : 'Pay Now'}
+      </button>
     </motion.div>
   );
 };

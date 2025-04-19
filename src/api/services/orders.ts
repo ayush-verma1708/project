@@ -12,7 +12,7 @@ export const orderService = {
     return data;
   },
 
-  create: async (order: Omit<Order, 'id' | 'createdAt'>) => {
+  create: async (order: Omit<Order, '_id' | 'createdAt'>) => {
     const { data } = await apiClient.post<Order>('/orders', order);
     return data;
   },

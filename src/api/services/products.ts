@@ -152,7 +152,12 @@ export const productService = {
   getNewArrivals: async () => {
     try {
       const { data } = await apiClient.get<Product[]>('/products/new-arrivals');
-      return data;
+      return {
+        products: data,
+        total: data.length,
+        totalPages: 1,
+        currentPage: 1
+      };
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
       throw new Error("Failed to fetch new arrivals");
@@ -163,7 +168,12 @@ export const productService = {
   getTrendingProducts: async () => {
     try {
       const { data } = await apiClient.get<Product[]>('/products/trending');
-      return data;
+      return {
+        products: data,
+        total: data.length,
+        totalPages: 1,
+        currentPage: 1
+      };
     } catch (error) {
       console.error("Error fetching trending products:", error);
       throw new Error("Failed to fetch trending products");

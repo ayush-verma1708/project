@@ -1,9 +1,8 @@
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { orderService } from '../../api/services/orders';
 import { Order } from '../../api/types';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 export default function OrderConfirmationPage() {
   const { orderId } = useParams();

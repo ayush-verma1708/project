@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Check, Truck, RotateCcw, Shield } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import PhoneSelector from '../../components/variantSelection/PhoneSelectorProps';
@@ -17,7 +17,7 @@ export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
   const cartButtonRef = useRef<any>(null);
   const { id } = useParams(); // Get the product ID from the URL
-  const { productName } = useParams(); // Get the product ID from the URL
+  const navigate = useNavigate();
   const { addItem } = useCart(); // Destructure addItem from useCart
   const [product, setProduct] = useState<any>(null); // State to store the product
   const [loading, setLoading] = useState(true); // Loading state
@@ -25,24 +25,28 @@ export default function ProductsDetail() {
   const [selectedPhone, setSelectedPhone] = useState({ brand: '', model: '' });
   const [errorMessage, setErrorMessage] = useState(""); // State for error toast
 
-
-
   // Fetch product details using getById
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const fetchedProduct = await productService.getByName(productName!);
+        if (!id) {
+          setError('Product ID is required');
+          setLoading(false);
+          return;
+        }
+        const fetchedProduct = await productService.getById(id);
         console.log("Fetched Product:", fetchedProduct);
-        setProduct(fetchedProduct); // ✅ Expecting an object, not an array
+        setProduct(fetchedProduct);
         setLoading(false);
       } catch (err) {
         setError('Product not found!');
         setLoading(false);
+        navigate('/not-found');
       }
     };
   
-    if (productName) fetchProduct();
-  }, [productName]); // ✅ Re-fetch when productName changes
+    fetchProduct();
+  }, [id, navigate]);
   
   // If loading, show a loading spinner
   if (loading) {

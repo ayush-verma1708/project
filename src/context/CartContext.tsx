@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import type { CartItem, Product } from '../types/types';
 
 interface CartState {
@@ -10,18 +10,20 @@ interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: Product & { color?: string; selectedBrand?: string; selectedModel?: string } }
-  | { type: 'REMOVE_ITEM'; payload: { id: string; selectedBrand: string; selectedModel: string } }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number; selectedBrand: string; selectedModel: string } }
+  | { type: 'ADD_ITEM'; payload: Product & { selectedBrand: string; selectedModel: string } }
+  | { type: 'REMOVE_ITEM'; payload: { _id: string; selectedBrand: string; selectedModel: string } }
+  | { type: 'UPDATE_QUANTITY'; payload: { _id: string; quantity: number; selectedBrand: string; selectedModel: string } }
   | { type: 'CLEAR_CART' }
   | { type: 'LOAD_CART'; payload: CartState };
 
 interface CartContextType {
   state: CartState;
-  addItem: (product: Product & { color?: string; selectedBrand?: string; selectedModel?: string }) => void;
+  addItem: (product: Product & { selectedBrand: string; selectedModel: string }) => void;
   removeItem: (id: string, selectedBrand: string, selectedModel: string) => void;
   updateQuantity: (id: string, quantity: number, selectedBrand: string, selectedModel: string) => void;
   clearCart: () => void;
+  getTotalItems: () => number;
+  getTotalPrice: () => number;
 }
 
 const TAX_RATE = 0.08; // 8% tax rate
@@ -48,7 +50,7 @@ const calculateTotals = (items: CartItem[]) => {
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const { id, selectedBrand, selectedModel, color } = action.payload;
+      const { _id, selectedBrand, selectedModel } = action.payload;
       
       // Ensure items is an array
       if (!state.items) {
@@ -57,11 +59,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       
       const existingItemIndex = state.items.findIndex(
         (item) =>
-          item.id === id &&
+          item._id === _id &&
           item.selectedBrand === selectedBrand &&
           item.selectedModel === selectedModel 
-          // &&
-          // item.color === color
       );
       
       let newItems;
@@ -85,9 +85,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     
     case 'REMOVE_ITEM': {
-      const { id, selectedBrand, selectedModel } = action.payload;
+      const { _id, selectedBrand, selectedModel } = action.payload;
       const newItems = state.items.filter(
-        item => !(item._id === id && item.selectedBrand === selectedBrand && item.selectedModel === selectedModel)
+        item => !(item._id === _id && item.selectedBrand === selectedBrand && item.selectedModel === selectedModel)
       );
       return {
         ...state,
@@ -97,9 +97,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case 'UPDATE_QUANTITY': {
-      const { id, quantity, selectedBrand, selectedModel } = action.payload;
+      const { _id, quantity, selectedBrand, selectedModel } = action.payload;
       const newItems = state.items.map(item =>
-        item._id === id && item.selectedBrand === selectedBrand && item.selectedModel === selectedModel
+        item._id === _id && item.selectedBrand === selectedBrand && item.selectedModel === selectedModel
           ? { ...item, quantity: Math.max(1, quantity) } // Prevent 0 quantity
           : item
       );
@@ -123,48 +123,83 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   useEffect(() => {
     // Load cart from localStorage on mount
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
-      dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        // Validate the loaded cart data
+        if (parsedCart.items && Array.isArray(parsedCart.items)) {
+          // Check if cart is older than 24 hours
+          const cartTimestamp = localStorage.getItem('cart_timestamp');
+          if (cartTimestamp) {
+            const cartAge = Date.now() - parseInt(cartTimestamp);
+            if (cartAge > 24 * 60 * 60 * 1000) { // 24 hours in milliseconds
+              localStorage.removeItem('cart');
+              localStorage.removeItem('cart_timestamp');
+              return;
+            }
+          }
+          dispatch({ type: 'LOAD_CART', payload: parsedCart });
+        } else {
+          localStorage.removeItem('cart');
+          localStorage.removeItem('cart_timestamp');
+        }
+      } catch (error) {
+        console.error('Error loading cart from localStorage:', error);
+        localStorage.removeItem('cart');
+        localStorage.removeItem('cart_timestamp');
+      }
     }
   }, []);
   
   useEffect(() => {
+    // Only save to localStorage if there are items
     if (state.items.length > 0) {
-      // Save the entire cart state (items, subtotal, tax, etc.) to localStorage whenever state.items changes
-      localStorage.setItem('cart', JSON.stringify({
-        items: state.items,
-        subtotal: state.subtotal,
-        tax: state.tax,
-        total: state.total,
-        itemCount: state.itemCount,
-      }));
+      try {
+        localStorage.setItem('cart', JSON.stringify({
+          items: state.items,
+          subtotal: state.subtotal,
+          tax: state.tax,
+          total: state.total,
+          itemCount: state.itemCount,
+        }));
+        localStorage.setItem('cart_timestamp', Date.now().toString());
+      } catch (error) {
+        console.error('Error saving cart to localStorage:', error);
+      }
     } else {
-      // If the cart is empty, remove it from localStorage
       localStorage.removeItem('cart');
+      localStorage.removeItem('cart_timestamp');
     }
-  }, [state.items, state.subtotal, state.tax, state.total, state.itemCount]); // Watch for any cart state changes
+  }, [state.items]); // Only watch for items changes
 
-  const addItem = (product: Product & { color?: string; selectedBrand?: string; selectedModel?: string }) => {
+  const addItem = (product: Product & { selectedBrand: string; selectedModel: string }) => {
     dispatch({ type: 'ADD_ITEM', payload: product });
   };
 
-  const removeItem = (id: string, selectedBrand: string, selectedModel: string) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: { id, selectedBrand, selectedModel } });
+  const removeItem = (_id: string, selectedBrand: string, selectedModel: string) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { _id, selectedBrand, selectedModel } });
   };
 
-  const updateQuantity = (id: string, quantity: number, selectedBrand: string, selectedModel: string) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity, selectedBrand, selectedModel } });
+  const updateQuantity = (_id: string, quantity: number, selectedBrand: string, selectedModel: string) => {
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { _id, quantity, selectedBrand, selectedModel } });
   };
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
   };
 
+  const getTotalItems = () => {
+    return state.items.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const getTotalPrice = () => {
+    return state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   return (
     <CartContext.Provider
@@ -174,6 +209,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeItem,
         updateQuantity,
         clearCart,
+        getTotalItems,
+        getTotalPrice,
       }}
     >
       {children}

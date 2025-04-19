@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { productService } from "../../api/index.ts";
 import PromoBanner from "../../components2/banners/PromoBanner.tsx";
@@ -20,13 +20,13 @@ import PopupBanner from "../../components2/banners/PopupBanner.tsx";
 import InstagramFeed from "../../components/Social/InstagramFeed.tsx";
 
 export default function Home() {
-  const { data: newArrivals = [], isLoading: isLoadingNewArrivals } = useQuery({
+  const { data: newArrivals = { products: [] }, isLoading: isLoadingNewArrivals } = useQuery({
     queryKey: ['newArrivals'],
     queryFn: () => productService.getNewArrivals(),
     refetchOnWindowFocus: false,
   });
 
-  const { data: trendingProducts = [], isLoading: isLoadingTrending } = useQuery({
+  const { data: trendingProducts = { products: [] }, isLoading: isLoadingTrending } = useQuery({
     queryKey: ['trendingProducts'],
     queryFn: () => productService.getTrendingProducts(),
     refetchOnWindowFocus: false,
@@ -51,6 +51,8 @@ export default function Home() {
   ]);
 
   const [showBackToTop, setShowBackToTop] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -241,12 +243,13 @@ export default function Home() {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {newArrivals.map((product) => (
-                   <ProductCard 
-                                                product={product} 
-                                                
-                                              />
-                 
+                {newArrivals.products.map((product) => (
+                  <ProductCard 
+                    key={product._id}
+                    product={product}
+                    onAddToCart={() => navigate(`/product/${product._id}`)}
+                    onViewDetails={() => navigate(`/product/${product._id}`)}
+                  />
                 ))}
               </div>
             )}
@@ -264,17 +267,17 @@ export default function Home() {
             </div>
             
             <div className="space-y-6">
-              {trendingProducts.map((product) => (
+              {trendingProducts.products.map((product) => (
                 <TrendingProductCard 
                   key={product._id} 
                   product={product} 
                   onAddToCart={() => {
                     // Add to cart logic would go here
-                    window.location.to = `/product/${product._id}`;
+                    navigate(`/product/${product._id}`);
                   }}
                   onViewDetails={() => {
                     // View details logic
-                    window.location.to = `/product/${product._id}`;
+                    navigate(`/product/${product._id}`);
                   }}
                 />
               ))}

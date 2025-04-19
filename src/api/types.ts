@@ -27,9 +27,14 @@ export interface Customer {
   totalSpent: number;
 }
 
+export interface ProductType {
+  _id: string;
+  name: string;
+}
+
 export interface Product {
   _id: string;
-  productType: string;
+  productType: ProductType;
   name: string;
   description: string;
   price: number;
@@ -40,6 +45,7 @@ export interface Product {
   rating: number;
   popularityScore: number;
   createdAt: string;
+  instagramLink?: string;
 }
 
 export interface ProductVariant {
@@ -47,16 +53,6 @@ export interface ProductVariant {
   size: string;
   additionalPrice: number;
 }
-
-// export interface Order {
-//   id: string;
-//   customer: string;
-//   items: OrderItem[];
-//   totalAmount: number;
-//   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-//   shippingAddress: string;
-//   createdAt: string;
-// }
 
 export interface OrderItem {
   product: string;
@@ -87,7 +83,6 @@ export interface Settings {
   supportEmail: string;
 }
 
-
 export interface Tag {
   _id: string;
   name: string;
@@ -114,9 +109,6 @@ export interface SubscriptionData {
   email: string;
   subscribe?: boolean;
 }
-
-
-
 
 export interface User {
   firstName: string;
@@ -169,7 +161,7 @@ export interface PaginatedResponse<T> {
   limit: number;
   data: T[];
 }
-// Add or ensure the following export exists
+
 export interface CartItem {
   _id: string;
   name: string;

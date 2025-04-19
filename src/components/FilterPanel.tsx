@@ -23,7 +23,15 @@ export interface FilterPanelProps {
   activeFiltersCount?: number;
 }
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({
+type ExpandedSections = {
+  categories: boolean;
+  price: boolean;
+  tags: boolean;
+  ratings: boolean;
+  popularity: boolean;
+};
+
+export default function FilterPanel({
   categories,
   selectedCategories,
   handleCategoryChange,
@@ -41,19 +49,22 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   handlePopularityChange,
   resetFilters,
   activeFiltersCount = 0
-}) => {
-  const [expandedSections, setExpandedSections] = useState({
-    categories: true,
-    price: true,
-    popularity: false,
+}: FilterPanelProps) {
+  const [isPriceOpen, setIsPriceOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isTagOpen, setIsTagOpen] = useState(false);
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [isPopularityOpen, setIsPopularityOpen] = useState(false);
+  const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
+    categories: false,
+    price: false,
+    tags: false,
     ratings: false,
-    tags: true
+    popularity: false
   });
-  
-  // For mobile filter panel
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
+  const toggleSection = (section: keyof ExpandedSections) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
@@ -68,7 +79,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     badge,
   }: { 
     title: string; 
-    section: keyof typeof expandedSections; 
+    section: keyof ExpandedSections; 
     children: React.ReactNode;
     badge?: number;
   }) => (
@@ -257,7 +268,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const mobileFilterButton = (
     <div className="md:hidden fixed bottom-20 right-4 z-40">
       <button
-        onClick={() => setIsMobileFilterOpen(true)}
+        onClick={() => setIsMobilePanelOpen(true)}
         className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-12 h-12 rounded-full shadow-lg"
       >
         <SlidersHorizontal size={20} />
@@ -282,7 +293,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
       {/* Mobile filter panel (slide-in from right) */}
       <AnimatePresence>
-        {isMobileFilterOpen && (
+        {isMobilePanelOpen && (
           <>
             {/* Backdrop */}
             <motion.div
@@ -290,7 +301,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-              onClick={() => setIsMobileFilterOpen(false)}
+              onClick={() => setIsMobilePanelOpen(false)}
             />
 
             {/* Slide-in panel */}
@@ -305,7 +316,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-medium">Filters</h3>
                   <button
-                    onClick={() => setIsMobileFilterOpen(false)}
+                    onClick={() => setIsMobilePanelOpen(false)}
                     className="p-1 rounded-full hover:bg-gray-100"
                   >
                     <X size={20} />
@@ -321,14 +332,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     <button
                       onClick={() => {
                         resetFilters();
-                        setIsMobileFilterOpen(false);
+                        setIsMobilePanelOpen(false);
                       }}
                       className="flex-1 py-2 border border-gray-300 rounded-md text-gray-700 font-medium"
                     >
                       Reset
                     </button>
                     <button
-                      onClick={() => setIsMobileFilterOpen(false)}
+                      onClick={() => setIsMobilePanelOpen(false)}
                       className="flex-1 py-2 bg-blue-600 text-white rounded-md font-medium"
                     >
                       Apply Filters
@@ -342,4 +353,4 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       </AnimatePresence>
     </>
   );
-};
+}

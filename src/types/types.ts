@@ -1,12 +1,22 @@
+export interface ProductType {
+  _id: string;
+  name: string;
+}
+
 export interface Product {
-  id: string;
-  productType: string;
+  _id: string;
   name: string;
   description: string;
   price: number;
-  category: string;
-  tags: string[];
   images: string[];
+  category: string;
+  productType: ProductType;
+  brand?: string;
+  model?: string;
+  quantity?: number;
+  selectedBrand?: string;
+  selectedModel?: string;
+  tags: string[];
   stock: number;
   rating: number;
   popularityScore: number;

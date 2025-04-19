@@ -4,35 +4,47 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductCard } from '../../components/ProductCard';
 import { productService } from '../../api';
 import debounce from 'lodash/debounce';
-import {  useLocation } from 'wouter';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { productCategories } from '../../constants/productCategories';
-import { FilterPanel } from '../../components/FilterPanel';
+import FilterPanel from '../../components/FilterPanel';
 import { Product } from '../../types/types';
+import { useSearchParams } from 'react-router-dom';
 
 export default function ProductListing() {
-  const [location, navigate] = useLocation();
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [hasProducts, setHasProducts] = useState<boolean | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get category from path parameter instead of query parameter
+  const categoryParam = location.pathname.split('/').pop() || 'mobile-skins';
+  
+  // Parse URL parameters with defaults
+  const pageParam = parseInt(searchParams.get('page') || '1');
+  const searchQueryParam = searchParams.get('search') || '';
+  const sortParam = searchParams.get('sort') || 'Newest';
+  const minPriceParam = parseInt(searchParams.get('minPrice') || '0');
+  const maxPriceParam = parseInt(searchParams.get('maxPrice') || '2000');
+  const ratingParam = searchParams.get('rating') ? parseInt(searchParams.get('rating')!) : null;
+  const popularityParam = searchParams.get('popularity') || 'all';
+  const viewModeParam = searchParams.get('view') || 'grid';
 
-  // Parse URL to get category
-  const categoryParam = location.split('/')[2]; // Assuming URL is /products/category
-  const categoryName = categoryParam || 'electronics'; // Default to electronics if no category
-
-  // Initialize state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Initialize state from URL params
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const [searchQuery, setSearchQuery] = useState(searchQueryParam);
+  const [sortBy, setSortBy] = useState(sortParam);
+  const [selectedRating, setSelectedRating] = useState<number | null>(ratingParam);
+  const [priceRange, setPriceRange] = useState({ min: minPriceParam, max: maxPriceParam });
+  const [currentPriceRange, setCurrentPriceRange] = useState({
+    min: minPriceParam,
+    max: maxPriceParam
+  });
+  const [popularityFilter, setPopularityFilter] = useState<'all' | 'popular' | 'trending'>(popularityParam as 'all' | 'popular' | 'trending');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(viewModeParam as 'grid' | 'list');
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['All']);
   const [selectedTags, setSelectedTags] = useState<string[]>(['All']);
-  const [sortBy, setSortBy] = useState('Newest');
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 2000 });
-  const [currentPriceRange, setCurrentPriceRange] = useState({
-    min: 0,
-    max: 2000
-  });
-  const [popularityFilter, setPopularityFilter] = useState<'all' | 'popular' | 'trending'>('all');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [hasProducts, setHasProducts] = useState<boolean | null>(null);
   const [comingSoonState, setComingSoonState] = useState({
     message: '',
     isComingSoon: false,
@@ -46,14 +58,14 @@ export default function ProductListing() {
   
   // Ensure this runs after we have a category
   useEffect(() => {
-    if (!categoryName || !productCategories[categoryName]) {
+    if (!categoryParam || !productCategories[categoryParam]) {
       navigate('/not-found');
       return;
     }
-  }, [categoryName, navigate]);
+  }, [categoryParam, navigate]);
   
   // Get category config
-  const categoryConfig = productCategories[categoryName] || productCategories.electronics;
+  const categoryConfig = productCategories[categoryParam] || productCategories.electronics;
   const { title, description, filters } = categoryConfig;
   const { categories, tags, sortOptions } = filters;
   
@@ -85,7 +97,7 @@ export default function ProductListing() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [
       'products',
-      categoryName,
+      categoryParam,
       currentPage,
       searchQuery,
       selectedCategories,
@@ -98,6 +110,14 @@ export default function ProductListing() {
     ],
     queryFn: async () => {
       try {
+        // Handle special categories
+        if (categoryParam === 'new-arrivals') {
+          return await productService.getNewArrivals();
+        }
+        if (categoryParam === 'trending') {
+          return await productService.getTrendingProducts();
+        }
+
         // Check if we have any filters applied
         const hasActiveFilters = 
           searchQuery !== '' || 
@@ -108,16 +128,12 @@ export default function ProductListing() {
           currentPriceRange.min !== priceRange.min ||
           currentPriceRange.max !== priceRange.max;
         
-        const result = await productService.getProductsByType(categoryName, {
+        const result = await productService.getProductsByType(categoryParam, {
           page: currentPage,
           search: searchQuery,
           categories: selectedCategories.includes('All') ? [] : selectedCategories,
           tags: selectedTags.includes('All') ? [] : selectedTags,
           sort: sortBy,
-          rating: selectedRating,
-          minPrice: currentPriceRange.min,
-          maxPrice: currentPriceRange.max,
-          popularity: popularityFilter !== 'all' ? popularityFilter : undefined,
           limit: productsPerPage,
         });
         
@@ -134,7 +150,7 @@ export default function ProductListing() {
           } else {
             // We have filters, so we need to check if category has any products without filters
             try {
-              const unfilteredCheck = await productService.getProductsByType(categoryName, {
+              const unfilteredCheck = await productService.getProductsByType(categoryParam, {
                 page: 1,
                 limit: 1
               });
@@ -175,7 +191,7 @@ export default function ProductListing() {
         throw err;
       }
     },
-    enabled: !!categoryName,
+    enabled: !!categoryParam,
     staleTime: 60000, // 1 minute before refetch
   });
 
@@ -388,6 +404,32 @@ export default function ProductListing() {
       });
     }
   }, [isLoading]);
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set('category', categoryParam);
+    params.set('page', currentPage.toString());
+    if (searchQuery) params.set('search', searchQuery);
+    if (sortBy !== 'Newest') params.set('sort', sortBy);
+    if (currentPriceRange.min > 0) params.set('minPrice', currentPriceRange.min.toString());
+    if (currentPriceRange.max < 2000) params.set('maxPrice', currentPriceRange.max.toString());
+    if (selectedRating) params.set('rating', selectedRating.toString());
+    if (popularityFilter !== 'all') params.set('popularity', popularityFilter);
+    if (viewMode !== 'grid') params.set('view', viewMode);
+    
+    setSearchParams(params);
+  }, [
+    categoryParam,
+    currentPage,
+    searchQuery,
+    sortBy,
+    currentPriceRange,
+    selectedRating,
+    popularityFilter,
+    viewMode,
+    setSearchParams
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

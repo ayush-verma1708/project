@@ -1,25 +1,40 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, ChevronDown } from 'lucide-react';
-import { CartButton } from './CartButton';
+import { Search, Menu, X, ChevronDown, ShoppingCart } from 'lucide-react';
+import { CartButton } from './Cart/CartButton';
 import { SearchModal } from './Search/SearchModal.tsx';
 import MobileNavigation from '../layout/MobileNavigation.tsx';
+import { productCategories } from '../constants/productCategories';
+
+interface Category {
+  title: string;
+  description: string;
+  available: boolean;
+  filters: {
+    categories: string[];
+    tags: string[];
+    sortOptions: string[];
+  };
+}
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [scrolled, setScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isHoveringShop, setIsHoveringShop] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const shopDropdownRef = useRef(null);
   const shopButtonRef = useRef(null);
+  const navigate = useNavigate();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 0);
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -84,7 +99,7 @@ export function Navigation() {
     };
   }, [isShopOpen]);
 
-  const toggleDropdown = (dropdown) => {
+  const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
   
@@ -100,6 +115,15 @@ export function Navigation() {
   
   const isShopDropdownVisible = isShopOpen || isHoveringShop;
   
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
   return (
     <>
       {/* Desktop Navigation - Hidden on Mobile */}
@@ -166,26 +190,19 @@ export function Navigation() {
                       }}
                     >
                       <div className="py-2">
-                        <Link 
-                          to="/category/mobile-skins" 
-                          className="block px-4 py-2 text-sm hover:bg-gray-50 hover:text-orange-500"
-                          onClick={() => {
-                            setIsShopOpen(false);
-                            setIsHoveringShop(false);
-                          }}
-                        >
-                          Mobile Skins
-                        </Link>
-                        <Link 
-                          to="/category/laptop-skins" 
-                          className="block px-4 py-2 text-sm hover:bg-gray-50 hover:text-orange-500"
-                          onClick={() => {
-                            setIsShopOpen(false);
-                            setIsHoveringShop(false);
-                          }}
-                        >
-                          Laptop Skins
-                        </Link>
+                        {Object.entries(productCategories).map(([key, category]) => (
+                          <Link
+                            key={key}
+                            to={`/category/${key}`}
+                            className="block px-4 py-2 text-sm hover:bg-gray-50 hover:text-orange-500"
+                            onClick={() => {
+                              setIsShopOpen(false);
+                              setIsHoveringShop(false);
+                            }}
+                          >
+                            {category.title}
+                          </Link>
+                        ))}
                       </div>
                     </motion.div>
                   )}
@@ -305,20 +322,16 @@ export function Navigation() {
                       transition={{ duration: 0.2 }}
                       className="pl-4 space-y-4 border-l-2 border-orange-500"
                     >
-                      <Link 
-                        to="/category/mobile-skins" 
-                        className="block hover:text-orange-500 transition-colors py-1"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Mobile Skins
-                      </Link>
-                      <Link 
-                        to="/category/laptop-skins" 
-                        className="block hover:text-orange-500 transition-colors py-1"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Laptop Skins
-                      </Link>
+                      {Object.entries(productCategories).map(([key, category]) => (
+                        <Link 
+                          key={key}
+                          to={`/category/${key}`}
+                          className="block hover:text-orange-500 transition-colors py-1"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {category.title}
+                        </Link>
+                      ))}
                     </motion.div>
                   )}
                 </div>
@@ -385,6 +398,41 @@ export function Navigation() {
         isOpen={isSearchOpen} 
         onClose={() => setIsSearchOpen(false)} 
       />
+
+      {/* Search Overlay */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsSearchOpen(false)}
+          >
+            <div 
+              className="max-w-3xl mx-auto mt-20 px-4"
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              <form onSubmit={handleSearch} className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full px-4 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
