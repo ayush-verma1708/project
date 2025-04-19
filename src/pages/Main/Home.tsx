@@ -20,19 +20,39 @@ import PopupBanner from "../../components2/banners/PopupBanner.tsx";
 import InstagramFeed from "../../components/Social/InstagramFeed.tsx";
 
 export default function Home() {
-  const { data: products = [], isLoading, isError, error } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => productService.getAll(),
-    refetchOnWindowFocus: true,
+  const { data: newArrivals = [], isLoading: isLoadingNewArrivals } = useQuery({
+    queryKey: ['newArrivals'],
+    queryFn: () => productService.getNewArrivals(),
+    refetchOnWindowFocus: false,
   });
 
-  const [newArrivals, setNewArrivals] = useState([]);
-  const [trendingProducts, setTrendingProducts] = useState([]);
-  const [featuredCollections, setFeaturedCollections] = useState([]);
+  const { data: trendingProducts = [], isLoading: isLoadingTrending } = useQuery({
+    queryKey: ['trendingProducts'],
+    queryFn: () => productService.getTrendingProducts(),
+    refetchOnWindowFocus: false,
+  });
+
+  const [featuredCollections] = useState([
+    { 
+      name: "Summer Collection", 
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cmrixhrt1ve4yqu7oelv.jpg", 
+      link: "/category/mobile-skins" 
+    },
+    { 
+      name: "Premium Selection", 
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cqculgftifbvlqoqihev.jpg", 
+      link: "/category/mobile-skins" 
+    },
+    { 
+      name: "Limited Editions", 
+      image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193207/Mobiiwrap%20pictures/Transparent%20skin/wd5mjtvxhxn2tnvwvbnt.jpg", 
+      link: "/category/mobile-skins" 
+    }
+  ]);
+
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
-    // Handle back to top button visibility
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 300);
     };
@@ -40,37 +60,6 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    if (Array.isArray(products) && products.length > 0) {
-      // Sort by creation date for new arrivals
-      const sortedByNew = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setNewArrivals(sortedByNew.slice(0, 8));
-      
-      // Set trending products (could be based on views or sales in a real app)
-      setTrendingProducts(sortedByNew.slice(0, 2));
-      
-      // Featured collections (group by category or type)
-      const collections = [
-        { 
-          name: "Summer Collection", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cmrixhrt1ve4yqu7oelv.jpg", 
-          link: "/category/mobile-skins" 
-        },
-        { 
-          name: "Premium Selection", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cqculgftifbvlqoqihev.jpg", 
-          link: "/category/mobile-skins" 
-        },
-        { 
-          name: "Limited Editions", 
-          image: "https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193207/Mobiiwrap%20pictures/Transparent%20skin/wd5mjtvxhxn2tnvwvbnt.jpg", 
-          link: "/category/mobile-skins" 
-        }
-      ];
-      setFeaturedCollections(collections);
-    }
-  }, [products]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -244,15 +233,11 @@ export default function Home() {
               </Link>
             </div>
             
-            {isLoading ? (
+            {isLoadingNewArrivals ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {[...Array(8)].map((_, i) => (
                   <div key={i} className="bg-gray-100 rounded-lg h-80 animate-pulse"></div>
                 ))}
-              </div>
-            ) : isError ? (
-              <div className="text-center p-8 bg-red-50 rounded-lg">
-                <p className="text-red-500">Error loading products. Please try again later.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -312,14 +297,14 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <TestimonialCard 
                 rating={5}
-                content="Mobiiwrap’s skins are a game changer! My phone looks sleek and stylish with the custom designs, and the quality is top-notch. Highly recommend!"
+                content="Mobiiwrap's skins are a game changer! My phone looks sleek and stylish with the custom designs, and the quality is top-notch. Highly recommend!"
                 name="Rahul Sharma"
                 location="Mumbai, India"
                 // avatar="https://randomuser.me/api/portraits/men/32.jpg"
               />
               <TestimonialCard 
                 rating={4.5}
-                content="I’m amazed at the precision of the wrap. It fits perfectly and the material feels luxurious. The design options are fantastic too!"
+                content="I'm amazed at the precision of the wrap. It fits perfectly and the material feels luxurious. The design options are fantastic too!"
                 name="Priya Patel"
                 location="Bangalore, India"
                 // avatar="https://randomuser.me/api/portraits/women/44.jpg"
