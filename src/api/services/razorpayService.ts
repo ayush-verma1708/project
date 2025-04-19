@@ -4,17 +4,20 @@ export const razorpayService = {
   // Step 1: Create Razorpay order by calling the backend
   createOrder: async (amount: number, currency = 'INR') => {
     try {
+      console.log('Creating Razorpay order with:', { amount, currency });
       const { data } = await apiClient.post('/payments/create-order', { amount, currency });
+      console.log('Razorpay order created:', data);
       return data;
-    } catch (error) {
-      console.error('Error creating Razorpay order:', error);
-      throw new Error('Failed to create Razorpay order. Please try again.');
+    } catch (error: any) {
+      console.error('Error creating Razorpay order:', error?.response?.data || error);
+      throw new Error(error?.response?.data?.message || 'Failed to create Razorpay order. Please try again.');
     }
   },
 
   // Step 2: Verify payment after Razorpay callback
   verifyPayment: async (paymentData: any, orderDetails: any) => {
     try {
+      console.log('Verifying payment with data:', { paymentData });
       // Create a new object to avoid circular references
       const sanitizedOrderDetails = {
         user: orderDetails.user,
@@ -28,26 +31,19 @@ export const razorpayService = {
         paymentMethod: orderDetails.paymentMethod,
         paymentStatus: orderDetails.paymentStatus,
       };
-
-      // const { data } = await apiClient.post('/payments/verify-payment', {
-      //   ...paymentData,
-      //   orderDetails: sanitizedOrderDetails,
-      // });
-      // const { data } = await apiClient.post('/payments/verify-payment', {
-      //   ...paymentData,
-      //   orderDetails: sanitizedOrderDetails,
-      // });
+      console.log('Sanitized order details:', sanitizedOrderDetails);
 
       const { data } = await apiClient.post('/payments/verify-payment', {
-        razorpayPaymentId: paymentData.razorpayPaymentId,    // Use camelCase
-        razorpayOrderId: paymentData.razorpayOrderId,        // Use camelCase
-        razorpaySignature: paymentData.razorpaySignature,    // Use camelCase
+        razorpayPaymentId: paymentData.razorpayPaymentId,
+        razorpayOrderId: paymentData.razorpayOrderId,
+        razorpaySignature: paymentData.razorpaySignature,
         orderDetails: sanitizedOrderDetails,
       });
+      console.log('Payment verification response:', data);
       return data;
-    } catch (error) {
-      console.error('Payment verification error:', error);
-      throw new Error('Payment verification failed. Please contact support.');
+    } catch (error: any) {
+      console.error('Payment verification error:', error?.response?.data || error);
+      throw new Error(error?.response?.data?.message || 'Payment verification failed. Please contact support.');
     }
   },
 };

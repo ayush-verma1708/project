@@ -101,28 +101,37 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
       }
 
       const options = {
-        key: import.meta.env.RAZORPAY_KEY_ID,
+        // key: import.meta.env.RAZORPAY_KEY_ID,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Mobiiwrap',
         description: 'Order Payment',
         order_id: razorpayOrder.razorpayOrderId,
         handler: async (response: any) => {
+          console.log('Razorpay payment response:', response);
           const paymentData = {
-            razorpayPaymentId: response.razorpay_payment_id,  // Convert to camelCase
-            razorpayOrderId: response.razorpay_order_id,      // Convert to camelCase
-            razorpaySignature: response.razorpay_signature,   // Convert to camelCase
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
           };
+          console.log('Payment data being sent for verification:', paymentData);
+          console.log('Order data being sent:', orderData);
           try {
             const verifyResponse = await razorpayService.verifyPayment(paymentData, orderData);
+            console.log('Verification response:', verifyResponse);
             if (verifyResponse.success) {
-              onPaymentSuccess(razorpayOrder.paymentData.razorpayOrderId); // Only call on verified success
+              console.log('Payment verification successful, orderId:', verifyResponse.orderId);
+              onPaymentSuccess(verifyResponse.orderId);
             } else {
+              console.error('Payment verification failed:', verifyResponse);
               setPaymentError('Payment verification failed. Contact support if charged.');
               onPaymentError('Payment verification failed.');
             }
-          } catch (error) {
-            setPaymentError('Payment verification error. Contact support if charged.');
+          } catch (error: any) {
+            console.error('Payment verification error details:', error?.response?.data || error);
+            setPaymentError(error?.response?.data?.message || error.message || 'Payment verification error. Contact support if charged.');
             onPaymentError('Payment verification error.');
           }
           setIsProcessing(false);

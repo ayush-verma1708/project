@@ -40,6 +40,7 @@ export default function ProductListing() {
   });
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [showPopup, setShowPopup] = useState<Record<string, boolean>>({});
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   const productsPerPage = 12;
   
@@ -346,6 +347,48 @@ export default function ProductListing() {
     (popularityFilter !== 'all' ? 1 : 0) +
     ((currentPriceRange.min !== priceRange.min || currentPriceRange.max !== priceRange.max) ? 1 : 0);
 
+  const handlePageChange = (newPage: number) => {
+    // First scroll to the product grid
+    if (productGridRef.current) {
+      productGridRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    
+    // Then update the page
+    setCurrentPage(newPage);
+  };
+
+  // Add this useEffect to handle the back to top button visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Add this function to handle scrolling to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  const productGridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isLoading && productGridRef.current) {
+      productGridRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }, [isLoading]);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       {/* Header Banner */}
@@ -587,10 +630,12 @@ export default function ProductListing() {
             ) : data?.products && data.products.length > 0 ? (
               // Products grid or list
               <>
-                <div className={`
-                  ${viewMode === 'grid' 
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' 
-                    : 'space-y-4'
+                <div 
+                  ref={productGridRef}
+                  className={`
+                    ${viewMode === 'grid' 
+                      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 p-4'
+                      : 'space-y-4'
                   }
                 `}>
                   {applyFrontendFilters(data.products).map((product) => (
@@ -612,7 +657,7 @@ export default function ProductListing() {
                   <div className="mt-8 flex justify-center">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
                         disabled={currentPage === 1}
                         className={`px-3 py-1 rounded border ${
                           currentPage === 1
@@ -643,7 +688,7 @@ export default function ProductListing() {
                         return (
                           <button
                             key={pageNum}
-                            onClick={() => setCurrentPage(pageNum)}
+                            onClick={() => handlePageChange(pageNum)}
                             className={`w-8 h-8 flex items-center justify-center rounded ${
                               currentPage === pageNum
                                 ? 'bg-blue-600 text-white'
@@ -656,7 +701,7 @@ export default function ProductListing() {
                       })}
                       
                       <button
-                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, data.totalPages))}
+                        onClick={() => handlePageChange(Math.min(currentPage + 1, data.totalPages))}
                         disabled={currentPage === data.totalPages}
                         className={`px-3 py-1 rounded border ${
                           currentPage === data.totalPages
@@ -693,6 +738,28 @@ export default function ProductListing() {
           </div>
         </div>
       </div>
+
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 z-50"
+          aria-label="Back to top"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

@@ -37,6 +37,12 @@ export default function CheckoutPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [orderDetails, setOrderDetails] = useState<{
+    items: any[];
+    total: number;
+    shippingForm: any;
+    orderId: string;
+  } | null>(null);
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
   const [couponError, setCouponError] = useState('');
@@ -56,12 +62,22 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    if (!state.items.length) {
+    if (!isConfirmed && !state.items.length) {
       setCheckoutError('Your cart is empty. Please add items to proceed.');
     } else {
       setCheckoutError(null);
     }
-  }, [state.items]);
+  }, [state.items, isConfirmed]);
+
+  useEffect(() => {
+    const storedOrderDetails = localStorage.getItem('orderDetails');
+    if (storedOrderDetails) {
+      const parsedDetails = JSON.parse(storedOrderDetails);
+      setOrderDetails(parsedDetails);
+      setIsConfirmed(true);
+      setOrderId(parsedDetails.orderId);
+    }
+  }, []);
 
   const discountedSubtotal = state.subtotal * (1 - discount);
   const tax = discountedSubtotal * TAX_RATE;
@@ -120,17 +136,22 @@ export default function CheckoutPage() {
     }
   };
 
-  
-
   const handlePaymentSuccess = (orderId: string) => {
+    const details = {
+      items: [...state.items],
+      total: total,
+      shippingForm: { ...shippingForm },
+      orderId: orderId
+    };
+    setOrderDetails(details);
+    localStorage.setItem('orderDetails', JSON.stringify(details));
+    
     setIsConfirmed(true);
     setOrderId(orderId);
     setCheckoutError(null);
-    clearCart(); // Clear cart after successful payment
-    localStorage.removeItem('validCoupon'); // Clear coupon from localStorage
+    clearCart();
+    localStorage.removeItem('validCoupon');
   };
-
-
 
   const handlePaymentError = (errorMsg: string) => {
     setCheckoutError(errorMsg);
@@ -142,6 +163,8 @@ export default function CheckoutPage() {
     setIsConfirmed(false);
     setOrderId(null);
     setCheckoutError(null);
+    setOrderDetails(null);
+    localStorage.removeItem('orderDetails');
   };
 
   const handleShippingSubmit = (updatedShippingForm: any) => {
@@ -158,7 +181,7 @@ export default function CheckoutPage() {
     });
   };
 
-  if (checkoutError) {
+  if (checkoutError && !isConfirmed) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 max-w-md text-center">
@@ -218,7 +241,7 @@ export default function CheckoutPage() {
           {!isConfirmed ? (
             <>
               <ShippingForm
-                onSubmit={handleShippingSubmit} // Updated to handle data
+                onSubmit={handleShippingSubmit}
                 initialValues={shippingForm}
                 isSubmitted={isSubmitted}
                 setIsSubmitted={setIsSubmitted}
@@ -243,9 +266,9 @@ export default function CheckoutPage() {
           ) : (
             <OrderConfirmation
               orderId={orderId!}
-              items={state.items}
-              total={total}
-              shippingForm={shippingForm}
+              items={orderDetails?.items || []}
+              total={orderDetails?.total || 0}
+              shippingForm={orderDetails?.shippingForm || {}}
             />
           )}
         </div>
@@ -409,7 +432,7 @@ export default function CheckoutPage() {
 //   const handlePaymentError = (errorMsg: string) => {
 //     setCheckoutError(errorMsg);
 //     setIsSubmitted(true); // Stay in payment step
-//     setIsConfirmed(false); // Ensure confirmation isn’t triggered
+//     setIsConfirmed(false); // Ensure confirmation isn't triggered
 //   };
 
 //   const resetPayment = () => {
