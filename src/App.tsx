@@ -8,13 +8,14 @@ import  { LoadingSpinner }  from './components/Loading/LoadingSpinner.tsx';
 import LockScreen from "./pages/LockScreen/LockScreen.tsx"; // Import it
 import {useState, useEffect } from "react";
 import { Navigate } from 'react-router-dom';
+import CheckoutPage from './pages/Main/Checkout';
+import OrderConfirmationPage from './pages/Main/OrderConfirmationPage';
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Main/Home.tsx"));
 const ProductListing = lazy(() => import("./pages/Main/ProductListing.tsx"));
 const ProductDetail = lazy(() => import("./pages/Main/ProductDetail.tsx"));
 const CartPage = lazy(() => import("./pages/Main/Cart.tsx"));
-const CheckoutPage = lazy(() => import("./pages/Main/Checkout.tsx"));
 const About = lazy(() => import("./pages/Main/About.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/Termspages/PrivacyPolicy"));
 const ReturnAndRefundPolicy = lazy(() => import("./pages/Termspages/ReturnAndRefundPolicy"));
@@ -81,7 +82,9 @@ export default function App() {
             {/* 404 Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Route>
-            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/:checkoutId" element={<CheckoutPage />} />
+            <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
+            <Route path="/checkout" element={<Navigate to="/checkout/new" replace />} />
         </Routes>
         </Suspense>
       </Router>
