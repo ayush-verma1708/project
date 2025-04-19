@@ -10,6 +10,9 @@ import FilterPanel from '../../components/FilterPanel';
 import { Product } from '../../types/types';
 import { useSearchParams } from 'react-router-dom';
 
+const NO_PRODUCTS_IMAGE = "https://illustrations.popsy.co/amber/work-in-progress.svg";
+// https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_400/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cmrixhrt1ve4yqu7oelv.jpg";
+
 export default function ProductListing() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -56,13 +59,25 @@ export default function ProductListing() {
 
   const productsPerPage = 12;
   
-  // Ensure this runs after we have a category
+  // Reset state when category changes
   useEffect(() => {
-    if (!categoryParam || !productCategories[categoryParam]) {
-      navigate('/not-found');
-      return;
-    }
-  }, [categoryParam, navigate]);
+    setCurrentPage(1);
+    setSearchQuery('');
+    setSortBy('Newest');
+    setSelectedRating(null);
+    setPriceRange({ min: 0, max: 2000 });
+    setCurrentPriceRange({ min: 0, max: 2000 });
+    setPopularityFilter('all');
+    setViewMode('grid');
+    setSelectedCategories(['All']);
+    setSelectedTags(['All']);
+    setHasProducts(null);
+    setComingSoonState({
+      message: '',
+      isComingSoon: false,
+      isLoaded: false
+    });
+  }, [categoryParam]);
   
   // Get category config
   const categoryConfig = productCategories[categoryParam] || productCategories.electronics;
@@ -657,13 +672,21 @@ export default function ProductListing() {
                 </button>
               </div>
             ) : comingSoonState.isComingSoon ? (
-              // Coming soon state
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-10 text-center">
-                <img 
-                  src="https://illustrations.popsy.co/amber/work-in-progress.svg" 
-                  alt="Coming Soon" 
-                  className="w-64 h-64 mx-auto mb-6"
-                />
+                <div className="relative w-64 h-64 mx-auto mb-6">
+                  <img 
+                    src={NO_PRODUCTS_IMAGE}
+                    alt="Coming Soon" 
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      // Fallback to a simple SVG if the image fails to load
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233B82F6'%3E%3Cpath d='M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.8L20 9l-8 4-8-4 8-4.2zM4 9.8l8 4v8.4l-8-4V9.8zm10 12.4v-8.4l8-4v8.4l-8 4z'/%3E%3C/svg%3E";
+                    }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-pulse bg-blue-100 rounded-full w-32 h-32"></div>
+                  </div>
+                </div>
                 <h3 className="text-xl font-medium text-blue-800 mb-3">Coming Soon!</h3>
                 <p className="text-blue-600 max-w-md mx-auto">
                   {comingSoonState.message}
