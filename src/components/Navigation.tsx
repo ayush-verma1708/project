@@ -398,41 +398,6 @@ export function Navigation() {
         isOpen={isSearchOpen} 
         onClose={() => setIsSearchOpen(false)} 
       />
-
-      {/* Search Overlay */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 z-50"
-            onClick={() => setIsSearchOpen(false)}
-          >
-            <div 
-              className="max-w-3xl mx-auto mt-20 px-4"
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            >
-              <form onSubmit={handleSearch} className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  className="w-full px-4 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500"
-                >
-                  <Search className="w-5 h-5" />
-                </button>
-              </form>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }
