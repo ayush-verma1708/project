@@ -118,20 +118,24 @@ export interface User {
 }
 
 export interface ShippingInfo {
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartment?: string;
-  city: string;
-  pin: string;
-  phone: string;
+  name: string;
   email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;
 }
 
 export interface ProductItem {
-  product: string; // Assuming it stores the product ID (MongoDB ObjectId)
+  _id: string;
+  name: string;
+  brand: string;
+  model: string;
   quantity: number;
-  customData?: Record<string, any>; // For additional product details (e.g., brand, model, etc.)
+  price: number;
+  extraInfo?: string;
 }
 
 export interface Coupon {
@@ -142,17 +146,18 @@ export interface Coupon {
 
 export interface Order {
   _id: string;
-  user: User;
-  products: ProductItem[];
+  items: ProductItem[];
   shippingInfo: ShippingInfo;
-  coupon?: Coupon;
-  subtotal: number;
-  discount: number;
-  tax: number;
   total: number;
   status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-  trackingNumber?: string; // For tracking feature
+  paymentMethod: string;
+  paymentStatus: 'Pending' | 'Completed' | 'Failed' | 'Refunded';
+  trackingNumber?: string;
   createdAt: string;
+  coupon?: Coupon;
+  token?: string;
+  tokenExpiresAt?: string;
+  tokenViewed?: boolean;
 }
 
 export interface PaginatedResponse<T> {

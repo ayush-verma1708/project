@@ -73,7 +73,7 @@ export default function OrderConfirmationPage() {
             <p className="text-gray-600">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
           </div>
 
-          <div className="border-t border-gray-200 pt-6 mb-8">
+          {/* <div className="border-t border-gray-200 pt-6 mb-8">
             <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
             <div className="space-y-4">
               {order.products.map((item) => (
@@ -85,6 +85,60 @@ export default function OrderConfirmationPage() {
                   <p className="font-medium">₹{item.price * item.quantity}</p>
                 </div>
               ))}
+            </div>
+          </div> */}
+
+  {/* Order Items */}
+  <div className="mb-8">
+            <h3 className="text-md font-semibold text-gray-900 mb-4">Order Items</h3>
+            <div className="space-y-4">
+              {order.products.map((item) => (
+                <div key={item._id} className="flex items-center gap-4 border-b border-gray-100 pb-4 last:border-b-0">
+                  <img
+                    src={item.product.images?.[0] || 'https://via.placeholder.com/64'}
+                    alt={item.product.name}
+                    className="w-16 h-16 object-cover rounded-md"
+                    onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/64')}
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">{item.product.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {item.extraInfo?.model && `Model: ${item.extraInfo.model}`}
+                      {item.extraInfo?.brand && ` | Brand: ${item.extraInfo.brand}`}
+                    </p>
+                    <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+  {/* Order Summary */}
+  <div className="bg-gray-50 p-4 rounded-lg mb-8">
+            <h3 className="text-md font-semibold text-gray-900 mb-4">Order Summary</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Subtotal</span>
+                <span className="text-gray-900">₹{order.subtotal.toFixed(2)}</span>
+              </div>
+              {order.discount > 0 && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>Discount</span>
+                  <span>-₹{order.discount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Tax</span>
+                <span className="text-gray-900">₹{order.tax.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-gray-200 my-2"></div>
+              <div className="flex justify-between font-medium">
+                <span className="text-gray-900">Total</span>
+                <span className="text-gray-900">₹{order.total.toFixed(2)}</span>
+              </div>
             </div>
           </div>
 

@@ -10,7 +10,7 @@ import LockScreen from "./pages/LockScreen/LockScreen.tsx";
 import { useState, useEffect } from "react";
 import { Navigate } from 'react-router-dom';
 import CheckoutPage from './pages/Main/Checkout';
-import OrderConfirmationPage from './pages/Main/OrderConfirmationPage';
+// import OrderConfirmationPage from './pages/Main/OrderConfirmationPage';
 import OrderConfirmation from './pages/Main/OrderConfirmation';
 
 // Lazy Load Pages

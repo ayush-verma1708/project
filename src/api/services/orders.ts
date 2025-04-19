@@ -12,6 +12,11 @@ export const orderService = {
     return data;
   },
 
+  getByToken: async (token: string) => {
+    const { data } = await apiClient.get<Order>(`/orders/token/${token}`);
+    return data;
+  },
+
   create: async (order: Omit<Order, '_id' | 'createdAt'>) => {
     const { data } = await apiClient.post<Order>('/orders', order);
     return data;
