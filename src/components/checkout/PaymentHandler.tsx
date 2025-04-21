@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { razorpayService } from '../api/services/razorpayService';
+import { razorpayService } from '../../api/services/razorpayService';
 import { motion } from 'framer-motion';
 import { Lock, AlertCircle } from 'lucide-react';
 

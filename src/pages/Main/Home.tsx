@@ -2,22 +2,23 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { productService } from "../../api/index.ts";
-import PromoBanner from "../../components2/banners/PromoBanner.tsx";
-import TrendingProductCard from "../../components2/product/TrendingProductCard.tsx";
-import CountdownTimer from "../../components2/ui/countdown-timer.tsx";
-import TrustBadge from "../../components2/ui/trust-badge.tsx";
-import { ProductCard } from "../../components/ProductCard.tsx";
+import TrendingProductCard from "../../components/product/TrendingProductCard.tsx";
+import CountdownTimer from "../../components/ui/countdown-timer.tsx";
+import TrustBadge from "../../components/ui/trust-badge.tsx";
+import ProductCard from "../../components/ProductSelection/ProductCard.tsx";
 import EmailSubscriptionBanner from "../../components/promotional/popUpBanner.tsx";
 import FAQSection from "../../components/FAQ/FAQSmall.tsx";
-import FiveStarReviews from "../../components/Reviews/FiveStarReviews.tsx";
 // Components2
 
 // import ProductCard from "../components2/product/ProductCard.tsx";
-import MobileNavigation from "../../components2/layout/MobileNavigation.tsx";
-import TestimonialCard from "../../components2/ui/testimonial-card.tsx";
-import JoinCommunitySection from "../../components/promotional/JoinCommunitySection.tsx"
-import PopupBanner from "../../components2/banners/PopupBanner.tsx";
-import InstagramFeed from "../../components/Social/InstagramFeed.tsx";
+// import MobileNavigation from "../../components2/layout/MobileNavigation.tsx";
+// import TestimonialCard from "../../components2/ui/testimonial-card.tsx";
+// import PopupBanner from "../../components2/banners/PopupBanner.tsx";
+// import InstagramFeed from "../../components/Social/InstagramFeed.tsx";
+// import PromoBanner from "../../components2/banners/PromoBanner.tsx";
+
+// import JoinCommunitySection from "../../components/promotional/JoinCommunitySection.tsx"
+// import FiveStarReviews from "../../components/Reviews/FiveStarReviews.tsx";
 
 export default function Home() {
   const { data: newArrivals = { products: [] }, isLoading: isLoadingNewArrivals } = useQuery({
@@ -68,111 +69,107 @@ export default function Home() {
   };
 
   return (
-    <>
-      {/* <Navbar /> */}
-      <PromoBanner 
-        message="Limited Time Offer: Free Shipping on Orders Over ₹1,500 | Use Code: FREESHIP" 
-      />
-
+    <div className="bg-white">
+      <div className="sticky top-0 z-50">
+        {/* <PromoBanner 
+          message="Limited Time Offer: Free Shipping on Orders Over ₹1,500 | Use Code: FREESHIP" 
+          className="bg-gradient-to-r from-[#ffe4ec] via-[#ffccdd] to-[#ffb3cc] text-[#6b4065] shadow-md"
+        /> */}
+      </div>
+      
       <EmailSubscriptionBanner/>
       {/* <PopupBanner /> */}
       
-      <main>
+      <main className="max-w-[1920px] mx-auto">
         {/* Hero Section */}
-        <section className="relative">
-          <div className="h-[70vh] md:h-[80vh] bg-gray-100 overflow-hidden">
-            <div className="absolute inset-0">
-              <img 
-                src="https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage_jzaflq.jpg" 
-                alt="Premium lifestyle products" 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
-            </div>
-            
-            <div className="container mx-auto px-4 h-full flex items-center relative z-10">
-              <div className="max-w-lg text-white">
-                <span className="inline-block bg-orange-500 px-3 py-1 text-sm font-medium rounded-full mb-4">New Collection</span>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Elevate Your Everyday Life</h1>
-                <p className="text-lg md:text-xl opacity-90 mb-8">
-                  Discover premium quality products crafted for those who appreciate the finer things in life.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/category/mobile-skins">
-                    <span className="block bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-lg transition-colors text-center">
-                      Shop Now
-                    </span>
-                  </Link>
-                  <Link to="/category/mobile-skins">
-                    <span className="block bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium px-6 py-3 rounded-lg transition-colors border border-white/30 text-center">
-                      Explore Collections
-                    </span>
-                  </Link>
-                </div>
+        <section className="relative h-screen md:h-[90vh]">
+          <div className="absolute inset-0 bg-black">
+            <img 
+              src="https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744241247/heroImage_jzaflq.jpg" 
+              alt="Premium lifestyle products" 
+              className="w-full h-full object-cover opacity-50"
+            />
+          </div>
+          
+          <div className="container mx-auto px-4 h-full flex items-center relative z-10">
+            <div className="max-w-2xl text-white">
+              <span className="inline-block bg-white text-black px-6 py-2 text-sm tracking-wider mb-8">NEW COLLECTION</span>
+              <h1 className="text-5xl md:text-7xl font-light tracking-tight mb-8">ELEVATE YOUR EVERYDAY</h1>
+              <p className="text-xl opacity-90 mb-12 tracking-wide">
+                Premium quality products crafted for those who appreciate the finer things in life.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6">
+                <Link to="/category/mobile-skins" className="group">
+                  <span className="block bg-white text-black px-12 py-4 text-sm tracking-wider hover:bg-black hover:text-white transition-all duration-300">
+                    SHOP NOW
+                  </span>
+                </Link>
+                <Link to="/category/mobile-skins" className="group">
+                  <span className="block border border-white px-12 py-4 text-sm tracking-wider hover:bg-white hover:text-black transition-all duration-300">
+                    EXPLORE
+                  </span>
+                </Link>
               </div>
             </div>
           </div>
         </section>
         
         {/* Trust Badges */}
-        <section className="py-8 bg-white border-b">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <TrustBadge
-  icon="truck"
-  title="Free Shipping"
-  description="On orders over ₹499"
-/>
-
-
-<TrustBadge
-  icon="camera"
-  title="Real Product Shots"
-  description="No mockups, just real images"
-/>
-
+        <section className="py-20 md:py-24 border-t border-b border-black/10">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
+              <TrustBadge
+                icon="truck"
+                title="Free Shipping"
+                description="On orders over ₹499"
+              />
+              <TrustBadge
+                icon="camera"
+                title="Real Product Shots"
+                description="No mockups, just real images"
+              />
               <TrustBadge
                 icon="shield"
                 title="Secure Payments"
                 description="Multiple payment methods"
               />
-             <TrustBadge
-  icon="star"
-  title="Top Quality"
-  description="Premium materials & craftsmanship"
-/>
-
+              <TrustBadge
+                icon="star"
+                title="Top Quality"
+                description="Premium materials & craftsmanship"
+              />
             </div>
           </div>
         </section>
         
         {/* Featured Collections */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold mb-4">Featured Collections</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+        <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">FEATURED COLLECTIONS</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto tracking-wide text-sm md:text-base">
                 Explore our curated collections designed to complement your lifestyle
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuredCollections.map((collection, index) => (
                 <Link 
                   key={index} 
                   to={collection.link}
+                  className="group"
                 >
-                  <div className="group relative rounded-xl overflow-hidden h-80 cursor-pointer">
+                  <div className="relative overflow-hidden h-[400px] md:h-[600px]">
                     <img 
                       src={collection.image} 
                       alt={collection.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                      <div className="p-6 w-full">
-                        <h3 className="text-xl font-bold text-white mb-2">{collection.name}</h3>
-                        <span className="inline-block text-white text-sm group-hover:translate-x-2 transition-transform">
-                          Shop Now →
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                        <h3 className="text-xl md:text-2xl font-light text-white mb-2 tracking-wide">{collection.name}</h3>
+                        <span className="inline-block text-white text-sm tracking-wider group-hover:translate-x-2 transition-transform">
+                          SHOP NOW →
                         </span>
                       </div>
                     </div>
@@ -184,65 +181,63 @@ export default function Home() {
         </section>
         
         {/* Flash Sale Section */}
-        <section className="py-16 bg-orange-50">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="bg-gradient-to-r from-orange-600 to-orange-400 rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2">
-                <div className="p-8 md:p-12 flex flex-col justify-center">
-                  <span className="inline-block bg-white text-orange-600 px-3 py-1 text-sm font-medium rounded-full mb-4">Flash Sale</span>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                    Up to 50% Off!
-                  </h2>
-                  <p className="text-white/90 mb-6">
-                    Don't miss out on these amazing deals. Limited time offer!
-                  </p>
-                  
-                  <div className="mb-6">
-                    <p className="text-white/90 text-sm mb-2">Hurry, sale ends in:</p>
-                    <CountdownTimer hours={23} minutes={59} seconds={59} />
-                  </div>
-                  
-                  <Link to="/category/mobile-skins">
-                    <span className="inline-block bg-white hover:bg-gray-100 text-orange-600 font-medium px-6 py-3 rounded-lg transition-colors">
-                      Shop the Sale
-                    </span>
-                  </Link>
+        <section className="py-16 md:py-20 bg-black text-white">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="flex flex-col justify-center">
+                <span className="inline-block bg-white text-black px-6 py-2 text-sm tracking-wider mb-6">FLASH SALE</span>
+                <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-6">
+                  UP TO 50% OFF
+                </h2>
+                <p className="text-xl text-gray-400 mb-8 tracking-wide">
+                  Don't miss out on these amazing deals. Limited time offer!
+                </p>
+                
+                <div className="mb-8">
+                  <p className="text-gray-400 text-sm mb-4 tracking-wide">Hurry, sale ends in:</p>
+                  <CountdownTimer hours={23} minutes={59} seconds={59} />
                 </div>
-                <div className="hidden md:block relative">
-                  <img 
-                    src="https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193209/Mobiiwrap%20pictures/Transparent%20skin/h86gb3xpejcfhstvsxjj.jpg" 
-                    alt="Flash sale products" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                
+                <Link to="/category/mobile-skins" className="group">
+                  <span className="inline-block bg-white text-black px-12 py-4 text-sm tracking-wider hover:bg-black hover:text-white transition-all duration-300">
+                    SHOP THE SALE
+                  </span>
+                </Link>
+              </div>
+              <div className="hidden md:block relative h-[500px]">
+                <img 
+                  src="https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_1920/v1744193209/Mobiiwrap%20pictures/Transparent%20skin/h86gb3xpejcfhstvsxjj.jpg" 
+                  alt="Flash sale products" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
         </section>
         
         {/* New Arrivals Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="flex justify-between items-end mb-8">
+        <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
               <div>
-                <h2 className="text-3xl font-bold mb-2">New Arrivals</h2>
-                <p className="text-gray-600">The latest additions to our collection</p>
+                <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-2">NEW ARRIVALS</h2>
+                <p className="text-gray-600 tracking-wide text-sm md:text-base">The latest additions to our collection</p>
               </div>
-              <Link to="/category/mobile-skins">
-                <span className="text-orange-500 hover:text-orange-600 font-medium">
-                  View All →
+              <Link to="/category/mobile-skins" className="group mt-4 md:mt-0">
+                <span className="text-black hover:text-gray-600 text-sm tracking-wider transition-colors">
+                  VIEW ALL →
                 </span>
               </Link>
             </div>
             
             {isLoadingNewArrivals ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                 {[...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-gray-100 rounded-lg h-80 animate-pulse"></div>
+                  <div key={i} className="bg-gray-100 h-[300px] md:h-[400px] animate-pulse"></div>
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                 {newArrivals.products.map((product) => (
                   <ProductCard 
                     key={product._id}
@@ -257,31 +252,33 @@ export default function Home() {
         </section>
         
         {/* Trending Products */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold mb-2">Trending Now</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+        <section className="py-16 md:py-24 bg-black text-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">TRENDING NOW</h2>
+              <p className="text-gray-400 max-w-2xl mx-auto tracking-wide text-sm md:text-base">
                 Our most popular products based on sales
               </p>
             </div>
             
-            <div className="space-y-6">
-              {trendingProducts.products.map((product) => (
-                <TrendingProductCard 
-                  key={product._id} 
-                  product={product} 
-                  onAddToCart={() => {
-                    // Add to cart logic would go here
-                    navigate(`/product/${product._id}`);
-                  }}
-                  onViewDetails={() => {
-                    // View details logic
-                    navigate(`/product/${product._id}`);
-                  }}
-                />
-              ))}
-            </div>
+            {isLoadingTrending ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white/5 h-[400px] animate-pulse"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                {trendingProducts.products.map((product) => (
+                  <TrendingProductCard 
+                    key={product._id} 
+                    product={product} 
+                    onAddToCart={() => navigate(`/product/${product._id}`)}
+                    onViewDetails={() => navigate(`/product/${product._id}`)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
      
@@ -327,7 +324,7 @@ export default function Home() {
       </main>
 
       <button
-        className={`fixed right-6 bottom-20 md:bottom-6 bg-gray-900 text-white p-3 rounded-full shadow-md transition-opacity duration-300 ${
+        className={`fixed right-6 bottom-20 md:bottom-6 bg-black text-white p-3 shadow-md transition-opacity duration-300 ${
           showBackToTop ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={scrollToTop}
@@ -337,8 +334,8 @@ export default function Home() {
           <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
         </svg>
       </button>
-      <FiveStarReviews />
-    </>
+      {/* <FiveStarReviews /> */}
+    </div>
   );
 }
 

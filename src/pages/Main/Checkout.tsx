@@ -3,10 +3,10 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { campaignService } from '../../api/services/campaigns';
-import ShippingForm from '../../components/ShippingForm';
-import OrderSummary from '../../components/OrderSummary';
-import PaymentHandler from '../../components/PaymentHandler';
-import OrderConfirmation from '../../components/OrderConfirmation';
+import ShippingForm from '../../components/checkout/ShippingForm';
+import OrderSummary from '../../components/checkout/OrderSummary';
+import PaymentHandler from '../../components/checkout/PaymentHandler';
+import OrderConfirmation from '../../components/checkout/OrderConfirmation';
 import { Coupon, Order, ProductItem, ShippingInfo } from '../../api/types';
 import { orderService } from '../../api/services/orders';
 import { CartItem, Product } from '../../types/types';

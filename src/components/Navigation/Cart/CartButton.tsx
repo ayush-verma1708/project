@@ -1,7 +1,7 @@
 import { ShoppingBag } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../../context/CartContext';
 import { useState, useEffect } from 'react';
-import { MiniCart } from '../Cart/MiniCart';
+import { MiniCart } from '../../Cart/MiniCart'
 import { useNavigate } from 'react-router-dom';
 
 export function CartButton() {

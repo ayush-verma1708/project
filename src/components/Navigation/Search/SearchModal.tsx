@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState, useCallback, useRef } from 'react';
 import { X, Search as SearchIcon, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import debounce from 'lodash.debounce';
-import { productService } from '../../api/services/products';
+import { productService } from '../../../api/services/products';
 
 interface SearchModalProps {
   isOpen: boolean;

@@ -1,8 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Layout } from './components/Layout';
+import { Layout } from './components/layout/Layout.tsx';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
-import ScrollToTop from './components/ScrollToTop.tsx';
 import { NotFound } from './components/notAvailable/404notFound.tsx';
 import { Suspense, lazy } from "react";
 import { LoadingSpinner } from './components/Loading/LoadingSpinner.tsx';
@@ -55,7 +54,7 @@ export default function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
-          <ScrollToTop />
+         
           {isLoading && <LoadingSpinner />}
           <Suspense fallback={<LoadingSpinner/>}>
             <Routes>

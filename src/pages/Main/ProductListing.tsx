@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, ChevronDown, Grid3X3, List,  AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { ProductCard } from '../../components/ProductCard';
+import  ProductCard  from '../../components/ProductSelection/ProductCard';
 import { productService } from '../../api';
 import debounce from 'lodash/debounce';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { productCategories } from '../../constants/productCategories';
-import FilterPanel from '../../components/FilterPanel';
+import FilterPanel from '../../components/ProductSelection/FilterPanel';
 import { Product } from '../../types/types';
 import { useSearchParams } from 'react-router-dom';
 
