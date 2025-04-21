@@ -1,22 +1,21 @@
 import { useState } from "react";
 import JoinCommunitySection from "../../components/promotional/JoinCommunitySection";
-import { Lock, Unlock, AlertCircle, X } from "lucide-react";
+import { Lock, Unlock, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function LockScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const correctPassword = "mobiiwrap-unlock"; // Your actual password
+  const correctPassword = "mobiiwrap-unlock";
 
   const handleUnlock = () => {
     setIsLoading(true);
-    // Simulate a slight delay for better UX
     setTimeout(() => {
       if (password === correctPassword) {
         localStorage.setItem("siteUnlocked", "true");
-        window.location.reload(); // Refresh to unlock the site
+        window.location.reload();
       } else {
         setError("Incorrect password. Please try again.");
         setIsLoading(false);
@@ -24,133 +23,144 @@ export default function LockScreen() {
     }, 600);
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleUnlock();
     }
   };
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-    if (!isModalOpen) {
-      // Reset when opening
-      setError("");
-      setPassword("");
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 relative">
-      {/* Lock in top right corner */}
-      <div className="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md"
-       onClick={toggleModal}
-       >
-        <Lock size={16} className="h-6 w-6 text-gray-700" />
-        
-      </div>
-      
-      <div className="max-w-6xl mx-auto pt-16">
-        {/* Logo and Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Mobiiwrap</h2>
-          <p className="text-gray-500 mt-2">Premium mobile accessories</p>
-        </div>
+    <div className="min-h-screen w-full bg-white flex flex-col">
+      <div className="flex-1 flex flex-col justify-center items-center">
+        <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          {/* Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8 sm:mb-12"
+          >
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">Mobiiwrap</h1>
+            <p className="mt-2 text-base sm:text-lg text-gray-500">Premium mobile accessories</p>
+          </motion.div>
 
-        <div className="grid md gap-8 items-center">
-         
-          {/* Join Community Section takes up the other half on larger screens */}
-          <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-            <h3 className="text-lg font-medium text-gray-700 mb-3">Never Miss an Update</h3>
-            <p className="text-gray-500 text-sm mb-4">Subscribe to get notified about new products and exclusive offers.</p>
-            <JoinCommunitySection />
-          </div>
-        </div>
-        
-        {/* Full width community section for mobile */}
-        <div className="mt-10 text-center">
-          <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} Mobiiwrap. All rights reserved.
-          </p>
-        </div>
-      </div>
-      
-      {/* Password Modal - Only appears when lock is clicked */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-20">
-          <div className="absolute inset-0 bg-black bg-opacity-40" onClick={toggleModal}></div>
-          <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 w-full max-w-md relative z-30">
-            {/* Close button */}
-            <button 
-              onClick={toggleModal} 
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            
-            <h3 className="text-lg font-medium text-gray-700 mb-4">Store Access</h3>
-            <div className="relative">
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (error) setError("");
-                }}
-                onKeyPress={handleKeyPress}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                autoFocus
-              />
-            </div>
-            
-            {error && (
-              <div className="flex items-center mt-2 text-red-500 text-sm">
-                <AlertCircle className="h-4 w-4 mr-1" />
-                <span>{error}</span>
+          {/* Password Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-gray-50 rounded-lg p-8 sm:p-10 shadow-sm"
+          >
+            <div className="flex items-center justify-center mb-6 sm:mb-8">
+              <div className="bg-gray-100 p-3 sm:p-4 rounded-full">
+                <Lock className="h-6 w-6 sm:h-8 sm:w-8 text-gray-600" />
               </div>
-            )}
-            
-            <button
-              onClick={handleUnlock}
-              disabled={isLoading || !password}
-              className="w-full mt-4 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="flex items-center">
-                 <svg 
-  className="animate-spin -ml-1 mr-2 text-white" 
-  xmlns="http://www.w3.org/2000/svg" 
-  fill="none" 
-  viewBox="0 0 24 24"
-  width="16" 
-  height="16"  // Explicit size
->
-  <circle 
-    className="opacity-25" 
-    cx="12" cy="12" 
-    r="10" 
-    stroke="currentColor" 
-    strokeWidth="4"
-  />
-  <path 
-    className="opacity-75" 
-    fill="currentColor" 
-    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-  />
-</svg>
+            </div>
 
-                  Unlocking...
-                </span>
-              ) : (
-                <span className="flex items-center">
-                  <Unlock className="h-4 w-4 mr-2" />
-                  Unlock Access
-                </span>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-center text-gray-900 mb-3">
+              This store is password protected
+            </h2>
+            <p className="text-base sm:text-lg text-gray-500 text-center mb-6 sm:mb-8">
+              Please enter the password to access the store
+            </p>
+
+            <div className="space-y-4 sm:space-y-6">
+              <div className="relative">
+                <input
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError("");
+                  }}
+                  onKeyPress={handleKeyPress}
+                  className="w-full px-4 py-3 sm:py-4 text-base sm:text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                  autoFocus
+                />
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center text-red-500 text-base sm:text-lg"
+                >
+                  <AlertCircle className="h-5 w-5 mr-2" />
+                  <span>{error}</span>
+                </motion.div>
               )}
-            </button>
-          </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleUnlock}
+                disabled={isLoading || !password}
+                className="w-full py-3 sm:py-4 px-4 bg-black text-white text-base sm:text-lg rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <svg 
+                      className="animate-spin -ml-1 mr-2 text-white" 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24"
+                      width="20" 
+                      height="20"
+                    >
+                      <circle 
+                        className="opacity-25" 
+                        cx="12" cy="12" 
+                        r="10" 
+                        stroke="currentColor" 
+                        strokeWidth="4"
+                      />
+                      <path 
+                        className="opacity-75" 
+                        fill="currentColor" 
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Unlocking...
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <Unlock className="h-5 w-5 mr-2" />
+                    Unlock Store
+                  </span>
+                )}
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Newsletter Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-10 sm:mt-12 text-center"
+          >
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 mb-3">
+              Stay Updated
+            </h3>
+            <p className="text-base sm:text-lg text-gray-500 mb-6">
+              Subscribe to get notified when we launch
+            </p>
+            <JoinCommunitySection />
+          </motion.div>
         </div>
-      )}
+      </div>
+
+      {/* Footer */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="py-6 text-center"
+      >
+        <p className="text-sm text-gray-400">
+          © {new Date().getFullYear()} Mobiiwrap. All rights reserved.
+        </p>
+      </motion.div>
     </div>
   );
 }
