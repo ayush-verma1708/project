@@ -8,17 +8,7 @@ import TrustBadge from "../../components/ui/trust-badge.tsx";
 import ProductCard from "../../components/ProductSelection/ProductCard.tsx";
 import EmailSubscriptionBanner from "../../components/promotional/popUpBanner.tsx";
 import FAQSection from "../../components/FAQ/FAQSmall.tsx";
-// Components2
 
-// import ProductCard from "../components2/product/ProductCard.tsx";
-// import MobileNavigation from "../../components2/layout/MobileNavigation.tsx";
-// import TestimonialCard from "../../components2/ui/testimonial-card.tsx";
-// import PopupBanner from "../../components2/banners/PopupBanner.tsx";
-// import InstagramFeed from "../../components/Social/InstagramFeed.tsx";
-// import PromoBanner from "../../components2/banners/PromoBanner.tsx";
-
-// import JoinCommunitySection from "../../components/promotional/JoinCommunitySection.tsx"
-// import FiveStarReviews from "../../components/Reviews/FiveStarReviews.tsx";
 
 export default function Home() {
   const { data: newArrivals = { products: [] }, isLoading: isLoadingNewArrivals } = useQuery({

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X, ChevronDown, ShoppingCart } from 'lucide-react';
 import { CartButton } from './Cart/CartButton';
 import { SearchModal } from './Search/SearchModal';
-import { productCategories } from '../../constants/productCategories';
+import CategoryNav from './CategoryNav';
 
 interface Category {
   title: string;
@@ -31,10 +31,11 @@ export default function Navigation() {
   const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const isHomePage = location.pathname === '/';
+
   const navItems = [
     { name: 'HOME', path: '/' },
     { name: 'SHOP', path: '/category/mobile-skins' },
-    // { name: 'COLLECTIONS', path: '/collections' },
     { name: 'ABOUT', path: '/about' },
     { name: 'CONTACT', path: '/contact' },
   ];
@@ -135,9 +136,15 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop Navigation */}
-      <header className={`hidden md:block transition-all duration-300 ${
-        scrolled ? "bg-black text-white shadow-lg" : "bg-transparent text-black"
-      } fixed top-0 left-0 right-0 z-40`}>
+      <header 
+        className={`hidden md:block transition-all duration-300 ${
+          scrolled 
+            ? "bg-black text-white shadow-lg" 
+            : isHomePage 
+              ? "bg-transparent text-black"
+              : "bg-white text-black border-b border-black/10"
+        } fixed top-0 left-0 right-0 z-40`}
+      >
         <div className="max-w-[1920px] mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
@@ -180,9 +187,15 @@ export default function Navigation() {
       </header>
 
       {/* Mobile Navigation */}
-      <header className={`md:hidden transition-all duration-300 ${
-        scrolled ? "bg-black text-white shadow-lg" : "bg-transparent text-black"
-      } fixed top-0 left-0 right-0 z-40`}>
+      <header 
+        className={`md:hidden transition-all duration-300 ${
+          scrolled 
+            ? "bg-black text-white shadow-lg" 
+            : isHomePage 
+              ? "bg-transparent text-black"
+              : "bg-white text-black border-b border-black/10"
+        } fixed top-0 left-0 right-0 z-40`}
+      >
         <div className="max-w-[1920px] mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* Mobile Menu Button */}
@@ -273,11 +286,17 @@ export default function Navigation() {
         </AnimatePresence>
       </header>
 
+      {/* Category Navigation */}
+      {!isHomePage && <CategoryNav />}
+
       {/* Search Modal */}
       <SearchModal 
         isOpen={isSearchOpen} 
         onClose={() => setIsSearchOpen(false)} 
       />
+
+      {/* Page Content Spacer */}
+      <div className={`h-20 ${!isHomePage ? 'md:h-32' : ''}`} />
     </>
   );
 }

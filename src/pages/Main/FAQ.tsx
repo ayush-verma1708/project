@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 // FAQ data
 const faqs = [
@@ -26,7 +27,7 @@ const faqs = [
   {
     question: "Will the skin affect the functionality of my device?",
     answer:
-      "No, Mobiiwrap skins are precisely cut to fit your device without covering essential ports, buttons, or sensors. Your device’s functionality remains intact."
+      "No, Mobiiwrap skins are precisely cut to fit your device without covering essential ports, buttons, or sensors. Your device's functionality remains intact."
   },
   {
     question: "Do you offer custom designs?",
@@ -71,12 +72,12 @@ const faqs = [
   {
     question: "How durable are Mobiiwrap skins?",
     answer:
-      "Our skins are designed to be highly durable, offering long-lasting protection against scratches and minor dings. They’re made from high-quality vinyl built for everyday use."
+      "Our skins are designed to be highly durable, offering long-lasting protection against scratches and minor dings. They're made from high-quality vinyl built for everyday use."
   },
   {
     question: "Will the skin leave any residue on my device?",
     answer:
-      "No, our skins are engineered to be residue-free. When removed, they won't leave any sticky residue or damage your device’s surface."
+      "No, our skins are engineered to be residue-free. When removed, they won't leave any sticky residue or damage your device's surface."
   },
   {
     question: "Can I reapply a Mobiiwrap skin after removing it?",
@@ -91,7 +92,7 @@ const faqs = [
   {
     question: "Do you offer skins for older or less common devices?",
     answer:
-      "Yes, we offer a wide range of skins, including options for older and less common devices. If your device isn’t listed, please contact us and we’ll do our best to accommodate your request."
+      "Yes, we offer a wide range of skins, including options for older and less common devices. If your device isn't listed, please contact us and we'll do our best to accommodate your request."
   },
   {
     question: "Can I clean my device with the skin applied?",
@@ -106,12 +107,12 @@ const faqs = [
   {
     question: "What if my skin has a defect or damage upon arrival?",
     answer:
-      "If you receive a defective or damaged skin, please contact our customer service within 7 days. We’ll arrange for a replacement or refund according to our policy."
+      "If you receive a defective or damaged skin, please contact our customer service within 7 days. We'll arrange for a replacement or refund according to our policy."
   },
   {
     question: "Can I use a case with a Mobiiwrap skin?",
     answer:
-      "Yes, our skins are thin enough to be used under most cases, offering extra protection and style without interfering with your case’s fit."
+      "Yes, our skins are thin enough to be used under most cases, offering extra protection and style without interfering with your case's fit."
   },
   {
     question: "How do I remove air bubbles during application?",
@@ -131,40 +132,114 @@ interface FAQ {
   answer: string;
 }
 
-function FAQItem({ faq }: { faq: FAQ }) {
+function FAQItem({ faq, index, isVisible, onOpen }: { faq: FAQ; index: number; isVisible: boolean; onOpen: () => void }) {
   const [open, setOpen] = useState(false);
 
+  const handleClick = () => {
+    setOpen(!open);
+    if (!open) {
+      onOpen();
+    }
+  };
+
   return (
-    <div className="border-b border-gray-300 py-4">
+    <motion.div 
+      className="border-b border-black/10"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ 
+        opacity: isVisible ? 1 : 0,
+        height: isVisible ? 'auto' : 0,
+        padding: isVisible ? '2rem 0' : '0'
+      }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+    >
       <button
-        className="w-full flex justify-between items-center text-left focus:outline-none"
-        onClick={() => setOpen(!open)}
+        className="w-full flex justify-between items-center text-left focus:outline-none group"
+        onClick={handleClick}
       >
-        <span className="font-semibold text-[#333333]">{faq.question}</span>
-        <span className="text-[#FF8C00]">{open ? '-' : '+'}</span>
+        <span className="text-lg md:text-xl font-light tracking-[0.1em] uppercase text-black/90 group-hover:text-black transition-colors">
+          {faq.question}
+        </span>
+        <ChevronDown 
+          className={`w-5 h-5 md:w-6 md:h-6 text-black/40 transition-all duration-300 ${open ? 'rotate-180' : ''}`}
+        />
       </button>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-2 text-gray-600"
-        >
-          {faq.answer}
-        </motion.div>
-      )}
-    </div>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-4 text-sm md:text-base text-black/60 tracking-wide leading-relaxed"
+          >
+            {faq.answer}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
-export default function FAQPage() {
+export default function FAQ() {
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [openedCount, setOpenedCount] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleFAQOpen = () => {
+    setOpenedCount(prev => prev + 1);
+    if (openedCount >= 2 && visibleCount < faqs.length) {
+      setVisibleCount(prev => prev + 2);
+    }
+  };
+
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-      <div className="space-y-4">
-        {faqs.map((faq, index) => (
-          <FAQItem key={index} faq={faq} />
-        ))}
-      </div>
-    </section>
+    <main className="min-h-screen bg-white">
+      <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <div className="text-center mb-12 md:mb-16">
+          <motion.h1 
+            className="text-3xl md:text-5xl font-light tracking-[0.2em] uppercase mb-4 md:mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            FAQ
+          </motion.h1>
+          <motion.p 
+            className="text-sm md:text-lg text-black/60 tracking-wide max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Find answers to common questions about our products and services.
+          </motion.p>
+        </div>
+        <motion.div 
+          className="space-y-4 md:space-y-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          {faqs.map((faq, index) => (
+            <FAQItem 
+              key={index} 
+              faq={faq} 
+              index={index}
+              isVisible={index < visibleCount}
+              onOpen={handleFAQOpen}
+            />
+          ))}
+        </motion.div>
+      </section>
+    </main>
   );
 }

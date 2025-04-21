@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Check, Truck, RotateCcw, Shield } from 'lucide-react';
+import { ShoppingCart,  Truck, RotateCcw, Shield } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import PhoneSelector from '../../components/variantSelection/PhoneSelectorProps';
 import { mobiles } from '../../sample/mobileDevicesList';
@@ -15,7 +15,7 @@ import ProductVideoPlayer from '../../components/ProductSelection/ProductVideoPl
 
 export default function ProductsDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
-  const cartButtonRef = useRef<any>(null);
+ 
   const { id } = useParams(); // Get the product ID from the URL
   const navigate = useNavigate();
   const { addItem } = useCart(); // Destructure addItem from useCart
