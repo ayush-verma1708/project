@@ -11,6 +11,7 @@ import { Navigate } from 'react-router-dom';
 import CheckoutPage from './pages/Main/Checkout';
 // import OrderConfirmationPage from './pages/Main/OrderConfirmationPage';
 import OrderConfirmation from './pages/Main/OrderConfirmation';
+import { useDynamicTitle } from "./hooks/useDynamicTitle.ts"; // adjust path as needed
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Main/Home.tsx"));
@@ -28,23 +29,30 @@ const FAQ = lazy(() => import("./pages/Main/FAQ.tsx"));
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      document.title = document.hidden ? "Come back! ⚡" : "Mobiiwrap";
-    };
+  useDynamicTitle(
+    [
+      "🔥 Premium Mobile Skins",
+      "⚡ Limited Edition Designs",
+      "✨ We miss you!",
+      "🛒 Items in your cart",
+      "🎁 Special offers inside",
+      "🏆 Top-rated protection",
+      "💯 Express shipping available",
+    ],
+    "Mobiiwrap | Premium Mobile Skins",
+    1000 // Change title every 5 seconds
+  );
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
 
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timer);
     };
   }, []);
-
+  
   const isUnlocked = localStorage.getItem("siteUnlocked") === "true";
   if (!isUnlocked) {
     return <LockScreen />;

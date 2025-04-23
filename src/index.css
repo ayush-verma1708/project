@@ -14,51 +14,53 @@
   }
 
   body {
-    @apply bg-[#F5F5F5] text-[#333333]; /* White background with black text */
+    @apply bg-white text-black font-sans; /* Pure white background with black text */
   }
 
-  /* 🎨 Custom Scrollbar Styling - Minimal Classy Look */
+  /* Premium Minimal Scrollbar Styling */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 4px; /* Thinner scrollbar for minimalist look */
+    height: 4px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #ffffff; /* Clean white background */
-    border-radius: 10px;
+    background: #f1f1f1; /* Light gray background */
+    border-radius: 0; /* Remove rounded corners */
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #e48333; /* Solid orange thumb */
-    border-radius: 10px;
+    background: #000000; /* Pure black thumb */
+    border-radius: 0; /* Angular look */
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #ff8c00; /* Slightly brighter orange on hover */
+    background: #333333; /* Slightly lighter black on hover */
   }
 
   /* Firefox Scrollbar - Matching minimal style */
   * {
-    scrollbar-color: #e48333 #ffffff; /* Orange thumb, white track for Firefox */
+    scrollbar-color: #000000 #f1f1f1; /* Black thumb, light gray track for Firefox */
     scrollbar-width: thin;
   }
 }
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-colors;
+    @apply px-4 py-2 font-medium transition-all duration-200 tracking-wide;
+    border-radius: 0; /* Angular buttons */
   }
 
   .btn-primary {
-    @apply bg-[#333333] text-[#F5F5F5] hover:bg-gray-800; /* Black button with white text, hover to dark gray */
+    @apply bg-black text-white hover:bg-zinc-800 border border-black; /* Black button with white text */
   }
 
   .btn-secondary {
-    @apply bg-[#E8E6E3] text-[#333333] hover:bg-gray-200; /* Light gray button with black text */
+    @apply bg-white text-black hover:bg-gray-100 border border-black; /* White button with black text */
   }
 
   .input {
-    @apply w-full px-3 py-2 border border-[#B0AFAF] rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent; /* Black focus ring */
+    @apply w-full px-3 py-2 border border-black focus:outline-none focus:ring-1 focus:ring-black focus:border-black;
+    border-radius: 0; /* Angular inputs */
   }
 }
 
@@ -76,16 +78,34 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  
+  /* Premium hover effects */
+  .hover-scale {
+    @apply transition-transform duration-200;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
 }
 
-/* src/index.css */
-
+/* Animations */
 @keyframes slide-in {
   0% { transform: translateX(100%); opacity: 0; }
-  60% { transform: translateX(-10%); opacity: 1; }
-  100% { transform: translateX(0); }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
 .animate-slide-in {
-  animation: slide-in 0.5s ease-out;
+  animation: slide-in 0.3s ease-out; /* Faster, more subtle animation */
+}
+
+/* Premium card styling */
+.card {
+  @apply bg-white border border-zinc-200 shadow-sm;
+  border-radius: 0; /* Angular cards */
+}
+
+/* Clean divider */
+.divider {
+  @apply h-px w-full bg-zinc-200 my-4;
 }

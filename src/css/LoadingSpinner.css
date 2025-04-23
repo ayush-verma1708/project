@@ -6,15 +6,37 @@
   }
   
   .spinner {
-    border: 8px solid var(--background-color, #f3f3f3); /* Light gray background, fallback if variable not defined */
-    border-top: 8px solid var(--primary-color, #f6772e); /* Blue color for the top, fallback if variable not defined */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1.5s linear infinite; /* Rotate the spinner */
+    border: 4px solid #f1f1f1; /* Light gray background for minimal look */
+    border-top: 4px solid #000000; /* Pure black for the loading indicator */
+    border-radius: 0; /* Square spinner for the premium angular aesthetic */
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite; /* Slightly faster animation for modern feel */
   }
   
+  /* Alternative minimal spinner - uncomment to use instead */
+  /*
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 0;
+    position: relative;
+    background: linear-gradient(to right, #000 50%, #f1f1f1 50%);
+    animation: minimal-spin 1s linear infinite;
+  }
+  */
+  
   @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Alternative animation for the minimal spinner */
+  @keyframes minimal-spin {
     0% {
       transform: rotate(0deg);
     }
