@@ -105,7 +105,10 @@ const PaymentHandler: React.FC<PaymentHandlerProps> = ({
                 brand: item.selectedBrand,
               },
             })),
-            shippingInfo: shippingForm,
+            shippingInfo: {
+              ...shippingForm,
+              customerNote: shippingForm.customerNote
+            },
             coupon: validCouponId ? {
               _id: validCouponId,
               code: validCouponId,

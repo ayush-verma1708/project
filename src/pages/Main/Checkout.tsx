@@ -36,6 +36,7 @@ interface ShippingFormData {
   pin: string;
   phone: string;
   email: string;
+  customerNote?: string;
 }
 
 interface PaymentResult {
@@ -67,7 +68,8 @@ export default function CheckoutPage() {
     state: '',
     country: 'India',
     phone: '',
-    email: ''
+    email: '',
+    customerNote: ''
   });
 
   const [errors, setErrors] = useState<Partial<ShippingFormData>>({});

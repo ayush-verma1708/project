@@ -128,6 +128,7 @@ export interface ShippingInfo {
   country: string;
   pin: string;
   apartment?: string;
+  customerNote?: string;
 }
 
 export interface ProductItem {
@@ -186,6 +187,7 @@ export interface Order {
     razorpayOrderId?: string;
     razorpaySignature?: string;
   };
+  customerNote?: string;
   createdAt: string;
 }
 

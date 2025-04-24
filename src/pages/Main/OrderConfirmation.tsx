@@ -80,8 +80,8 @@ export default function OrderConfirmationPage() {
             <div>
               <h3 className="text-md font-semibold text-gray-900 mb-4">Order Items</h3>
               <div className="space-y-4">
-                {order.products.map((item) => (
-                  <div key={item._id} className="flex items-center gap-4 border-b border-gray-100 pb-4 last:border-b-0">
+                {order.products.map((item, index) => (
+                  <div key={`${item.product._id}-${index}`} className="flex items-center gap-4 border-b border-gray-100 pb-4 last:border-b-0">
                     <img
                       src={item.product.images?.[0] || 'https://via.placeholder.com/64'}
                       alt={item.product.name}
@@ -153,7 +153,29 @@ export default function OrderConfirmationPage() {
                   </p>
                 </div>
               </div>
+              {order.shippingInfo.customerNote && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-md">
+                  <p className="text-gray-600 font-medium">Special Instructions:</p>
+                  <p className="text-gray-700 mt-1">{order.shippingInfo.customerNote}</p>
+                </div>
+              )}
             </div>
+
+            {/* Payment Details */}
+            <div>
+              <h2 className="text-lg font-semibold mb-4">Payment Details</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gray-600">Payment Method</p>
+                  <p className="font-medium">{order.paymentMethod}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Payment Status</p>
+                  <p className="font-medium">{order.paymentStatus}</p>
+                </div>  
+              </div>
+            </div>
+
           </div>
 
           <div className="flex justify-between items-center mt-8">
@@ -164,12 +186,6 @@ export default function OrderConfirmationPage() {
               <ArrowLeft size={18} />
               Back to Home
             </Link>
-            {/* <Link
-              to="/orders"
-              className="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              View All Orders
-            </Link> */}
           </div>
         </div>
       </div>

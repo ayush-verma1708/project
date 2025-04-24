@@ -14,6 +14,7 @@ interface ShippingFormProps {
     state: string; // Added state
     phone: string;
     email: string;
+    customerNote?: string;
   };
   isSubmitted: boolean;
   setIsSubmitted: (value: boolean) => void;
@@ -31,6 +32,7 @@ interface Errors {
   state: string; // Added state
   phone: string;
   email: string;
+  customerNote: string;
 }
 
 const ShippingForm: React.FC<ShippingFormProps> = ({
@@ -52,12 +54,13 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
     state: '', // Added state
     phone: '',
     email: '',
+    customerNote: ''
   });
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '',state: '',  pin: '', phone: '', email: '' };
+    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '',state: '',  pin: '', phone: '', email: '', customerNote: '' };
     if (!shippingForm.firstName.trim()) {
       newErrors.firstName = 'First name is required';
       isValid = false;
@@ -117,7 +120,7 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setShippingForm(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: '' }));
@@ -244,6 +247,17 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
               {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
             </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Special Instructions (Optional)</label>
+              <textarea
+                name="customerNote"
+                value={shippingForm.customerNote}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Add any special instructions or notes for your order..."
+                rows={3}
+              />
+            </div>
             <button
               type="submit"
               className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
@@ -259,9 +273,15 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             <p><span className="font-medium">Apartment:</span> {shippingForm.apartment}</p>
             <p><span className="font-medium">City:</span> {shippingForm.city}</p>
             <p><span className="font-medium">PIN:</span> {shippingForm.pin}</p>
-            <p><span className="font-medium">State:</span> {shippingForm.state}</p> {/* Added state display */}
+            <p><span className="font-medium">State:</span> {shippingForm.state}</p>
             <p><span className="font-medium">Phone:</span> {shippingForm.phone}</p>
             <p><span className="font-medium">Email:</span> {shippingForm.email}</p>
+            {shippingForm.customerNote && (
+              <div className="mt-2 p-3 bg-gray-50 rounded-md">
+                <p className="font-medium text-sm text-gray-700">Special Instructions:</p>
+                <p className="text-sm text-gray-600 mt-1">{shippingForm.customerNote}</p>
+              </div>
+            )}
             <button
               onClick={() => setIsEditing(true)}
               className="text-indigo-600 hover:underline flex items-center gap-1"
