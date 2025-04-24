@@ -1,3 +1,6 @@
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout/Layout.tsx';
 import { CartProvider } from './context/CartContext';
@@ -59,66 +62,70 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-         
-          {isLoading && <LoadingSpinner />}
-          <Suspense fallback={<LoadingSpinner/>}>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                {/* Homepage */}
-                <Route index element={<Home />} />
-                
-                {/* Category Routes */}
-                <Route path="category">
-                  <Route index element={<Navigate to="/category/mobile-skins" replace />} />
-                  <Route path=":categoryName" element={<ProductListing />} />
-                </Route>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <div className="min-h-screen bg-white">
+              {isLoading && <LoadingSpinner />}
+              <Suspense fallback={<LoadingSpinner/>}>
+                <Routes>
+                  <Route path="/" element={<Layout />}>
+                    {/* Homepage */}
+                    <Route index element={<Home />} />
+                    
+                    {/* Category Routes */}
+                    <Route path="category">
+                      <Route index element={<Navigate to="/category/mobile-skins" replace />} />
+                      <Route path=":categoryName" element={<ProductListing />} />
+                    </Route>
 
-                {/* Product Routes */}
-                <Route path="product">
-                  <Route path=":id" element={<ProductDetail />} />
-                </Route>
+                    {/* Product Routes */}
+                    <Route path="product">
+                      <Route path=":id" element={<ProductDetail />} />
+                    </Route>
 
-                {/* Search Route */}
-                <Route path="search" element={<ProductListing />} />
+                    {/* Search Route */}
+                    <Route path="search" element={<ProductListing />} />
 
-                {/* Core Pages */}
-                <Route path="about" element={<About />} />
-                <Route path="blog" element={<Blog />} />
-                <Route path="cart" element={<CartPage />} />
-                <Route path="contact" element={<Contact />} />
-                <Route path="faq" element={<FAQ />} />
+                    {/* Core Pages */}
+                    <Route path="about" element={<About />} />
+                    <Route path="blog" element={<Blog />} />
+                    <Route path="cart" element={<CartPage />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="faq" element={<FAQ />} />
 
-                {/* Policy Pages */}
-                <Route path="policies">
-                  <Route path="privacy" element={<PrivacyPolicy />} />
-                  <Route path="returns" element={<ReturnAndRefundPolicy />} />
-                  <Route path="shipping" element={<ShippingPolicy />} />
-                  <Route path="terms" element={<TermsAndConditions />} />
-                </Route>
+                    {/* Policy Pages */}
+                    <Route path="policies">
+                      <Route path="privacy" element={<PrivacyPolicy />} />
+                      <Route path="returns" element={<ReturnAndRefundPolicy />} />
+                      <Route path="shipping" element={<ShippingPolicy />} />
+                      <Route path="terms" element={<TermsAndConditions />} />
+                    </Route>
 
-                {/* Checkout Routes */}
-                <Route path="checkout">
-                  <Route index element={<Navigate to={`/checkout/p/${crypto.randomUUID()}/pay`} replace />} />
-                  <Route path="p/:pipelineId/:action" element={<CheckoutPage />} />
-                  <Route path="p/:pipelineId/:action/:productId" element={<CheckoutPage />} />
-                </Route>
+                    {/* Checkout Routes */}
+                    <Route path="checkout">
+                      <Route index element={<Navigate to={`/checkout/p/${crypto.randomUUID()}/pay`} replace />} />
+                      <Route path="p/:pipelineId/:action" element={<CheckoutPage />} />
+                      <Route path="p/:pipelineId/:action/:productId" element={<CheckoutPage />} />
+                    </Route>
 
-                {/* Order Confirmation */}
-                <Route path="order-confirmation">
-                  <Route path=":orderId" element={<OrderConfirmation />} />
-                  <Route index element={<OrderConfirmation />} />
-                </Route>
+                    {/* Order Confirmation */}
+                    <Route path="order-confirmation">
+                      <Route path=":orderId" element={<OrderConfirmation />} />
+                      <Route index element={<OrderConfirmation />} />
+                    </Route>
 
-                {/* 404 Catch-all */}
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </Suspense>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+                    {/* 404 Catch-all */}
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </div>
+          </Router>
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

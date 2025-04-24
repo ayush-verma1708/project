@@ -1,52 +1,92 @@
-import { Plus, Minus } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Plus, Minus } from 'lucide-react';
+import { useState } from 'react';
 
 interface QuantityControlProps {
   quantity: number;
   onIncrease: () => void;
   onDecrease: () => void;
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  size?: 'sm' | 'md';
+  theme?: 'light' | 'dark';
 }
 
-export function QuantityControl({
-  quantity,
-  onIncrease,
-  onDecrease,
+export function QuantityControl({ 
+  quantity, 
+  onIncrease, 
+  onDecrease, 
   size = 'md',
-  className = '',
+  theme = 'light'
 }: QuantityControlProps) {
+  const [isPressed, setIsPressed] = useState<'increase' | 'decrease' | null>(null);
+
   const sizeClasses = {
-    sm: 'h-6 w-6 text-xs',
-    md: 'h-8 w-8 text-sm',
-    lg: 'h-10 w-10 text-base',
+    sm: {
+      container: 'h-8',
+      button: 'w-8',
+      quantity: 'w-10',
+      icon: 12
+    },
+    md: {
+      container: 'h-10',
+      button: 'w-10',
+      quantity: 'w-12',
+      icon: 14
+    }
   };
 
-  const iconSize = {
-    sm: 12,
-    md: 14,
-    lg: 16,
+  const themeClasses = {
+    light: {
+      border: 'border-black/10',
+      text: 'text-black',
+      textSecondary: 'text-black/60',
+      bg: 'bg-white',
+      hover: 'hover:bg-black/5'
+    },
+    dark: {
+      border: 'border-white/10',
+      text: 'text-white',
+      textSecondary: 'text-white/60',
+      bg: 'bg-black',
+      hover: 'hover:bg-white/10'
+    }
+  };
+
+  const handleClick = (action: 'increase' | 'decrease') => {
+    setIsPressed(action);
+    if (action === 'increase') onIncrease();
+    else onDecrease();
+    setTimeout(() => setIsPressed(null), 150);
   };
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className="inline-flex items-stretch select-none">
       <motion.button
-        whileTap={{ scale: 0.95 }}
-        onClick={onDecrease}
+        onClick={() => handleClick('decrease')}
+        className={`relative ${sizeClasses[size].button} flex items-center justify-center border ${themeClasses[theme].border} border-r-0 
+          ${themeClasses[theme].textSecondary} hover:${themeClasses[theme].text} ${themeClasses[theme].hover} transition-colors 
+          disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent
+          ${isPressed === 'decrease' ? themeClasses[theme].hover : ''}`}
         disabled={quantity <= 1}
-        className={`flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${sizeClasses[size]}`}
+        whileTap={{ scale: 0.97 }}
       >
-        <Minus size={iconSize[size]} className="text-gray-600" />
+        <Minus size={sizeClasses[size].icon} strokeWidth={2.5} />
       </motion.button>
-      <span className={`font-medium text-gray-900 min-w-[1.5rem] text-center ${sizeClasses[size]}`}>
-        {quantity}
-      </span>
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        onClick={onIncrease}
-        className={`flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors ${sizeClasses[size]}`}
+
+      <div
+        className={`${sizeClasses[size].container} ${sizeClasses[size].quantity} border-y ${themeClasses[theme].border}
+          flex items-center justify-center font-medium ${themeClasses[theme].text} ${themeClasses[theme].bg}`}
       >
-        <Plus size={iconSize[size]} className="text-gray-600" />
+        {quantity}
+      </div>
+
+      <motion.button
+        onClick={() => handleClick('increase')}
+        className={`relative ${sizeClasses[size].button} flex items-center justify-center border ${themeClasses[theme].border} border-l-0 
+          ${themeClasses[theme].textSecondary} hover:${themeClasses[theme].text} ${themeClasses[theme].hover} transition-colors
+          ${isPressed === 'increase' ? themeClasses[theme].hover : ''}`}
+        whileTap={{ scale: 0.97 }}
+      >
+        <Plus size={sizeClasses[size].icon} strokeWidth={2.5} />
       </motion.button>
     </div>
   );

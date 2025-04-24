@@ -1,15 +1,29 @@
+import { ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-export function EmptyCart({ onClose, variant = 'page' }: { onClose?: () => void; variant?: 'page' | 'mini' }) {
+interface EmptyCartProps {
+  onClose?: () => void;
+  variant?: 'page' | 'mini';
+}
+
+export function EmptyCart({ onClose, variant = 'page' }: EmptyCartProps) {
   return (
-    <div className={`text-center ${variant === 'page' ? 'bg-white p-8 rounded-lg shadow-md' : ''}`}>
-      {variant === 'page' && <h2 className="text-xl font-semibold mb-4">Your Cart is Empty</h2>}
+    <div className={`flex flex-col items-center justify-center ${variant === 'mini' ? 'py-12' : 'py-24'}`}>
+      <div className="relative mb-8">
+        <div className="absolute inset-0 bg-black/5" />
+        <ShoppingBag size={variant === 'mini' ? 40 : 56} className="relative text-black/20" />
+      </div>
+      <h3 className="text-sm font-medium tracking-wide mb-3">YOUR CART IS EMPTY</h3>
+      <p className="text-xs text-black/60 mb-8 text-center max-w-xs">
+        Looks like you haven't added anything to your cart yet.
+      </p>
       <Link
         to="/category/mobile-skins"
         onClick={onClose}
-        className="text-blue-600 hover:text-blue-700 transition-colors"
+        className="group flex items-center gap-2 text-sm font-medium tracking-wide text-black hover:text-black/70 transition-colors"
       >
-        Continue Shopping
+        <span>START SHOPPING</span>
+        <span className="transform transition-transform duration-300 group-hover:translate-x-1">→</span>
       </Link>
     </div>
   );

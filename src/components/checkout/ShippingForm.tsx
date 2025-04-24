@@ -1,297 +1,266 @@
 import React, { useState } from 'react';
-import { Edit, Lock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { TextField, Button, Box, Checkbox, FormControlLabel, Typography, Link } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
-interface ShippingFormProps {
-  onSubmit: (data: any) => void;
-  initialValues: {
-    firstName: string;
-    lastName: string;
-    address: string;
-    apartment: string;
-    city: string;
-    pin: string;
-    state: string; // Added state
-    phone: string;
-    email: string;
-    customerNote?: string;
-  };
-  isSubmitted: boolean;
-  setIsSubmitted: (value: boolean) => void;
-  isEditing: boolean;
-  setIsEditing: (value: boolean) => void;
-}
-
-interface Errors {
+interface ShippingFormData {
   firstName: string;
   lastName: string;
   address: string;
   apartment: string;
   city: string;
+  state: string;
   pin: string;
-  state: string; // Added state
+  country: string;
   phone: string;
   email: string;
   customerNote: string;
 }
 
+interface ShippingFormProps {
+  initialValues: ShippingFormData;
+  onSubmit: (address: ShippingFormData) => void;
+  isSubmitted: boolean;
+  setIsSubmitted: (value: boolean) => void;
+  isEditing: boolean;
+  setIsEditing: (value: boolean) => void;
+  agreedToPolicies: boolean;
+  setAgreedToPolicies: (value: boolean) => void;
+}
+
 const ShippingForm: React.FC<ShippingFormProps> = ({
-  onSubmit,
   initialValues,
+  onSubmit,
   isSubmitted,
   setIsSubmitted,
   isEditing,
   setIsEditing,
+  agreedToPolicies,
+  setAgreedToPolicies
 }) => {
-  const [shippingForm, setShippingForm] = useState(initialValues);
-  const [errors, setErrors] = useState<Errors>({
-    firstName: '',
-    lastName: '',
-    address: '',
-    apartment: '',
-    city: '',
-    pin: '',
-    state: '', // Added state
-    phone: '',
-    email: '',
-    customerNote: ''
-  });
-  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [shippingAddress, setShippingAddress] = useState<ShippingFormData>(initialValues);
+  const [errors, setErrors] = useState<Partial<ShippingFormData & { agreedToPolicies?: string }>>({});
 
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors: Errors = { firstName: '', lastName: '', address: '', apartment: '', city: '',state: '',  pin: '', phone: '', email: '', customerNote: '' };
-    if (!shippingForm.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-      isValid = false;
-    }
-    if (!shippingForm.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-      isValid = false;
-    }
-    if (!shippingForm.address.trim()) {
-      newErrors.address = 'Address is required';
-      isValid = false;
-    }
-    if (!shippingForm.city.trim()) {
-      newErrors.city = 'City is required';
-      isValid = false;
-    }
-    if (!shippingForm.pin.trim()) {
-      newErrors.pin = 'PIN code is required';
-      isValid = false;
-    } else if (!/^\d{6}$/.test(shippingForm.pin)) {
-      newErrors.pin = 'Invalid PIN (6 digits required)';
-      isValid = false;
-    }
-    if (!shippingForm.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-      isValid = false;
-    } else if (!/^\d{10}$/.test(shippingForm.phone)) {
-      newErrors.phone = 'Invalid phone number (10 digits required)';
-      isValid = false;
-    }
-    if (!shippingForm.state.trim()) { // Added state validation
-      newErrors.state = 'State is required';
-      isValid = false;
-    }
-    if (!shippingForm.email.trim()) {
-      newErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(shippingForm.email)) {
-      newErrors.email = 'Invalid email address';
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setShippingAddress(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      try {
-        setIsSubmitted(true);
-        setIsEditing(false);
-        onSubmit(shippingForm);
-        setSubmissionError(null);
-      } catch (error) {
-        setSubmissionError('Failed to submit shipping details. Please try again.');
-      }
+    
+    // Validate form
+    const newErrors: Partial<ShippingFormData & { agreedToPolicies?: string }> = {};
+    if (!shippingAddress.firstName) newErrors.firstName = 'First name is required';
+    if (!shippingAddress.lastName) newErrors.lastName = 'Last name is required';
+    if (!shippingAddress.address) newErrors.address = 'Address is required';
+    if (!shippingAddress.city) newErrors.city = 'City is required';
+    if (!shippingAddress.state) newErrors.state = 'State is required';
+    if (!shippingAddress.pin) newErrors.pin = 'PIN code is required';
+    if (!shippingAddress.phone) newErrors.phone = 'Phone number is required';
+    if (!shippingAddress.email) newErrors.email = 'Email is required';
+    if (!agreedToPolicies) {
+      newErrors.agreedToPolicies = 'You must agree to the policies';
     }
-  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setShippingForm(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: '' }));
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    onSubmit(shippingAddress);
+    setIsSubmitted(true);
   };
 
   return (
-    <motion.div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Shipping Address</h2>
-        <span className="flex items-center text-sm text-gray-500">
-          <Lock size={14} className="mr-1" /> Secure
-        </span>
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: 'auto' }}>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <TextField
+          label="First Name"
+          name="firstName"
+          value={shippingAddress.firstName}
+          onChange={handleChange}
+          error={!!errors.firstName}
+          helperText={errors.firstName}
+          required
+          fullWidth
+        />
+        <TextField
+          label="Last Name"
+          name="lastName"
+          value={shippingAddress.lastName}
+          onChange={handleChange}
+          error={!!errors.lastName}
+          helperText={errors.lastName}
+          required
+          fullWidth
+        />
       </div>
 
-      <AnimatePresence>
-        {!isSubmitted || isEditing ? (
-          <motion.form onSubmit={handleSubmit} className="space-y-4">
-            {submissionError && (
-              <p className="text-red-500 text-sm mb-2">{submissionError}</p>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">First Name</label>
-                <input
-                  name="firstName"
-                  value={shippingForm.firstName}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="First Name"
-                />
-                {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Last Name</label>
-                <input
-                  name="lastName"
-                  value={shippingForm.lastName}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Last Name"
-                />
-                {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Phone</label>
-              <input
-                name="phone"
-                type="tel"
-                value={shippingForm.phone}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="+91"
-              />
-              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <input
-                name="email"
-                type="email"
-                value={shippingForm.email}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="example@example.com"
-              />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Address</label>
-              <input
-                name="address"
-                value={shippingForm.address}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Address"
-              />
-              {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Apartment, suite, etc. (optional)</label>
-              <input
-                name="apartment"
-                value={shippingForm.apartment}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Optional"
-              />
-              {errors.apartment && <p className="text-red-500 text-xs mt-1">{errors.apartment}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">City</label>
-                <input
-                  name="city"
-                  value={shippingForm.city}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="City"
-                />
-                {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">PIN Code</label>
-                <input
-                  name="pin"
-                  type="number"
-                  value={shippingForm.pin}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="110001"
-                />
-                {errors.pin && <p className="text-red-500 text-xs mt-1">{errors.pin}</p>}
-              </div>
-              <div>
-              <label className="block text-sm font-medium mb-1">State</label>
-              <input
-                name="state"
-                value={shippingForm.state}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="State"
-              />
-              {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
-            </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Special Instructions (Optional)</label>
-              <textarea
-                name="customerNote"
-                value={shippingForm.customerNote}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Add any special instructions or notes for your order..."
-                rows={3}
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              Continue to Payment
-            </button>
-          </motion.form>
-        ) : (
-          <motion.div className="space-y-2">
-            <p><span className="font-medium">First Name:</span> {shippingForm.firstName}</p>
-            <p><span className="font-medium">Last Name:</span> {shippingForm.lastName}</p>
-            <p><span className="font-medium">Address:</span> {shippingForm.address}</p>
-            <p><span className="font-medium">Apartment:</span> {shippingForm.apartment}</p>
-            <p><span className="font-medium">City:</span> {shippingForm.city}</p>
-            <p><span className="font-medium">PIN:</span> {shippingForm.pin}</p>
-            <p><span className="font-medium">State:</span> {shippingForm.state}</p>
-            <p><span className="font-medium">Phone:</span> {shippingForm.phone}</p>
-            <p><span className="font-medium">Email:</span> {shippingForm.email}</p>
-            {shippingForm.customerNote && (
-              <div className="mt-2 p-3 bg-gray-50 rounded-md">
-                <p className="font-medium text-sm text-gray-700">Special Instructions:</p>
-                <p className="text-sm text-gray-600 mt-1">{shippingForm.customerNote}</p>
-              </div>
-            )}
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-indigo-600 hover:underline flex items-center gap-1"
-            >
-              <Edit size={14} /> Edit
-            </button>
-          </motion.div>
+      <TextField
+        label="Address"
+        name="address"
+        value={shippingAddress.address}
+        onChange={handleChange}
+        error={!!errors.address}
+        helperText={errors.address}
+        required
+        fullWidth
+        margin="normal"
+      />
+
+      <TextField
+        label="Apartment, suite, etc. (optional)"
+        name="apartment"
+        value={shippingAddress.apartment}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      />
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <TextField
+          label="City"
+          name="city"
+          value={shippingAddress.city}
+          onChange={handleChange}
+          error={!!errors.city}
+          helperText={errors.city}
+          required
+          fullWidth
+        />
+        <TextField
+          label="State"
+          name="state"
+          value={shippingAddress.state}
+          onChange={handleChange}
+          error={!!errors.state}
+          helperText={errors.state}
+          required
+          fullWidth
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <TextField
+          label="PIN Code"
+          name="pin"
+          value={shippingAddress.pin}
+          onChange={handleChange}
+          error={!!errors.pin}
+          helperText={errors.pin}
+          required
+          fullWidth
+        />
+        <TextField
+          label="Country"
+          name="country"
+          value={shippingAddress.country}
+          onChange={handleChange}
+          required
+          fullWidth
+          disabled
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <TextField
+          label="Phone"
+          name="phone"
+          value={shippingAddress.phone}
+          onChange={handleChange}
+          error={!!errors.phone}
+          helperText={errors.phone}
+          required
+          fullWidth
+        />
+        <TextField
+          label="Email"
+          name="email"
+          type="email"
+          value={shippingAddress.email}
+          onChange={handleChange}
+          error={!!errors.email}
+          helperText={errors.email}
+          required
+          fullWidth
+        />
+      </div>
+
+      <TextField
+        label="Customer Note (Optional)"
+        name="customerNote"
+        value={shippingAddress.customerNote}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        multiline
+        rows={3}
+        placeholder="Add any special instructions or notes for your order..."
+      />
+
+      <div className="mt-6 p-4 border border-black">
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={agreedToPolicies}
+              onChange={(e) => setAgreedToPolicies(e.target.checked)}
+              color="primary"
+              required
+            />
+          }
+          label={
+            <Typography variant="body2">
+              By checking this box, I confirm that I have read and agree to all the following policies:
+              <ul className="list-disc pl-6 mt-2">
+                <li>
+                  <Link component={RouterLink} to="/policies/privacy" target="_blank" color="primary">
+                    Privacy Policy
+                  </Link>
+                  : I understand how my personal data will be collected and used
+                </li>
+                <li>
+                  <Link component={RouterLink} to="/policies/returns" target="_blank" color="primary">
+                    Return & Refund Policy
+                  </Link>
+                  : I acknowledge the conditions for returns and refunds
+                </li>
+                <li>
+                  <Link component={RouterLink} to="/policies/shipping" target="_blank" color="primary">
+                    Shipping Policy
+                  </Link>
+                  : I understand the shipping terms and delivery timelines
+                </li>
+                <li>
+                  <Link component={RouterLink} to="/policies/terms" target="_blank" color="primary">
+                    Terms & Conditions
+                  </Link>
+                  : I agree to the general terms of service
+                </li>
+              </ul>
+            </Typography>
+          }
+        />
+        {errors.agreedToPolicies && (
+          <Typography color="error" variant="caption" className="mt-1 block">
+            {errors.agreedToPolicies}
+          </Typography>
         )}
-      </AnimatePresence>
-    </motion.div>
+      </div>
+
+      <Button 
+        type="submit" 
+        variant="contained" 
+        color="primary" 
+        fullWidth 
+        sx={{ mt: 4, py: 1.5 }}
+        disabled={!agreedToPolicies}
+      >
+        Continue to Payment
+      </Button>
+    </Box>
   );
 };
 

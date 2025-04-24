@@ -6,7 +6,6 @@ import { campaignService } from '../../api/services/campaigns';
 import ShippingForm from '../../components/checkout/ShippingForm';
 import OrderSummary from '../../components/checkout/OrderSummary';
 import PaymentHandler from '../../components/checkout/PaymentHandler';
-import OrderConfirmation from '../../components/checkout/OrderConfirmation';
 import { Coupon, Order, ProductItem, ShippingInfo } from '../../api/types';
 import { orderService } from '../../api/services/orders';
 import { CartItem, Product } from '../../types/types';
@@ -14,7 +13,7 @@ import { productService } from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { LoadingSpinner } from '../../components/Loading/LoadingSpinner';
 
-const TAX_RATE = 0.08; // 8% tax rate
+const TAX_RATE = 0; // Changed from 0.08 to 0
 
 interface CheckoutPipeline {
   pipelineId?: string;
@@ -36,7 +35,7 @@ interface ShippingFormData {
   pin: string;
   phone: string;
   email: string;
-  customerNote?: string;
+  customerNote: string;
 }
 
 interface PaymentResult {
@@ -48,6 +47,31 @@ interface PaymentResult {
 interface OrderDetails {
   shippingInfo: ShippingFormData;
   paymentResult: PaymentResult;
+}
+
+interface OrderSummaryProps {
+  items: CartItem[];
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  couponCode: string;
+  couponError: string;
+  validCoupon: string;
+  isSubmitted: boolean;
+  onApplyCoupon: () => Promise<void>;
+  onCouponChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setCouponCode: (code: string) => void;
+  setDiscount: (discount: number) => void;
+  setCouponError: (error: string) => void;
+  setValidCoupon: (coupon: string) => void;
+  applyAttemptCount: number;
+  setApplyAttemptCount: (count: number) => void;
+  disableCouponApply: boolean;
+  setDisableCouponApply: (disabled: boolean) => void;
+  rateLimitMessage: string;
+  setRateLimitMessage: (message: string) => void;
+  onOrderSubmit: () => void;
 }
 
 export default function CheckoutPage() {
@@ -87,6 +111,7 @@ export default function CheckoutPage() {
   const [applyAttemptCount, setApplyAttemptCount] = useState(0);
   const [disableCouponApply, setDisableCouponApply] = useState(false);
   const [rateLimitMessage, setRateLimitMessage] = useState('');
+  const [agreedToPolicies, setAgreedToPolicies] = useState(false);
 
   useEffect(() => {
     if (isBuyNow && productId) {
@@ -118,8 +143,6 @@ export default function CheckoutPage() {
     setPaymentError(null);
 
     try {
-      // Order is already created during payment verification
-      // Just clear the cart and navigate to confirmation with token
       clearCart();
       navigate(`/order-confirmation/${paymentId}`);
     } catch (error: any) {
@@ -130,14 +153,25 @@ export default function CheckoutPage() {
     }
   };
 
+  const calculateTax = (subtotal: number) => {
+    // Tax is now 0
+    return 0;
+  };
+
+  const calculateTotal = (subtotal: number, discount: number) => {
+    const discountedSubtotal = subtotal - discount;
+    // No tax added
+    return Number(discountedSubtotal.toFixed(2));
+  };
+
   const discountedSubtotal = cart.items.reduce((total: number, item: CartItem) => 
-    total + item.price * item.quantity, 0);
-  const tax = discountedSubtotal * TAX_RATE;
+    total + (item.price * item.quantity), 0);
+  
   const discountAmount = discountedSubtotal * discount;
-  const total = discountedSubtotal + tax - discountAmount;
+  const tax = 0; // Tax is always 0
+  const total = calculateTotal(discountedSubtotal, discountAmount);
 
   const validateForm = () => {
-    console.log('Validating shippingForm in CheckoutPage:', shippingFormData);
     let isValid = true;
     const newErrors = { 
       firstName: '', 
@@ -150,6 +184,7 @@ export default function CheckoutPage() {
       phone: '',
       email: ''
     };
+
     if (!shippingFormData.firstName.trim()) { newErrors.firstName = 'First name is required'; isValid = false; }
     if (!shippingFormData.lastName.trim()) { newErrors.lastName = 'Last name is required'; isValid = false; }
     if (!shippingFormData.address.trim()) { newErrors.address = 'Address is required'; isValid = false; }
@@ -162,8 +197,8 @@ export default function CheckoutPage() {
     else if (!/^\d{10}$/.test(shippingFormData.phone)) { newErrors.phone = 'Invalid phone number (10 digits required)'; isValid = false; }
     if (!shippingFormData.email.trim()) { newErrors.email = 'Email is required'; isValid = false; }
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shippingFormData.email)) { newErrors.email = 'Invalid email format'; isValid = false; }
+    if (!agreedToPolicies) { isValid = false; }
 
-    console.log('Validation result:', { isValid, newErrors });
     setErrors(newErrors);
     return isValid;
   };
@@ -218,13 +253,13 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
+    <div className="min-h-screen bg-white">
+      <header className="border-b border-black">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold">Checkout</h1>
+            <h1 className="text-2xl font-bold">Checkout</h1>
           </div>
-          <Link to="/cart" className="flex items-center text-gray-600 hover:text-black">
+          <Link to="/cart" className="flex items-center text-black hover:text-gray-600">
             <ChevronLeft size={18} /> Back to Cart
           </Link>
         </div>
@@ -232,13 +267,13 @@ export default function CheckoutPage() {
 
       <div className="max-w-5xl mx-auto px-4 py-4">
         <div className="flex justify-between text-sm font-medium text-gray-500">
-          <span className={isSubmitted ? 'text-indigo-600' : 'text-gray-800'}>Shipping</span>
-          <span className={isSubmitted ? (isConfirmed ? 'text-indigo-600' : 'text-gray-800') : 'text-gray-400'}>Payment</span>
-          <span className={isConfirmed ? 'text-indigo-600' : 'text-gray-400'}>Confirmation</span>
+          <span className={isSubmitted ? 'text-black' : 'text-black'}>Shipping</span>
+          <span className={isSubmitted ? (isConfirmed ? 'text-black' : 'text-black') : 'text-gray-400'}>Payment</span>
+          <span className={isConfirmed ? 'text-black' : 'text-gray-400'}>Confirmation</span>
         </div>
-        <div className="h-1 bg-gray-200 mt-2 rounded-full">
+        <div className="h-1 bg-gray-200 mt-2">
           <div
-            className={`h-full bg-indigo-600 rounded-full transition-all duration-300 ${
+            className={`h-full bg-black transition-all duration-300 ${
               isConfirmed ? 'w-full' : isSubmitted ? 'w-2/3' : 'w-1/3'
             }`}
           ></div>
@@ -255,30 +290,18 @@ export default function CheckoutPage() {
               setIsSubmitted={setIsSubmitted}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
+              agreedToPolicies={agreedToPolicies}
+              setAgreedToPolicies={setAgreedToPolicies}
             />
           ) : (
             <PaymentHandler
               shippingForm={shippingFormData}
               state={cart}
-              discount={discount}
+              discount={discountAmount}
               tax={tax}
               total={total}
               validCouponId={validCoupon}
-              validateForm={() => {
-                const newErrors = {
-                  firstName: !shippingFormData.firstName ? 'First name is required' : '',
-                  lastName: !shippingFormData.lastName ? 'Last name is required' : '',
-                  address: !shippingFormData.address ? 'Address is required' : '',
-                  city: !shippingFormData.city ? 'City is required' : '',
-                  country: !shippingFormData.country ? 'Country is required' : '',
-                  state: !shippingFormData.state ? 'State is required' : '',
-                  pin: !shippingFormData.pin ? 'PIN code is required' : '',
-                  phone: !shippingFormData.phone ? 'Phone number is required' : '',
-                  email: !shippingFormData.email ? 'Email is required' : '',
-                };
-                setErrors(newErrors);
-                return !Object.values(newErrors).some(error => error);
-              }}
+              validateForm={validateForm}
               setErrors={setErrors}
               onPaymentSuccess={handlePaymentSuccess}
               onPaymentError={handlePaymentError}
@@ -289,8 +312,9 @@ export default function CheckoutPage() {
           <OrderSummary
             items={cart.items}
             subtotal={discountedSubtotal}
-            discount={discount}
-            taxRate={tax}
+            discount={discountAmount}
+            tax={tax}
+            total={total}
             couponCode={couponCode}
             couponError={couponError}
             validCoupon={validCoupon}

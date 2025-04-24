@@ -1,92 +1,87 @@
-import { X } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
-import { CartItem } from '../../api/types';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Trash2 } from 'lucide-react';
+import { QuantityControl } from './QuantityControl';
+import { useCart } from '../../context/CartContext';
 
-export function CartItems({ item, layout = 'full' }: { item: CartItem; layout?: 'full' | 'mini' }) {
+interface CartItemProps {
+  item: {
+    _id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    images: string[];
+    selectedBrand: string;
+    selectedModel: string;
+  };
+  layout?: 'page' | 'mini';
+  theme?: 'light' | 'dark';
+}
+
+export function CartItems({ item, layout = 'page', theme = 'light' }: CartItemProps) {
   const { removeItem, updateQuantity } = useCart();
-  const [shake, setShake] = useState(false);
+  const borderColor = theme === 'dark' ? 'border-white/10' : 'border-black/10';
+  const textColor = theme === 'dark' ? 'text-white' : 'text-black';
+  const secondaryColor = theme === 'dark' ? 'text-white/60' : 'text-black/60';
 
   const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity < 1) {
-      toast.info("To remove this item, click the remove button.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-      });
-      return;
-    }
+    if (newQuantity < 1) return;
     updateQuantity(item._id, newQuantity, item.selectedBrand, item.selectedModel);
   };
 
   const handleRemoveItem = () => {
-    const confirmed = window.confirm(`Are you sure you want to remove "${item.name}" from the cart?`);
-    if (confirmed) {
-      removeItem(item._id, item.selectedBrand, item.selectedModel);
-      toast.success(`${item.name} removed from cart`, {
-        position: "top-left",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-      });
-    }
+    removeItem(item._id, item.selectedBrand, item.selectedModel);
   };
 
   return (
-    <div className={`flex gap-4 ${layout === 'mini' ? 'bg-gray-50 p-4 rounded-lg' : 'bg-white p-4 rounded-lg shadow-md'}`}>
-      <img
-        src={item.images[0]}
-        alt={item.name}
-        className={`${layout === 'mini' ? 'w-20 h-20 rounded-md' : 'w-32 h-32'} object-cover`}
-      />
-      <div className="flex-1">
-        <div className="flex justify-between items-center">
-          <h3 className="font-medium">{item.name}</h3>
-          <button onClick={handleRemoveItem} className="text-gray-400 hover:text-red-500 flex items-center gap-1">
-            <X size={20} />
-            <span className="text-xs">Remove</span>
-          </button>
-        </div>
-        {layout === 'full' ? (
-          <p className="text-sm text-gray-500">{item.selectedBrand} - {item.selectedModel}</p>
-        ) : (
-          <>
-            <p className="text-xs text-gray-500">{item.description}</p>
-            <p className="text-sm text-blue-600">Brand: {item.selectedBrand}</p>
-            <p className="text-sm text-green-600">Model: {item.selectedModel}</p>
-          </>
-        )}
-        <div className="flex items-center gap-4 mt-4">
-          <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
-            <motion.button
-              onClick={() => handleQuantityChange(item.quantity - 1)}
-              className="text-gray-600 hover:text-black disabled:text-gray-400"
-              animate={shake ? { x: [-5, 5, -5, 5, 0] } : {}}
-              transition={{ duration: 0.3 }}
-            >
-              -
-            </motion.button>
-            <span className="w-8 text-center">{item.quantity}</span>
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -50 }}
+      className={`group relative flex items-start gap-8 ${layout === 'mini' ? 'py-5' : 'py-8'} border-b ${borderColor} last:border-b-0`}
+    >
+      {/* Product Image */}
+      <div className={`${layout === 'mini' ? 'w-20 h-20' : 'w-28 h-28'} flex-shrink-0 overflow-hidden bg-white`}>
+        <img
+          src={item.images[0]}
+          alt={item.name}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+
+      {/* Product Details */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h3 className={`text-sm font-medium tracking-wide truncate ${textColor}`}>{item.name}</h3>
+            <p className={`text-xs mt-1.5 ${secondaryColor}`}>
+              {item.selectedBrand} {item.selectedModel}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className={`text-sm font-medium ${textColor}`}>
+              ₹{(item.price * item.quantity).toFixed(2)}
+            </p>
             <button
-              onClick={() => handleQuantityChange(item.quantity + 1)}
-              className="text-gray-600 hover:text-black"
+              onClick={handleRemoveItem}
+              className={`${secondaryColor} hover:${textColor} mt-3 transition-colors`}
             >
-              +
+              <Trash2 size={16} />
             </button>
           </div>
-          <span className="text-lg font-bold">Rs.{(item.price * item.quantity).toFixed(2)}</span>
+        </div>
+
+        {/* Quantity Control */}
+        <div className="mt-6">
+          <QuantityControl
+            quantity={item.quantity}
+            onIncrease={() => handleQuantityChange(item.quantity + 1)}
+            onDecrease={() => handleQuantityChange(item.quantity - 1)}
+            size={layout === 'mini' ? 'sm' : 'md'}
+            theme={theme}
+          />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
