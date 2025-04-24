@@ -1,31 +1,30 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingCart,  Truck, RotateCcw, Shield } from 'lucide-react';
+import { ShoppingCart, Truck, RotateCcw, Shield } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import PhoneSelector from '../../components/variantSelection/PhoneSelectorProps';
 import { mobiles } from '../../sample/mobileDevicesList';
-import { productService } from '../../api'; // Import the productService
+import { productService } from '../../api';
 import ProductImageGallery from '../../components/ProductSelection/ProductImageGallery';
-import Toast from "../../components/ui/Toast"; // Import Toast
-import {LoadingSpinner} from '../../components/Loading/LoadingSpinner';
+import Toast from "../../components/ui/Toast";
+import { LoadingSpinner } from '../../components/Loading/LoadingSpinner';
 import FAQSection from '../../components/FAQ/FAQSmall';
 import Breadcrumbs from '../../components/Breadcrumb/Breadcrumbs';
 import ProductVideoPlayer from '../../components/ProductSelection/ProductVideoPlayer';
+import { AnnouncementBar } from '../../components/ui/AnnouncementBar';
 
-export default function ProductsDetail() {
+export default function ProductDetail() {
   const [showAddedNotification, setShowAddedNotification] = useState(false);
- 
-  const { id } = useParams(); // Get the product ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { addItem } = useCart(); // Destructure addItem from useCart
-  const [product, setProduct] = useState<any>(null); // State to store the product
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState<string>(''); // Error state
+  const { addItem } = useCart();
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
   const [selectedPhone, setSelectedPhone] = useState({ brand: '', model: '' });
-  const [errorMessage, setErrorMessage] = useState(""); // State for error toast
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Fetch product details using getById
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -35,7 +34,6 @@ export default function ProductsDetail() {
           return;
         }
         const fetchedProduct = await productService.getById(id);
-        console.log("Fetched Product:", fetchedProduct);
         setProduct(fetchedProduct);
         setLoading(false);
       } catch (err) {
@@ -44,25 +42,14 @@ export default function ProductsDetail() {
         navigate('/not-found');
       }
     };
-  
+
     fetchProduct();
   }, [id, navigate]);
-  
-  // If loading, show a loading spinner
-  if (loading) {
-    return <LoadingSpinner/>;
-  }
 
-  // If there's an error, display the error message
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <LoadingSpinner />;
+  if (error) return <div>{error}</div>;
+  if (!product) return <div>Product not found!</div>;
 
-  if (!product) {
-    return <div>Product not found!</div>;
-  }
-
-  // Handle Add to Cart
   const handleAddToCart = () => {
     if (product.productType.name === "mobile-skins" && (!selectedPhone.brand || !selectedPhone.model)) {
       setErrorMessage("Please select a phone brand and model before adding to cart.");
@@ -75,121 +62,116 @@ export default function ProductsDetail() {
       selectedModel: selectedPhone.model,
     });
 
-    // ✅ Ensure the mini cart opens after adding an item
- 
-
     setShowAddedNotification(true);
     setTimeout(() => setShowAddedNotification(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Render breadcrumbs at the top */}
+    <>
+      <AnnouncementBar />
+      <div className="min-h-screen bg-white">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <Breadcrumbs />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Image Gallery */}
-          <ProductImageGallery images={product.images} productName={product.name}  />
-          {/* Video */}
           
-          {/* Product Info */}
-          <div className="space-y-6">
-            <div>
-              <motion.h1
-                className="text-3xl font-bold"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                {product.name}
-              </motion.h1>
-              <div className="flex items-center space-x-4 mt-2"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-8">
+            {/* Left Column - Images */}
+            <div className="space-y-8">
+              <ProductImageGallery images={product.images} productName={product.name} />
+              <ProductVideoPlayer 
+                videoLink={product.instagramLink}
+                posterImage={product.images[0]}
+                productName={product.name}
+              />
             </div>
 
-            <motion.div
-              className="text-3xl font-bold text-black-600"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              Rs. {product.price}
-              
-            </motion.div>
+            {/* Right Column - Product Info */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-3xl font-light tracking-wide"
+                >
+                  {product.name}
+                </motion.h1>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl font-medium"
+                >
+                  ₹{product.price.toFixed(2)}
+                </motion.div>
+              </div>
 
-            {/* Conditionally render PhoneSelector if productType is 'mobile' */}
-            {product.productType.name === 'mobile-skins' && (
-              <motion.div
-                className="space-y-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <h3 className="font-semibold">Select Your Device</h3>
-                <div className="flex space-x-4">
+              {/* Device Selection */}
+              {product.productType.name === 'mobile-skins' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="space-y-4"
+                >
+                  <h3 className="text-sm font-medium tracking-wide">SELECT YOUR DEVICE</h3>
                   <PhoneSelector brands={mobiles} setSelectedPhone={setSelectedPhone} />
-                </div>
-              </motion.div>
-            )}
+                </motion.div>
+              )}
 
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="flex space-x-4">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex-1 bg-black text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-black/70"
+              {/* Add to Cart Button */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <button
                   onClick={handleAddToCart}
+                  className="w-full bg-black text-white py-4 flex items-center justify-center gap-3 hover:bg-black/90 transition-colors"
                 >
                   <ShoppingCart size={20} />
-                  <span>Add to Cart</span>
-                </motion.button>
-              </div>
-            </motion.div>
+                  <span className="text-sm tracking-wide">ADD TO CART</span>
+                </button>
+              </motion.div>
 
-            <div className="border-t border-gray-200 pt-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Truck size={20} />
-                  <span>Fast Delivery</span>
+              {/* Features */}
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-black/10">
+                <div className="text-center space-y-2">
+                  <Truck size={24} className="mx-auto text-black/60" />
+                  <span className="block text-xs tracking-wide text-black/60">Fast Delivery</span>
                 </div>
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <RotateCcw size={20} />
-                  <span>Easy To Apply</span>
+                <div className="text-center space-y-2">
+                  <RotateCcw size={24} className="mx-auto text-black/60" />
+                  <span className="block text-xs tracking-wide text-black/60">Easy To Apply</span>
                 </div>
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Shield size={20} />
-                  <span>Quality Assurance</span>
+                <div className="text-center space-y-2">
+                  <Shield size={24} className="mx-auto text-black/60" />
+                  <span className="block text-xs tracking-wide text-black/60">Quality Assured</span>
                 </div>
               </div>
-            </div>
 
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="font-semibold mb-4">Description</h3>
-              <p className="text-gray-600">{product.description}</p>
+              {/* Description */}
+              <div className="pt-8 border-t border-black/10">
+                <h3 className="text-sm font-medium tracking-wide mb-4">DESCRIPTION</h3>
+                <p className="text-sm leading-relaxed text-black/60">{product.description}</p>
+              </div>
             </div>
           </div>
-          <ProductVideoPlayer 
-  videoLink={product.instagramLink}
-  posterImage={product.images[0]} // Optional - first product image as poster
-  productName={product.name}
-/>
+
+          {/* FAQ Section */}
+          <div className="mt-16">
+            <FAQSection />
+          </div>
         </div>
       </div>
 
-
-<FAQSection/>
-      {/* Added to Cart Notification */}
+      {/* Notifications */}
       <AnimatePresence>
-         {/* Toast Notification for Errors */}
-     {errorMessage && <Toast message={errorMessage} type="error" onClose={() => setErrorMessage("")} />}
-      
-      {/* Toast Notification for Success */}
-      {showAddedNotification && <Toast message="Added to cart!" type="success" onClose={() => setShowAddedNotification(false)} />}
-    
+        {errorMessage && (
+          <Toast message={errorMessage} type="error" onClose={() => setErrorMessage("")} />
+        )}
+        {showAddedNotification && (
+          <Toast message="Added to cart!" type="success" onClose={() => setShowAddedNotification(false)} />
+        )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

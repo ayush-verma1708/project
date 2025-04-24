@@ -219,7 +219,7 @@ export default function AboutUs() {
                 FIND OUR STORE
               </a>
               <a 
-                href="/products" 
+                href="/category/mobile-skins" 
                 className="px-8 py-3 border border-white text-white font-light tracking-wider hover:bg-white hover:text-black transition-all duration-300"
               >
                 SHOP ONLINE

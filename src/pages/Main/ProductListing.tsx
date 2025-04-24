@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Search, X, ChevronDown, Grid3X3, List,  AlertCircle } from 'lucide-react';
+import { Search, X, ChevronDown, Grid3X3, List, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import  ProductCard  from '../../components/ProductSelection/ProductCard';
+import ProductCard from '../../components/ProductSelection/ProductCard';
 import { productService } from '../../api';
 import debounce from 'lodash/debounce';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { productCategories } from '../../constants/productCategories';
 import FilterPanel from '../../components/ProductSelection/FilterPanel';
 import { Product } from '../../types/types';
-import { useSearchParams } from 'react-router-dom';
+import { AnnouncementBar } from '../../components/ui/AnnouncementBar';
 
 const NO_PRODUCTS_IMAGE = "https://illustrations.popsy.co/amber/work-in-progress.svg";
 // https://res.cloudinary.com/dskopgpgi/image/upload/f_auto,q_auto,w_400/v1744193202/Mobiiwrap%20pictures/Transparent%20skin/cmrixhrt1ve4yqu7oelv.jpg";
@@ -447,359 +447,336 @@ export default function ProductListing() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      {/* Header Banner */}
-      {/* <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-8 px-4 mb-6">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">{title}</h1>
-          <p className="text-blue-100 max-w-2xl">{description}</p>
-        </div>
-      </div>  */}
-
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Search and filter bar */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search input */}
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={18} className="text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                onChange={(e) => debouncedSearch(e.target.value)}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    debouncedSearch('');
-                  }}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <X size={18} className="text-gray-400 hover:text-gray-600" />
-                </button>
-              )}
-            </div>
-
-            {/* Sort dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsSortOpen(!isSortOpen)}
-                className="flex items-center justify-between w-full md:w-48 px-4 py-2 border border-gray-300 rounded-md bg-white"
-              >
-                <span className="text-gray-700">{sortBy}</span>
-                <ChevronDown size={18} className={`text-gray-500 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {isSortOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                  <ul className="py-1">
-                    {sortOptions.map((option) => (
-                      <li key={option}>
-                        <button
-                          className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 ${
-                            sortBy === option ? 'font-medium text-blue-600 bg-blue-50' : 'text-gray-700'
-                          }`}
-                          onClick={() => handleSortChange(option)}
-                        >
-                          {option}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+    <>
+      <AnnouncementBar />
+      <div className="min-h-screen bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Search and Controls Bar */}
+          <div className="py-8 space-y-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search input */}
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search size={18} className="text-black/40" />
                 </div>
-              )}
-            </div>
-
-            {/* View mode toggle (grid/list) */}
-            <div className="flex border border-gray-300 rounded-md overflow-hidden">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`flex items-center justify-center px-3 py-2 ${
-                  viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'bg-white text-gray-600'
-                }`}
-              >
-                <Grid3X3 size={18} />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex items-center justify-center px-3 py-2 ${
-                  viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'bg-white text-gray-600'
-                }`}
-              >
-                <List size={18} />
-              </button>
-            </div>
-          </div>
-          
-          {/* Active filters display */}
-          {activeFiltersCount > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2 items-center">
-              <span className="text-sm text-gray-500">Active filters:</span>
-              
-              {/* Category filters */}
-              {selectedCategories.filter(c => c !== 'All').map((category) => (
-                <button
-                  key={`cat-${category}`}
-                  onClick={() => handleCategoryChange(category)}
-                  className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-sm rounded-full"
-                >
-                  {category}
-                  <X size={14} />
-                </button>
-              ))}
-              
-              {/* Tag filters */}
-              {selectedTags.filter(t => t !== 'All').map((tag) => (
-                <button
-                  key={`tag-${tag}`}
-                  onClick={() => handleTagChange(tag)}
-                  className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-sm rounded-full"
-                >
-                  {tag}
-                  <X size={14} />
-                </button>
-              ))}
-              
-              {/* Price filter */}
-              {(currentPriceRange.min !== priceRange.min || currentPriceRange.max !== priceRange.max) && (
-                <button
-                  onClick={() => {
-                    // Reset the user adjustment flag when clicking the tag to remove the filter
-                    hasUserAdjustedPrice.current = false;
-                    setCurrentPriceRange(priceRange);
-                  }}
-                  className="flex items-center gap-1 px-2 py-1 bg-amber-50 text-amber-700 text-sm rounded-full"
-                >
-                  Price: ₹{currentPriceRange.min} - ₹{currentPriceRange.max}
-                  <X size={14} />
-                </button>
-              )}
-              
-              {/* Rating filter */}
-              {selectedRating && (
-                <button
-                  onClick={() => handleRatingChange(null)}
-                  className="flex items-center gap-1 px-2 py-1 bg-purple-50 text-purple-700 text-sm rounded-full"
-                >
-                  Rating: {selectedRating}+ stars
-                  <X size={14} />
-                </button>
-              )}
-              
-              {/* Popularity filter */}
-              {popularityFilter !== 'all' && (
-                <button
-                  onClick={() => handlePopularityChange('all')}
-                  className="flex items-center gap-1 px-2 py-1 bg-red-50 text-red-700 text-sm rounded-full"
-                >
-                  {popularityFilter === 'popular' ? 'Popular' : 'Trending'}
-                  <X size={14} />
-                </button>
-              )}
-              
-              {/* Clear all button */}
-              <button
-                onClick={resetFilters}
-                className="ml-auto text-sm text-gray-600 hover:text-gray-900 hover:underline"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Main content container */}
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Desktop Sidebar */}
-          <aside className="hidden md:block w-64 flex-shrink-0">
-            <div className="sticky top-24">
-              <FilterPanel
-                categories={categories}
-                selectedCategories={selectedCategories}
-                handleCategoryChange={handleCategoryChange}
-                tags={tags}
-                selectedTags={selectedTags}
-                handleTagChange={handleTagChange}
-                ratings={ratings}
-                selectedRating={selectedRating}
-                handleRatingChange={handleRatingChange}
-                priceRange={priceRange}
-                currentPriceRange={currentPriceRange}
-                handlePriceChange={handlePriceChange}
-                popularityOptions={[
-                  { value: 'all', label: 'All Products' },
-                  { value: 'popular', label: 'Popular Items' },
-                  { value: 'trending', label: 'Trending Now' }
-                ]}
-                popularityFilter={popularityFilter}
-                handlePopularityChange={handlePopularityChange}
-                resetFilters={resetFilters}
-                activeFiltersCount={activeFiltersCount}
-              />
-            </div>
-          </aside>
-
-          {/* Products grid */}
-          <div className="flex-1">
-            {isLoading ? (
-              // Loading skeleton
-              <div className={`grid ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1'} gap-4`}>
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-lg shadow-sm p-4 animate-pulse">
-                    <div className="bg-gray-300 aspect-square rounded mb-4"></div>
-                    <div className="bg-gray-300 h-4 rounded w-3/4 mb-2"></div>
-                    <div className="bg-gray-300 h-4 rounded w-1/2"></div>
-                  </div>
-                ))}
-              </div>
-            ) : isError ? (
-              // Error state
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-red-800 mb-2">There was an error</h3>
-                <p className="text-red-600 mb-4">
-                  {error instanceof Error ? error.message : 'Failed to load products. Please try again.'}
-                </p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
-                >
-                  Refresh Page
-                </button>
-              </div>
-            ) : comingSoonState.isComingSoon ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-10 text-center">
-                <div className="relative w-64 h-64 mx-auto mb-6">
-                  <img 
-                    src={NO_PRODUCTS_IMAGE}
-                    alt="Coming Soon" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      // Fallback to a simple SVG if the image fails to load
-                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233B82F6'%3E%3Cpath d='M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.8L20 9l-8 4-8-4 8-4.2zM4 9.8l8 4v8.4l-8-4V9.8zm10 12.4v-8.4l8-4v8.4l-8 4z'/%3E%3C/svg%3E";
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="block w-full pl-11 pr-4 py-3 border-black/10 focus:border-black focus:ring-0 text-sm"
+                  onChange={(e) => debouncedSearch(e.target.value)}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      debouncedSearch('');
                     }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="animate-pulse bg-blue-100 rounded-full w-32 h-32"></div>
-                  </div>
-                </div>
-                <h3 className="text-xl font-medium text-blue-800 mb-3">Coming Soon!</h3>
-                <p className="text-blue-600 max-w-md mx-auto">
-                  {comingSoonState.message}
-                </p>
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                  >
+                    <X size={18} className="text-black/40 hover:text-black" />
+                  </button>
+                )}
               </div>
-            ) : data?.products && data.products.length > 0 ? (
-              // Products grid or list
-              <>
-                <div 
-                  ref={productGridRef}
-                  className={`
-                    ${viewMode === 'grid' 
-                      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 p-4'
-                      : 'space-y-4'
-                  }
-                `}>
-                  {applyFrontendFilters(data.products).map((product) => (
-                    <ProductCard
-                      key={product._id}
-                      product={product}
-                      onQuickView={() => handleQuickView(product)}
-                      onAddToCart={() => handleAddToCart(product)}
-                      onLike={() => handleLike(product)}
-                      isLiked={liked[product._id]}
-                      showPopup={showPopup[product._id]}
-                      viewMode={viewMode}
-                    />
-                  ))}
-                </div>
 
-                {/* Pagination */}
-                {data.totalPages > 1 && (
-                  <div className="mt-8 flex justify-center">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-                        disabled={currentPage === 1}
-                        className={`px-3 py-1 rounded border ${
-                          currentPage === 1
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-white text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        Previous
-                      </button>
-                      
-                      {/* Page numbers */}
-                      {[...Array(data.totalPages)].map((_, i) => {
-                        const pageNum = i + 1;
-                        // Show current page, first, last, and pages around current
-                        const isImportantPage = 
-                          pageNum === 1 || 
-                          pageNum === data.totalPages ||
-                          Math.abs(pageNum - currentPage) <= 1;
-                          
-                        if (!isImportantPage) {
-                          // Show ellipsis for skipped pages
-                          if (pageNum === 2 || pageNum === data.totalPages - 1) {
-                            return <span key={`ellipsis-${pageNum}`} className="px-2">...</span>;
-                          }
-                          return null;
-                        }
-                        
-                        return (
+              {/* Sort dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                  className="flex items-center justify-between w-full md:w-48 px-4 py-3 border border-black/10 bg-white"
+                >
+                  <span className="text-sm">{sortBy}</span>
+                  <ChevronDown size={18} className={`text-black/40 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isSortOpen && (
+                  <div className="absolute right-0 mt-1 w-48 bg-white shadow-lg border border-black/10 z-10">
+                    <ul className="py-1">
+                      {sortOptions.map((option) => (
+                        <li key={option}>
                           <button
-                            key={pageNum}
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`w-8 h-8 flex items-center justify-center rounded ${
-                              currentPage === pageNum
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-white text-gray-700 hover:bg-gray-50'
+                            className={`block px-4 py-2 text-sm w-full text-left hover:bg-black hover:text-white transition-colors ${
+                              sortBy === option ? 'bg-black text-white' : 'text-black/60'
                             }`}
+                            onClick={() => handleSortChange(option)}
                           >
-                            {pageNum}
+                            {option}
                           </button>
-                        );
-                      })}
-                      
-                      <button
-                        onClick={() => handlePageChange(Math.min(currentPage + 1, data.totalPages))}
-                        disabled={currentPage === data.totalPages}
-                        className={`px-3 py-1 rounded border ${
-                          currentPage === data.totalPages
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-white text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        Next
-                      </button>
-                    </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
-              </>
-            ) : (
-              // No results state
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-                <img 
-                  src="https://illustrations.popsy.co/amber/taking-notes.svg" 
-                  alt="No Results" 
-                  className="w-48 h-48 mx-auto mb-4"
-                />
-                <h3 className="text-lg font-medium text-gray-800 mb-2">No products found</h3>
-                <p className="text-gray-600 mb-4">
-                  Try adjusting your search or filter criteria.
-                </p>
+              </div>
+
+              {/* View mode toggle */}
+              {/* <div className="flex border border-black/10">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`flex items-center justify-center px-4 py-3 ${
+                    viewMode === 'grid' ? 'bg-black text-white' : 'bg-white text-black/60'
+                  }`}
+                >
+                  <Grid3X3 size={18} />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`flex items-center justify-center px-4 py-3 ${
+                    viewMode === 'list' ? 'bg-black text-white' : 'bg-white text-black/60'
+                  }`}
+                >
+                  <List size={18} />
+                </button>
+              </div> */}
+            </div>
+
+            {/* Active filters */}
+            {activeFiltersCount > 0 && (
+              <div className="flex flex-wrap gap-2 items-center border-t border-black/10 pt-6">
+                <span className="text-xs tracking-wide text-black/40">ACTIVE FILTERS:</span>
+                
+                {selectedCategories.filter(c => c !== 'All').map((category) => (
+                  <button
+                    key={`cat-${category}`}
+                    onClick={() => handleCategoryChange(category)}
+                    className="flex items-center gap-1 px-3 py-1 bg-black text-white text-xs"
+                  >
+                    {category}
+                    <X size={14} />
+                  </button>
+                ))}
+                
+                {selectedTags.filter(t => t !== 'All').map((tag) => (
+                  <button
+                    key={`tag-${tag}`}
+                    onClick={() => handleTagChange(tag)}
+                    className="flex items-center gap-1 px-3 py-1 border border-black text-xs"
+                  >
+                    {tag}
+                    <X size={14} />
+                  </button>
+                ))}
+                
+                {(currentPriceRange.min !== priceRange.min || currentPriceRange.max !== priceRange.max) && (
+                  <button
+                    onClick={() => {
+                      hasUserAdjustedPrice.current = false;
+                      setCurrentPriceRange(priceRange);
+                    }}
+                    className="flex items-center gap-1 px-3 py-1 border border-black text-xs"
+                  >
+                    ₹{currentPriceRange.min} - ₹{currentPriceRange.max}
+                    <X size={14} />
+                  </button>
+                )}
+                
+                {selectedRating && (
+                  <button
+                    onClick={() => handleRatingChange(null)}
+                    className="flex items-center gap-1 px-3 py-1 border border-black text-xs"
+                  >
+                    {selectedRating}+ stars
+                    <X size={14} />
+                  </button>
+                )}
+                
+                {popularityFilter !== 'all' && (
+                  <button
+                    onClick={() => handlePopularityChange('all')}
+                    className="flex items-center gap-1 px-3 py-1 border border-black text-xs"
+                  >
+                    {popularityFilter === 'popular' ? 'Popular' : 'Trending'}
+                    <X size={14} />
+                  </button>
+                )}
+                
                 <button
                   onClick={resetFilters}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+                  className="ml-auto text-xs text-black/60 hover:text-black hover:underline"
                 >
-                  Reset Filters
+                  Clear all
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Main content */}
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Sidebar */}
+            <aside className="hidden md:block w-64 flex-shrink-0">
+              <div className="sticky top-24 border border-black/10">
+                <FilterPanel
+                  categories={categories}
+                  selectedCategories={selectedCategories}
+                  handleCategoryChange={handleCategoryChange}
+                  tags={tags}
+                  selectedTags={selectedTags}
+                  handleTagChange={handleTagChange}
+                  ratings={ratings}
+                  selectedRating={selectedRating}
+                  handleRatingChange={handleRatingChange}
+                  priceRange={priceRange}
+                  currentPriceRange={currentPriceRange}
+                  handlePriceChange={handlePriceChange}
+                  popularityOptions={[
+                    { value: 'all', label: 'All Products' },
+                    { value: 'popular', label: 'Popular Items' },
+                    { value: 'trending', label: 'Trending Now' }
+                  ]}
+                  popularityFilter={popularityFilter}
+                  handlePopularityChange={handlePopularityChange}
+                  resetFilters={resetFilters}
+                  activeFiltersCount={activeFiltersCount}
+                />
+              </div>
+            </aside>
+
+            {/* Products grid */}
+            <div className="flex-1">
+              {isLoading ? (
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="bg-white border border-black/5">
+                      <div className="p-4 md:p-6 space-y-4">
+                        <div className="aspect-square bg-black/[0.02]" />
+                        <div className="space-y-3">
+                          <div className="h-3 md:h-4 w-2/3 bg-black/[0.02]" />
+                          <div className="h-2 md:h-3 w-1/3 bg-black/[0.02]" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : isError ? (
+                <div className="border border-black/10 p-12 text-center">
+                  <AlertCircle className="w-12 h-12 text-black/40 mx-auto mb-6" />
+                  <h3 className="text-lg font-light tracking-wide mb-3">Error Loading Products</h3>
+                  <p className="text-black/60 mb-6 max-w-md mx-auto">
+                    {error instanceof Error ? error.message : 'Failed to load products'}
+                  </p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-3 bg-black text-white text-sm tracking-wide hover:bg-black/90 transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : comingSoonState.isComingSoon ? (
+                <div className="border border-black/10 p-12 text-center">
+                  <div className="relative w-64 h-64 mx-auto mb-8">
+                    <img 
+                      src={NO_PRODUCTS_IMAGE}
+                      alt="Coming Soon"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-light tracking-wide mb-3">Coming Soon</h3>
+                  <p className="text-black/60 max-w-md mx-auto">
+                    {comingSoonState.message}
+                  </p>
+                </div>
+              ) : data?.products && data.products.length > 0 ? (
+                <>
+                  <div 
+                    ref={productGridRef}
+                    className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+                  >
+                    {applyFrontendFilters(data.products).map((product) => (
+                      <div key={product._id} className="bg-white border border-black/5">
+                        <ProductCard
+                          product={product}
+                          viewMode="grid"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {data.totalPages > 1 && (
+                    <div className="mt-12 flex justify-center mb-[50px]">
+                      <div className="flex items-center gap-px bg-black/5">
+                        <button
+                          onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                          disabled={currentPage === 1}
+                          className={`px-6 py-3 text-sm tracking-wide ${
+                            currentPage === 1
+                              ? 'bg-black/[0.02] text-black/40'
+                              : 'bg-white text-black hover:bg-black hover:text-white transition-colors'
+                          }`}
+                        >
+                          Previous
+                        </button>
+                        
+                        {[...Array(data.totalPages)].map((_, i) => {
+                          const pageNum = i + 1;
+                          const isImportantPage = 
+                            pageNum === 1 || 
+                            pageNum === data.totalPages ||
+                            Math.abs(pageNum - currentPage) <= 1;
+                            
+                          if (!isImportantPage) {
+                            if (pageNum === 2 || pageNum === data.totalPages - 1) {
+                              return (
+                                <span 
+                                  key={`ellipsis-${pageNum}`} 
+                                  className="w-12 flex items-center justify-center bg-white text-black/40"
+                                >
+                                  ···
+                                </span>
+                              );
+                            }
+                            return null;
+                          }
+                          
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => handlePageChange(pageNum)}
+                              className={`w-12 h-12 flex items-center justify-center text-sm tracking-wide ${
+                                currentPage === pageNum
+                                  ? 'bg-black text-white'
+                                  : 'bg-white text-black hover:bg-black hover:text-white transition-colors'
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        })}
+                        
+                        <button
+                          onClick={() => handlePageChange(Math.min(currentPage + 1, data.totalPages))}
+                          disabled={currentPage === data.totalPages}
+                          className={`px-6 py-3 text-sm tracking-wide ${
+                            currentPage === data.totalPages
+                              ? 'bg-black/[0.02] text-black/40'
+                              : 'bg-white text-black hover:bg-black hover:text-white transition-colors'
+                          }`}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="border border-black/10 p-12 text-center ">
+                  <img 
+                    src="https://illustrations.popsy.co/amber/taking-notes.svg" 
+                    alt="No Results" 
+                    className="w-48 h-48 mx-auto mb-6"
+                  />
+                  <h3 className="text-lg font-light tracking-wide mb-3">No Products Found</h3>
+                  <p className="text-black/60 mb-6">
+                    Try adjusting your search or filter criteria
+                  </p>
+                  <button
+                    onClick={resetFilters}
+                    className="px-6 py-3 bg-black text-white text-sm tracking-wide hover:bg-black/90 transition-colors"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -807,7 +784,7 @@ export default function ProductListing() {
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 z-50"
+          className="fixed bottom-8 right-8 bg-black text-white p-3 shadow-lg hover:bg-black/90 transition-colors z-50"
           aria-label="Back to top"
         >
           <svg
@@ -825,6 +802,7 @@ export default function ProductListing() {
           </svg>
         </button>
       )}
-    </div>
+      
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { X, ChevronDown, SlidersHorizontal, Star } from 'lucide-react';
 import PriceRangeSelector from './PriceRangeSlider';
 
 export interface FilterPanelProps {
@@ -150,18 +150,17 @@ export default function FilterPanel({
       >
         <div className="space-y-2">
           {categories.map((category) => (
-            <label
+            <button
               key={category}
-              className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded group"
+              onClick={() => handleCategoryChange(category)}
+              className={`block w-full text-left px-3 py-2 text-xs transition-colors ${
+                selectedCategories.includes(category)
+                  ? 'bg-black text-white'
+                  : 'text-black/60 hover:text-black hover:bg-black/5'
+              }`}
             >
-              <input
-                type="checkbox"
-                checked={selectedCategories.includes(category)}
-                onChange={() => handleCategoryChange(category)}
-                className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500 focus:ring-2"
-              />
-              <span className="text-sm text-gray-700 group-hover:text-gray-900">{category}</span>
-            </label>
+              {category}
+            </button>
           ))}
         </div>
       </FilterSection>
@@ -190,10 +189,10 @@ export default function FilterPanel({
             <button
               key={tag}
               onClick={() => handleTagChange(tag)}
-              className={`px-3 py-1 text-sm rounded-full border transition-all ${
-                selectedTags.includes(tag) 
-                  ? 'bg-blue-50 border-blue-300 text-blue-700 font-medium' 
-                  : 'border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50'
+              className={`px-3 py-1 text-xs transition-colors border ${
+                selectedTags.includes(tag)
+                  ? 'bg-black text-white border-black'
+                  : 'border-black/20 text-black/60 hover:border-black hover:text-black'
               }`}
             >
               {tag}

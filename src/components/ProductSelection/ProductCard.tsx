@@ -1,56 +1,79 @@
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  images: string[];
-  instagramLink?: string;
-}
+import { Link } from 'react-router-dom';
+import { Product } from '../../types/types';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: () => void;
-  onViewDetails: () => void;
+  viewMode: 'grid' | 'list';
 }
 
-export default function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  viewMode
+}: ProductCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      whileHover={{ y: -5 }}
-      className="group"
-    >
-      <Link to={`/product/${product._id}`} onClick={onViewDetails}>
-        <div className="relative overflow-hidden aspect-square">
+    <div className={`group ${
+      viewMode === 'grid' 
+        ? 'p-3 md:p-6' 
+        : 'p-4 md:p-8 flex flex-col md:flex-row md:gap-8'
+    }`}>
+      {/* Image Container */}
+      <Link 
+        to={`/product/${product._id}`}
+        className={`block bg-black/[0.02] ${
+          viewMode === 'grid' 
+            ? 'aspect-square w-full' 
+            : 'w-full md:w-80 aspect-square'
+        }`}
+      >
+        <motion.div
+          className="w-full h-full relative"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+        >
           <img
             src={product.images[0]}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full h-full object-contain p-2"
+            loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-white text-lg font-light tracking-wide mb-2">
-          {product.name}
-        </h3>
-              <p className="text-white text-sm tracking-wider">
-                ₹{product.price}
-              </p>
-            </div>
-          </div>
-        </div>
+        </motion.div>
       </Link>
-      
-      <div className="mt-4">
-        <button
-          onClick={onAddToCart}
-          className="w-full bg-black text-white py-3 text-sm tracking-wider hover:bg-white hover:text-black border border-black transition-all duration-300"
-        >
-          ADD TO CART
-        </button>
+
+      {/* Content */}
+      <div className={`${
+        viewMode === 'grid' 
+          ? 'mt-3 md:mt-6' 
+          : 'mt-4 md:mt-0 flex-1 flex flex-col justify-between min-w-0'
+      }`}>
+        <div className="min-w-0">
+          <Link 
+            to={`/product/${product._id}`}
+            className="block text-xs md:text-sm tracking-wide text-black/80 hover:text-black transition-colors line-clamp-2"
+          >
+            {product.name}
+          </Link>
+          <p className="mt-1 md:mt-2 text-[10px] md:text-xs tracking-wide uppercase text-black/40">
+            {product.productType.name}
+          </p>
+        </div>
+
+        <div className={`${
+          viewMode === 'grid' 
+            ? 'mt-2 md:mt-4' 
+            : ''
+        } flex items-center justify-between`}>
+          <p className="text-xs md:text-sm tracking-wide font-medium">
+            ₹{product.price.toFixed(2)}
+          </p>
+          <Link
+            to={`/product/${product._id}`}
+            className="text-[10px] md:text-xs tracking-wide text-black/40 hover:text-black transition-colors ml-3 md:ml-4 shrink-0"
+          >
+            View Details →
+          </Link>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
