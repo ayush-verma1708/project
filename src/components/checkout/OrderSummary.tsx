@@ -219,7 +219,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             )}
           </AnimatePresence>
           <div className="flex justify-between">
-            <span>Tax ({taxRate * 100}%)</span>
+            <span>Tax ({taxRate}%)</span>
             <span>₹{tax.toFixed(2)}</span>
           </div>
         </div>

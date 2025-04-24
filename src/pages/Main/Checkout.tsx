@@ -119,7 +119,7 @@ export default function CheckoutPage() {
       // Order is already created during payment verification
       // Just clear the cart and navigate to confirmation with token
       clearCart();
-      navigate(`/order-confirmation?token=${paymentId}`);
+      navigate(`/order-confirmation/${paymentId}`);
     } catch (error: any) {
       console.error('Error handling payment success:', error);
       setPaymentError(error?.response?.data?.message || error.message || 'Failed to process payment');

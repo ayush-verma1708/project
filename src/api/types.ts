@@ -118,14 +118,16 @@ export interface User {
 }
 
 export interface ShippingInfo {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   address: string;
   city: string;
   state: string;
   country: string;
-  zipCode: string;
+  pin: string;
+  apartment?: string;
 }
 
 export interface ProductItem {
@@ -146,18 +148,45 @@ export interface Coupon {
 
 export interface Order {
   _id: string;
-  items: ProductItem[];
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  products: {
+    product: {
+      _id: string;
+      name: string;
+      images?: string[];
+    };
+    quantity: number;
+    price: number;
+    extraInfo?: {
+      model?: string;
+      brand?: string;
+    };
+  }[];
   shippingInfo: ShippingInfo;
+  coupon?: {
+    _id: string;
+    code: string;
+    discount: number;
+  };
+  subtotal: number;
+  discount: number;
+  tax: number;
   total: number;
   status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-  paymentMethod: string;
-  paymentStatus: 'Pending' | 'Completed' | 'Failed' | 'Refunded';
   trackingNumber?: string;
+  paymentMethod: 'Online' | 'COD';
+  paymentStatus: 'Pending' | 'Paid' | 'Failed' | 'Refunded';
+  paymentInfo?: {
+    razorpayPaymentId?: string;
+    razorpayOrderId?: string;
+    razorpaySignature?: string;
+  };
   createdAt: string;
-  coupon?: Coupon;
-  token?: string;
-  tokenExpiresAt?: string;
-  tokenViewed?: boolean;
 }
 
 export interface PaginatedResponse<T> {

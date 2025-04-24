@@ -107,7 +107,10 @@ export default function App() {
                 </Route>
 
                 {/* Order Confirmation */}
-                <Route path="order-confirmation/:orderId" element={<OrderConfirmation />} />
+                <Route path="order-confirmation">
+                  <Route path=":orderId" element={<OrderConfirmation />} />
+                  <Route index element={<OrderConfirmation />} />
+                </Route>
 
                 {/* 404 Catch-all */}
                 <Route path="*" element={<NotFound />} />
